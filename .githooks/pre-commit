@@ -1,27 +1,31 @@
 #!/usr/bin/env bash
 # pre-commit: restricted-content guard.
-# Scans staged additions for blocked patterns and aborts if any are found.
-# Self-excluded: this file is never scanned.
+# Patterns are loaded from .githooks/.blocked (git-ignored, never committed).
+# If that file is absent the hook exits silently — create it locally to activate.
+# Self-excluded: this hook file and the patterns file are never scanned.
 set -e
 
-# Cross-platform base64 decode (Git Bash / macOS / Linux)
-_d() { printf '%s' "$1" | base64 -d 2>/dev/null || printf '%s' "$1" | base64 --decode; }
-
-# Patterns encoded — opaque intentionally; decode reveals nothing here.
-P1=$(_d 'ZnJlZCBtYW5kYXB8ZnJlZGVyaWNrIG1hbmRhcA==')
-P2=$(_d 'ZnJlZGVyaWNrXC5tYW5kYXB8dGh1Z19rY2lyZWRlcmY=')
-P3=$(_d 'YWNjZW50dXJlXC5jb218YWNjZW50dXJl')
-
+PATTERNS_FILE='.githooks/.blocked'
 SELF='.githooks/pre-commit'
-FAIL=0
 
+# No patterns file → nothing to enforce.
+[[ -f "$PATTERNS_FILE" ]] || exit 0
+
+# Build a single grep -iE pattern from non-comment, non-blank lines.
+# tr -d '\r' handles Windows CRLF if the file was edited on Windows.
+PATTERN=$(grep -Ev '^[[:space:]]*(#|$)' "$PATTERNS_FILE" \
+    | tr -d '\r' | tr '\n' '|' | sed 's/|$//')
+[[ -n "$PATTERN" ]] || exit 0
+
+FAIL=0
 while IFS= read -r f; do
-    [[ -f "$f" ]]       || continue   # skip deletions / missing
-    [[ "$f" == "$SELF" ]] && continue  # never scan this hook itself
+    [[ -f "$f" ]]                  || continue   # skip deletions / missing
+    [[ "$f" == "$SELF" ]]          && continue   # never scan this hook
+    [[ "$f" == "$PATTERNS_FILE" ]] && continue   # never scan the patterns file
 
     if git diff --cached --unified=0 -- "$f" \
         | grep -E '^[+][^+]' \
-        | grep -qiE "$P1|$P2|$P3"; then
+        | grep -qiE "$PATTERN"; then
         printf '  blocked  %s\n' "$f" >&2
         FAIL=1
     fi

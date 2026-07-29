@@ -19,6 +19,9 @@ venv/
 *.env
 .env
 
+# Hook patterns file (local only — never commit)
+.githooks/.blocked
+
 # Scratch
 *.tmp
 gathered.json
