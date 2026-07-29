@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# pre-commit: restricted-content guard.
+# Scans staged additions for blocked patterns and aborts if any are found.
+# Self-excluded: this file is never scanned.
+set -e
+
+# Cross-platform base64 decode (Git Bash / macOS / Linux)
+_d() { printf '%s' "$1" | base64 -d 2>/dev/null || printf '%s' "$1" | base64 --decode; }
+
+# Patterns encoded — opaque intentionally; decode reveals nothing here.
+P1=$(_d 'ZnJlZCBtYW5kYXB8ZnJlZGVyaWNrIG1hbmRhcA==')
+P2=$(_d 'ZnJlZGVyaWNrXC5tYW5kYXB8dGh1Z19rY2lyZWRlcmY=')
+P3=$(_d 'YWNjZW50dXJlXC5jb218YWNjZW50dXJl')
+
+SELF='.githooks/pre-commit'
+FAIL=0
+
+while IFS= read -r f; do
+    [[ -f "$f" ]]       || continue   # skip deletions / missing
+    [[ "$f" == "$SELF" ]] && continue  # never scan this hook itself
+
+    if git diff --cached --unified=0 -- "$f" \
+        | grep -E '^[+][^+]' \
+        | grep -qiE "$P1|$P2|$P3"; then
+        printf '  blocked  %s\n' "$f" >&2
+        FAIL=1
+    fi
+done < <(git diff --cached --name-only)
+
+(( FAIL == 0 )) || {
+    printf '\nCommit blocked — remove or redact restricted content and retry.\n' >&2
+    exit 1
+}
