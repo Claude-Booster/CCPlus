@@ -92,7 +92,7 @@ jobs:
             BASENAME=$(basename "$NEW" .html)            # CCPlus_<timestamp>
             TS=${BASENAME#CCPlus_}
             gh release create "$TS" "$NEW" --title "$BASENAME" \
-              --notes "Automated CCPlus run. View: https://fredman08.github.io/CCPlus/artifacts/$(basename "$NEW")" \
+              --notes "Automated CCPlus run. View: https://claude-booster.github.io/CCPlus/artifacts/$(basename "$NEW")" \
               || echo "release step skipped"
           fi
 
@@ -104,7 +104,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          SITE: "https://fredman08.github.io/CCPlus/"
+          SITE: "https://claude-booster.github.io/CCPlus/"
         run: |
           LAST=$(jq -c '.runs[-1]' state/runlog.json)
           STATUS=$(echo "$LAST" | jq -r '.status')

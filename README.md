@@ -4,8 +4,8 @@ An automated pipeline that tracks and surfaces **what's new** in Claude Code —
 tricks, techniques, and "hacks" — from Anthropic, the Claude community, and AI experts, and
 publishes it as a versioned, citation-backed, Anthropic-styled HTML document.
 
-**Live site:** https://fredman08.github.io/CCPlus/ &nbsp;|&nbsp; **Versions:** see
-[Releases](https://github.com/fredman08/CCPlus/releases)
+**Live site:** https://claude-booster.github.io/CCPlus/ &nbsp;|&nbsp; **Versions:** see
+[Releases](https://github.com/Claude-Booster/CCPlus/releases)
 
 ---
 

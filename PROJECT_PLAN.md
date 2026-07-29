@@ -3,8 +3,8 @@
 *Automated pipeline that tracks and surfaces what's new in Claude Code — updates, tips,
 techniques, and "hacks" — and publishes it as a versioned, cited, Anthropic-styled artifact.*
 
-- **Repo:** https://github.com/fredman08/CCPlus
-- **Live site:** https://fredman08.github.io/CCPlus/
+- **Repo:** https://github.com/Claude-Booster/CCPlus
+- **Live site:** https://claude-booster.github.io/CCPlus/
 - **Started:** June 4, 2026 · **Status:** v1.0 live
 
 ---

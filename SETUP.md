@@ -16,7 +16,7 @@ Claude Code on the web can't be enabled.
 ## A. Weekly Routine (cloud, native)
 
 1. Go to <https://claude.ai/code/routines> and create a new routine.
-2. **Connect this repo** (`fredman08/CCPlus`) via the GitHub connector (authorize once).
+2. **Connect this repo** (`Claude-Booster/CCPlus`) via the GitHub connector (authorize once).
 3. **Schedule:** weekly, cron `0 13 * * 1` (Mondays 13:00). Set the timezone to **Asia/Manila**
    (or your local zone). If the UI only accepts UTC, use `0 5 * * 1` for Mon 13:00 PHT.
 4. **Model:** Opus. The reviewer subagent runs on Sonnet automatically (see
@@ -45,7 +45,7 @@ Automate and no premium connector.
 
 ### B1. Turn on watching (one-time)
 
-1. Open <https://github.com/fredman08/CCPlus>.
+1. Open <https://github.com/Claude-Booster/CCPlus>.
 2. Top-right **Watch** → **All Activity**. (This subscribes you to issues, comments, and releases.)
 3. Confirm GitHub emails go where you want: <https://github.com/settings/notifications> →
    **Watching** → enable **Email**; and <https://github.com/settings/emails> → make sure the
@@ -61,7 +61,7 @@ new comment on the run-log issue ("no significant updates" if nothing changed). 
 > yourself may not notify you — but the **scheduled** Monday runs will. Plain commits/pushes do
 > not generate emails, which is why notifications go through the run-log **issue** (and Releases),
 > not the commit. The old Power Automate `PA_WEBHOOK_URL` secret is no longer used and can be
-> deleted: `gh secret delete PA_WEBHOOK_URL --repo fredman08/CCPlus`.
+> deleted: `gh secret delete PA_WEBHOOK_URL --repo Claude-Booster/CCPlus`.
 
 ---
 
@@ -89,7 +89,7 @@ credential secret is added**, so scheduled runs no-op cleanly until you activate
 ### Activating
 
 Add **one** credential as a repo secret at
-`https://github.com/fredman08/CCPlus/settings/secrets/actions`:
+`https://github.com/Claude-Booster/CCPlus/settings/secrets/actions`:
 
 | Option | Secret | Notes |
 |--------|--------|-------|
