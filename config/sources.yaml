@@ -1,6 +1,5 @@
-# CCPlus source list.
-# In Plan A (native Routine) the generator reads these directly via WebSearch/WebFetch.
-# The same list drives the scripted gather step in the Plan C (GitHub Actions) fallback.
+# CCPlus source list — used by the GitHub Actions generator via WebSearch/WebFetch.
+# Active engine: GitHub Actions (.github/workflows/ccplus.yml).
 #
 # Each source: name, url, type (authoritative|community), weight (1=low .. 5=high),
 # method (how to fetch it), notes.

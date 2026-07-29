@@ -5,7 +5,7 @@ techniques, and "hacks" — and publishes it as a versioned, cited, Anthropic-st
 
 - **Repo:** https://github.com/Claude-Booster/CCPlus
 - **Live site:** https://claude-booster.github.io/CCPlus/
-- **Started:** June 4, 2026 · **Status:** v1.0 live
+- **Started:** June 4, 2026 · **Status:** v1.0 live · Active engine: GitHub Actions
 
 ---
 
@@ -28,31 +28,33 @@ or on demand, and skipped (notification only) when nothing significant has chang
 | 5 | v1.0 covers all recommended default-config improvements to date | ✅ |
 | 6 | Never overwrite — a new artifact per version | ✅ (timestamped files + Releases) |
 | 7 | Accessible / shareable to others | ✅ (public GitHub Pages + Releases) |
-| 8 | Weekly schedule **or** by request/trigger | ⏳ Routine pending; `/ccplus` ready |
-| 9 | No artifact if nothing significant — notify instead | ✅ logic; ⏳ email flow pending |
+| 8 | Weekly schedule **or** by request/trigger | ✅ GitHub Actions cron + `/ccplus` skill |
+| 9 | No artifact if nothing significant — notify instead | ✅ issue comment + GitHub Watch email |
 | 10 | Cross-model review (Opus ⇄ Sonnet) for accuracy | ✅ |
 
-## 3. Chosen approach
+## 3. Active approach
 
-- **Engine:** native Claude Code **Routine** (cloud, weekly cron), running
-  `prompts/generate-ccplus.md`.
-- **Schedule:** Mondays 1:00 PM Asia/Manila (cron `0 13 * * 1`, = `0 5 * * 1` UTC); on-demand via
-  the `/ccplus` skill or the routine's "Run now".
+- **Engine:** **GitHub Actions** (`.github/workflows/ccplus.yml`), credential `CLAUDE_CODE_OAUTH_TOKEN`
+  set — uses Enterprise subscription, no PAYG billing. Claude Code on the web / Routines are
+  disabled for this account; if enabled later, see `SETUP.md §A` to switch.
+- **Schedule:** Mondays 05:00 UTC (= 13:00 Asia/Manila); on-demand via the `/ccplus` skill or
+  Actions **Run workflow** button.
 - **Format:** self-contained Anthropic-styled HTML.
 - **Hosting / sharing:** public GitHub Pages from `docs/`, plus a GitHub Release per version.
-- **Notifications:** Outlook email via a Power Automate cloud flow that watches
-  `state/runlog.json` (covers both new-artifact and "no significant updates" cases).
-- **Cross-model review:** routine runs on Opus; spawns a Sonnet reviewer subagent to fact-check
-  every claim against its citation before publish (roles swap if the base model is Sonnet).
+- **Notifications:** a rolling **"📋 CCPlus run log"** GitHub issue receives one comment per run
+  (both new-version and no-update). Repo watchers (Watch → All Activity) receive these by email.
+  No Power Automate required.
+- **Cross-model review:** Actions runs on Opus; spawns a Sonnet reviewer subagent to fact-check
+  every claim before publish (roles swap if the base model is Sonnet).
 
 ## 4. Architecture
 
 ```
-Weekly cron (Mon 13:00)  ─┐
-/ccplus (on demand)       ├─►  generate-ccplus.md (Opus)
-Routine "Run now"        ─┘        │
-                                   ▼
-        1. Gather   — WebSearch/WebFetch over config/sources.yaml → structured JSON
+GitHub Actions cron (Mon 05:00 UTC)  ─┐
+/ccplus (on demand)                   ├─►  generate-ccplus.md (Opus)
+Actions "Run workflow"               ─┘         │
+                                                ▼
+        1. Gather   — WebFetch over config/sources.yaml → structured JSON
         2. Dedupe   — drop items already in state/state.json
         3. Significance — config/config.yaml rubric → generate OR notify-only
               │ notify-only → append runlog (no-update) → commit → STOP
@@ -61,8 +63,8 @@ Routine "Run now"        ─┘        │
         5. Review   — Sonnet subagent (review-ccplus.md): pass / pass_with_edits / fail
         6. Publish  — update state + runlog, regenerate docs/index.html, commit & push,
                       create GitHub Release
-                                   ▼
-        Power Automate watches runlog.json → Outlook email (new version OR "no updates")
+                                                ▼
+        Workflow posts issue comment on "📋 CCPlus run log" → GitHub Watch emails watchers
 ```
 
 ## 5. Repository layout
@@ -71,15 +73,19 @@ Routine "Run now"        ─┘        │
 CCPlus/
   config/sources.yaml          # tracked sources (authoritative vs community)
   config/config.yaml           # significance rubric + model choices
-  prompts/generate-ccplus.md   # the generator the routine runs
+  prompts/generate-ccplus.md   # the generator the pipeline runs
   prompts/review-ccplus.md     # cross-model reviewer instructions
   templates/template.html      # Anthropic-styled HTML shell ({{tokens}})
   state/state.json             # dedup ledger + version/changelog/hash tracking
-  state/runlog.json            # per-run status log (drives notifications)
+  state/runlog.json            # per-run status log
   docs/index.html              # GitHub Pages landing page (all versions, newest first)
+  docs/assets/                 # animated banner + pipeline diagram (README visuals)
   docs/artifacts/CCPlus_*.html # immutable artifact per version
+  .githooks/pre-commit         # PII guard (committed, executable); reads .githooks/.blocked
+  .githooks/.blocked           # blocked patterns (git-ignored, local only)
+  .github/workflows/ccplus.yml # GitHub Actions workflow
   .claude/skills/ccplus/       # /ccplus on-demand trigger
-  SETUP.md                     # Routine + Power Automate setup steps
+  SETUP.md                     # setup & operations guide
   PROJECT_PLAN.md              # this file
 ```
 
@@ -95,37 +101,36 @@ already in the state ledger.
 ## 7. Build status
 
 **Done**
-- Repo scaffolded, committed, pushed; GitHub Pages enabled and serving (HTTP 200).
-- v1.0 artifact generated (Opus 4.8), cross-model reviewed (Sonnet 4.6 → `pass_with_edits`,
-  two corrections applied), published to Pages and Release `v1.0`.
-- `index.html`, `state.json`, `runlog.json` initialized; `/ccplus` skill and `SETUP.md` in place.
+- Repo scaffolded, pushed; GitHub Pages live (HTTP 200). Moved to **Claude-Booster** org.
+- v1.0 artifact generated (Opus 4.8), reviewed (Sonnet 4.6 → `pass_with_edits`, two corrections
+  applied), published to Pages and Release `v1.0`. 4 CI runs logged.
+- GitHub Actions active — `CLAUDE_CODE_OAUTH_TOKEN` set as repo secret (subscription, no PAYG).
+- Notifications: rolling GitHub issue ("📋 CCPlus run log"); watchers receive email per run.
+- Animated banner + pipeline diagram added to README (`docs/assets/`).
+- Pre-commit PII guard: `.githooks/pre-commit` (committed) + `.githooks/.blocked` (local, git-ignored).
+- Git identity: `user.name=CCPlus`, `user.email=fredman08@users.noreply.github.com`.
+- History: all commit identities and file content scrubbed of PII; force-pushed.
 
-**Engine note (June 2026):** Claude Code on the web / Routines are **disabled** for this account,
-so the active engine is **GitHub Actions** (`.github/workflows/ccplus.yml`), committed but dormant
-until a credential secret is added. `/ccplus` on demand works today.
+**Nothing remaining** — the pipeline is fully operational. Ongoing maintenance only:
+- Tune `config/config.yaml` significance thresholds as needed.
+- Add/update sources in `config/sources.yaml`.
+- If Claude Code on the web is later enabled, switch to the native Routine (no API key).
 
-**Remaining (owner/admin actions — not automatable)**
-1. **Activate the engine** — add one secret to enable GitHub Actions: `ANTHROPIC_API_KEY` (PAYG),
-   `CLAUDE_CODE_OAUTH_TOKEN` (subscription), or wire Bedrock/Vertex creds. See `SETUP.md` §A2.
-   *(If web access is later enabled, switch to the no-key Routine instead — `SETUP.md` §A.)*
-2. **Build the Power Automate Outlook flow** watching `state/runlog.json`. See `SETUP.md` §B.
-3. *(Interim)* run `/ccplus` weekly on demand until automation is activated.
+## 8. Fallbacks (if GitHub Actions ever needs replacement)
 
-## 8. Fallbacks (if Claude Code on the web can't be enabled)
-
+- **Native Routine** — if Claude Code on the web / Routines are enabled for this account, switch
+  to the Routine (no credential needed; uses subscription). See `SETUP.md §A`.
 - **Local headless** — Task Scheduler / Power Automate Desktop runs `claude -p ...` weekly using
-  the existing CLI login. No web entitlement, no API key; machine must be on at run time.
-- **GitHub Actions** — fully unattended cloud runs; requires a Console **pay-as-you-go**
-  `ANTHROPIC_API_KEY` (not subscription credentials) and incurs token billing.
+  the CLI login. No key required; machine must be on at run time.
 
 ## 9. Verification
 
 - v1.0 renders with Anthropic styling; citations/References/History Log present; no stray
-  template tokens; public Pages URL opens (verified HTTP 200).
+  template tokens; public Pages URL opens (HTTP 200).
 - No-overwrite: each run writes a new timestamped file; `index.html` lists all; Releases archive
   each version.
 - Notify path: a run with the state ledger already current yields `no-update` in `runlog.json`
-  and an email instead of an artifact.
+  and a comment on the run-log issue (GitHub Watch emails watchers).
 - Cross-model review: reviewer runs on the opposite model; verdict recorded in the artifact and
   `runlog.json`.
 

@@ -53,7 +53,7 @@ items, OR `>= min_new_community` new community items). Otherwise → **notify-on
 - Do NOT create an artifact.
 - Append to `state/runlog.json`:
   `{ "timestamp": "...", "status": "no-update", "new_items": <n>, "checked_sources": <n>, "note": "No significant Claude Code updates this week." }`
-- Commit (`state/runlog.json` only) and stop. The Power Automate flow turns this into an email.
+- Commit (`state/runlog.json` only) and stop. The workflow will post this to the "📋 CCPlus run log" issue; GitHub Watch emails watchers.
 
 ## Step 4 — Generate the artifact (significant path)
 

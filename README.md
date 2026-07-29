@@ -69,6 +69,8 @@ CCPlus/
   docs/index.html              # GitHub Pages landing page (all versions, newest first)
   docs/assets/                 # banner + pipeline diagram (this page)
   docs/artifacts/CCPlus_*.html # immutable artifact per version
+  .githooks/pre-commit         # PII guard hook (committed); reads .githooks/.blocked
+  .githooks/.blocked           # blocked patterns (git-ignored, local only)
   .claude/skills/ccplus/       # /ccplus on-demand trigger
   SETUP.md                     # setup & operations guide
 ```

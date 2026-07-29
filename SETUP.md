@@ -1,9 +1,7 @@
 # CCPlus — Setup & Operations
 
-This guide finishes wiring CCPlus after the repo is created and v1.0 is published. There are
-three things to set up: **(A)** the weekly Routine, **(B)** the Outlook-email notification flow
-in Power Automate, and **(C)** the on-demand trigger. A **fallback** section covers what to do if
-Claude Code on the web can't be enabled.
+This guide covers CCPlus operations: **(A)** the weekly Routine (if/when enabled), **(B)** email
+notifications via GitHub Watch, **(C)** on-demand triggers, and **(D)** the pre-commit PII guard.
 
 > **Prerequisite — Claude Code on the web (hard gate for the Routine).** Routines require
 > "Claude Code on the web" to be enabled for your account. This is an Anthropic org-side setting
@@ -83,8 +81,8 @@ new comment on the run-log issue ("no significant updates" if nothing changed). 
 ## A2. GitHub Actions (active engine while Routines are unavailable)
 
 The workflow is committed at `.github/workflows/ccplus.yml`. It runs weekly (Mon 05:00 UTC =
-13:00 Asia/Manila) and via the **Run workflow** button (on-demand). It is **dormant until a
-credential secret is added**, so scheduled runs no-op cleanly until you activate it.
+13:00 Asia/Manila) and via the **Run workflow** button (on-demand). **Active** — `CLAUDE_CODE_OAUTH_TOKEN`
+is set as a repo secret (uses subscription, no PAYG billing).
 
 ### Activating
 
@@ -116,11 +114,48 @@ Pages automatically (push to `main` rebuilds Pages) and a GitHub Release is crea
    ```powershell
    claude -p "Follow prompts/generate-ccplus.md ..." --permission-mode acceptEdits
    ```
-3. Keep the same repo, Pages, and Power Automate email flow.
+3. Keep the same repo and Pages; notifications come from GitHub Watch (no PA needed).
 
 **Manual on-demand only** (zero infrastructure): run **`/ccplus`** in VS Code whenever you want
-(e.g. a weekly calendar reminder). No CLI install, no key, no machine-on requirement. This works
-right now and is the recommended interim path until an Actions credential is sorted.
+(e.g. a weekly calendar reminder). No CLI install, no key, no machine-on requirement.
+
+---
+
+---
+
+## D. Pre-commit PII guard
+
+The hook file `.githooks/pre-commit` is committed (executable, mode `100755`). It reads blocked
+patterns from `.githooks/.blocked`, which is **git-ignored and never committed** — you must
+create it locally.
+
+### D1. Activate (one-time per clone)
+
+```bash
+# Tell git to use the .githooks/ directory
+git config core.hooksPath .githooks
+
+# Create the local patterns file — add your own restricted strings, one per line.
+# Lines starting with # are ignored. Patterns use grep -iE syntax (case-insensitive).
+# Example structure (replace with your actual restricted content):
+#
+#   your name variant 1
+#   your name variant 2
+#   your\.email\.localpart
+#   your_handle
+#   yourorg\.com
+#   YourOrg
+#
+touch .githooks/.blocked   # or open in an editor and add your patterns
+```
+
+### D2. How it works
+
+- Scans only the **added lines** of each staged file (`git diff --cached`).
+- Skips itself (`.githooks/pre-commit`) and the patterns file (`.githooks/.blocked`).
+- If `.githooks/.blocked` is absent, the hook exits silently — no false blocks on a fresh clone
+  before the file is created.
+- Blocks are case-insensitive (`grep -i`).
 
 ---
 

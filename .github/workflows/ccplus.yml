@@ -2,9 +2,9 @@ name: CCPlus weekly
 
 # Runs the CCPlus generator weekly and on demand.
 #
-# DORMANT UNTIL A CREDENTIAL IS ADDED: the "generate" job only runs when the repo secret
-# ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN) is present, so scheduled runs no-op cleanly
-# until you activate it. See SETUP.md "Activating GitHub Actions".
+# Active: CLAUDE_CODE_OAUTH_TOKEN is set as a repo secret (uses subscription, no PAYG).
+# The "generate" job guards against missing credentials so it no-ops cleanly if the secret
+# is ever removed. See SETUP.md §A2 for credential options.
 #
 # Verify the claude-code-action version and input names against the current docs before
 # enabling (https://github.com/anthropics/claude-code-action) — the AI tooling moves weekly.
