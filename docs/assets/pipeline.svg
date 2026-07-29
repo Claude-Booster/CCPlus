@@ -1,0 +1,107 @@
+<svg viewBox="0 0 820 140" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect width="820" height="140" rx="10" fill="#1A1A19"/>
+
+  <!-- ── NODE 1: GATHER (x:20-130, center:75) ── -->
+  <rect x="20" y="45" width="110" height="42" rx="7"
+        fill="#1E1E1C" stroke="#D97757" stroke-width="1.5"/>
+  <text x="75" y="63" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="10.5" font-weight="700" letter-spacing="1" fill="#D97757">GATHER</text>
+  <text x="75" y="78" text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#565650">sources</text>
+
+  <!-- CONNECTOR 1 (130 → 188) -->
+  <line x1="131" y1="66" x2="182" y2="66"
+        stroke="#363634" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="181,62 188,66 181,70" fill="#D97757" opacity="0.9"/>
+  <!-- animated dot -->
+  <circle cy="66" r="3.5" fill="#D97757">
+    <animate attributeName="cx"
+      from="131" to="183" dur="1.8s" begin="0s" repeatCount="indefinite"/>
+    <animate attributeName="opacity"
+      values="0;1;1;0" keyTimes="0;0.08;0.88;1"
+      dur="1.8s" begin="0s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ── NODE 2: EVALUATE (x:188-298, center:243) ── -->
+  <rect x="188" y="45" width="110" height="42" rx="7"
+        fill="#1E1E1C" stroke="#D97757" stroke-width="1.5"/>
+  <text x="243" y="63" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="10.5" font-weight="700" letter-spacing="1" fill="#D97757">EVALUATE</text>
+  <text x="243" y="78" text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#565650">significance</text>
+
+  <!-- no-update branch (down) -->
+  <line x1="243" y1="87" x2="243" y2="108"
+        stroke="#363634" stroke-width="1" stroke-dasharray="3 2"/>
+  <polygon points="240,106 243,113 246,106" fill="#363634"/>
+  <text x="243" y="128" text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#484844">no-update → notify only</text>
+
+  <!-- CONNECTOR 2 (298 → 356) -->
+  <line x1="299" y1="66" x2="350" y2="66"
+        stroke="#363634" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="349,62 356,66 349,70" fill="#D97757" opacity="0.9"/>
+  <circle cy="66" r="3.5" fill="#D97757">
+    <animate attributeName="cx"
+      from="299" to="351" dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
+    <animate attributeName="opacity"
+      values="0;1;1;0" keyTimes="0;0.08;0.88;1"
+      dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ── NODE 3: GENERATE (x:356-466, center:411) ── -->
+  <rect x="356" y="45" width="110" height="42" rx="7"
+        fill="#1E1E1C" stroke="#D97757" stroke-width="1.5"/>
+  <text x="411" y="63" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="10.5" font-weight="700" letter-spacing="1" fill="#D97757">GENERATE</text>
+  <text x="411" y="78" text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#565650">Opus model</text>
+
+  <!-- CONNECTOR 3 (466 → 524) -->
+  <line x1="467" y1="66" x2="518" y2="66"
+        stroke="#363634" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="517,62 524,66 517,70" fill="#D97757" opacity="0.9"/>
+  <circle cy="66" r="3.5" fill="#D97757">
+    <animate attributeName="cx"
+      from="467" to="519" dur="1.8s" begin="1.2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity"
+      values="0;1;1;0" keyTimes="0;0.08;0.88;1"
+      dur="1.8s" begin="1.2s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ── NODE 4: REVIEW (x:524-634, center:579) ── -->
+  <rect x="524" y="45" width="110" height="42" rx="7"
+        fill="#1E1E1C" stroke="#D97757" stroke-width="1.5"/>
+  <text x="579" y="63" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="10.5" font-weight="700" letter-spacing="1" fill="#D97757">REVIEW</text>
+  <text x="579" y="78" text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#565650">Sonnet model</text>
+
+  <!-- CONNECTOR 4 (634 → 692) — green: success path -->
+  <line x1="635" y1="66" x2="686" y2="66"
+        stroke="#363634" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="685,62 692,66 685,70" fill="#10B981" opacity="0.9"/>
+  <circle cy="66" r="3.5" fill="#10B981">
+    <animate attributeName="cx"
+      from="635" to="687" dur="1.8s" begin="1.72s" repeatCount="indefinite"/>
+    <animate attributeName="opacity"
+      values="0;1;1;0" keyTimes="0;0.08;0.88;1"
+      dur="1.8s" begin="1.72s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ── NODE 5: PUBLISH (x:692-802, center:747) ── -->
+  <rect x="692" y="45" width="110" height="42" rx="7"
+        fill="#1E1E1C" stroke="#10B981" stroke-width="1.5"/>
+  <text x="747" y="63" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="10.5" font-weight="700" letter-spacing="1" fill="#10B981">PUBLISH</text>
+  <text x="747" y="78" text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#565650">Pages + Release</text>
+
+</svg>
