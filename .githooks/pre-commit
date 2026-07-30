@@ -17,14 +17,17 @@ PATTERN=$(grep -Ev '^[[:space:]]*(#|$)' "$PATTERNS_FILE" \
     | tr -d '\r' | tr '\n' '|' | sed 's/|$//')
 [[ -n "$PATTERN" ]] || exit 0
 
-# Check commit author identity (name + email) against the same pattern.
-# git var GIT_AUTHOR_IDENT resolves env overrides, local config, global, system — in order.
-IDENT=$(git var GIT_AUTHOR_IDENT 2>/dev/null || true)
-if printf '%s\n' "$IDENT" | grep -qiE "$PATTERN"; then
-    printf 'Commit blocked — git author identity contains restricted content.\n' >&2
-    printf 'Run: git config user.name "CCPlus" && git config user.email "fredman08@users.noreply.github.com"\n' >&2
-    exit 1
-fi
+# Check commit author + committer identity against the same pattern.
+# git var resolves env overrides → local config → global → system → OS fallback, in order.
+# Author and committer can differ during cherry-pick/rebase/am — check both.
+for _IDENT_VAR in GIT_AUTHOR_IDENT GIT_COMMITTER_IDENT; do
+    _IDENT=$(git var "$_IDENT_VAR" 2>/dev/null || true)
+    if printf '%s\n' "$_IDENT" | grep -qiE "$PATTERN"; then
+        printf 'Commit blocked — git %s contains restricted content.\n' "$_IDENT_VAR" >&2
+        printf 'Run: git config user.name "CCPlus" && git config user.email "fredman08@users.noreply.github.com"\n' >&2
+        exit 1
+    fi
+done
 
 FAIL=0
 while IFS= read -r f; do

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# commit-msg: restricted-content guard on commit message text.
+# Patterns are loaded from .githooks/.blocked (git-ignored, never committed).
+# If that file is absent the hook exits silently.
+
+PATTERNS_FILE='.githooks/.blocked'
+
+[[ -f "$PATTERNS_FILE" ]] || exit 0
+
+PATTERN=$(grep -Ev '^[[:space:]]*(#|$)' "$PATTERNS_FILE" \
+    | tr -d '\r' | tr '\n' '|' | sed 's/|$//')
+[[ -n "$PATTERN" ]] || exit 0
+
+# $1 is the path to the file containing the commit message.
+if grep -qiE "$PATTERN" "$1"; then
+    printf 'Commit blocked — message contains restricted content. Edit and retry.\n' >&2
+    exit 1
+fi
