@@ -125,15 +125,24 @@ Pages automatically (push to `main` rebuilds Pages) and a GitHub Release is crea
 
 ## D. Pre-commit PII guard
 
-The hook file `.githooks/pre-commit` is committed (executable, mode `100755`). It reads blocked
-patterns from `.githooks/.blocked`, which is **git-ignored and never committed** — you must
-create it locally.
+Two hooks are committed (executable, mode `100755`):
+
+| Hook | File | What it guards |
+|------|------|----------------|
+| `pre-commit` | `.githooks/pre-commit` | Staged file content + git author/committer identity |
+| `commit-msg` | `.githooks/commit-msg` | Commit message text |
+
+Both read patterns from `.githooks/.blocked`, which is **git-ignored and never committed** — you must create it locally.
 
 ### D1. Activate (one-time per clone)
 
 ```bash
 # Tell git to use the .githooks/ directory
 git config core.hooksPath .githooks
+
+# Set safe commit identity (avoids OS fallback leaking your system username)
+git config user.name  "CCPlus"
+git config user.email "fredman08@users.noreply.github.com"
 
 # Create the local patterns file — add your own restricted strings, one per line.
 # Lines starting with # are ignored. Patterns use grep -iE syntax (case-insensitive).
@@ -149,13 +158,25 @@ git config core.hooksPath .githooks
 touch .githooks/.blocked   # or open in an editor and add your patterns
 ```
 
-### D2. How it works
+### D2. What each hook guards
 
+**pre-commit** runs before every commit:
 - Scans only the **added lines** of each staged file (`git diff --cached`).
-- Skips itself (`.githooks/pre-commit`) and the patterns file (`.githooks/.blocked`).
-- If `.githooks/.blocked` is absent, the hook exits silently — no false blocks on a fresh clone
-  before the file is created.
-- Blocks are case-insensitive (`grep -i`).
+- Checks **author and committer identity** (`git var GIT_AUTHOR_IDENT` and `GIT_COMMITTER_IDENT`) — this resolves env vars → local config → global → system → OS fallback in order, so a blocked name in `%USERNAME%` or `~/.gitconfig` is caught before the commit is written.
+- Skips itself and the patterns file.
+
+**commit-msg** runs after you type/save the commit message:
+- Scans the full commit message text for blocked patterns.
+- Catches PII typed into commit messages (`git commit -m "..."` or editor).
+
+**What is NOT covered** — `git tag -a` annotated tags:
+- Tagger identity comes from the same local git config (`CCPlus` here), so identity is safe.
+- But the tag **message** (typed with `-m` or in the editor) is not scanned — git has no pre-tag hook.
+- Mitigation: always use `git tag -a -m "..."` with neutral message text; never type names in tag messages.
+
+**Common to both hooks:**
+- If `.githooks/.blocked` is absent, both hooks exit silently — no false blocks on a fresh clone before the file is created.
+- All pattern matching is case-insensitive.
 
 ---
 
