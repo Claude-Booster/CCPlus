@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# pre-push: restricted-content guard on annotated tag objects.
+# git has no pre-tag hook; this is the earliest point to catch PII in tag
+# messages and tagger identity before they reach the remote.
+# Non-tag refs and lightweight tags are skipped immediately.
+
+PATTERNS_FILE='.githooks/.blocked'
+[[ -f "$PATTERNS_FILE" ]] || exit 0
+
+PATTERN=$(grep -Ev '^[[:space:]]*(#|$)' "$PATTERNS_FILE" \
+    | tr -d '\r' | tr '\n' '|' | sed 's/|$//')
+[[ -n "$PATTERN" ]] || exit 0
+
+FAIL=0
+# stdin: "<local_ref> <local_sha> <remote_ref> <remote_sha>" per line
+while IFS=' ' read -r local_ref local_sha remote_ref remote_sha; do
+    [[ "$local_ref" == refs/tags/* ]] || continue          # non-tag refs — skip
+    [[ "$local_sha" =~ ^0+$ ]] && continue                 # deletion push — skip
+    [[ "$(git cat-file -t "$local_sha" 2>/dev/null)" == "tag" ]] || continue  # lightweight — skip
+
+    tag_content=$(git cat-file -p "$local_sha" 2>/dev/null || true)
+    if printf '%s\n' "$tag_content" | grep -qiE "$PATTERN"; then
+        tag_name="${local_ref#refs/tags/}"
+        printf 'Push blocked — tag "%s" contains restricted content (message or tagger identity).\n' "$tag_name" >&2
+        printf 'Fix: git tag -d %s && git tag -a %s -m "clean message"\n' "$tag_name" "$tag_name" >&2
+        FAIL=1
+    fi
+done
+
+(( FAIL == 0 )) || {
+    printf '\nPush blocked. Retag with clean content and retry.\n' >&2
+    exit 1
+}

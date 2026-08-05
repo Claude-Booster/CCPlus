@@ -125,14 +125,15 @@ Pages automatically (push to `main` rebuilds Pages) and a GitHub Release is crea
 
 ## D. Pre-commit PII guard
 
-Two hooks are committed (executable, mode `100755`):
+Three hooks are committed (executable, mode `100755`):
 
 | Hook | File | What it guards |
 |------|------|----------------|
-| `pre-commit` | `.githooks/pre-commit` | Staged file content + git author/committer identity |
+| `pre-commit` | `.githooks/pre-commit` | Staged file content · author identity · committer identity · env vars · OS fallback |
 | `commit-msg` | `.githooks/commit-msg` | Commit message text |
+| `pre-push` | `.githooks/pre-push` | Annotated tag message + tagger identity (before the tag reaches the remote) |
 
-Both read patterns from `.githooks/.blocked`, which is **git-ignored and never committed** — you must create it locally.
+All three read patterns from `.githooks/.blocked`, which is **git-ignored and never committed** — you must create it locally.
 
 ### D1. Activate (one-time per clone)
 
@@ -169,10 +170,7 @@ touch .githooks/.blocked   # or open in an editor and add your patterns
 - Scans the full commit message text for blocked patterns.
 - Catches PII typed into commit messages (`git commit -m "..."` or editor).
 
-**What is NOT covered** — `git tag -a` annotated tags:
-- Tagger identity comes from the same local git config (`CCPlus` here), so identity is safe.
-- But the tag **message** (typed with `-m` or in the editor) is not scanned — git has no pre-tag hook.
-- Mitigation: always use `git tag -a -m "..."` with neutral message text; never type names in tag messages.
+**`git tag -a` coverage** — git has no pre-tag hook, so a tag can be created locally with PII before any hook fires. The `pre-push` hook closes this: it inspects every annotated tag object (tagger identity + message) before it reaches the remote. PII in a tag message is caught at push time and the push is blocked.
 
 **Common to both hooks:**
 - If `.githooks/.blocked` is absent, both hooks exit silently — no false blocks on a fresh clone before the file is created.
