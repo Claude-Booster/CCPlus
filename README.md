@@ -9,9 +9,9 @@
   &nbsp;
   <img src="https://img.shields.io/badge/Schedule-Mon%2013%3A00%20PHT-3B82F6?style=flat-square&logo=clockify&logoColor=white" alt="Weekly — Mondays 13:00 PHT"/>
   &nbsp;
-  <img src="https://img.shields.io/badge/Generator-Claude%20Opus-D97757?style=flat-square&logoColor=white" alt="Generator: Claude Opus"/>
+  <img src="https://img.shields.io/badge/Generator-Claude%20Opus-D97757?style=flat-square&logo=anthropic&logoColor=white" alt="Generator: Claude Opus"/>
   &nbsp;
-  <img src="https://img.shields.io/badge/Reviewer-Claude%20Sonnet-E8A07A?style=flat-square&logoColor=white" alt="Reviewer: Claude Sonnet"/>
+  <img src="https://img.shields.io/badge/Reviewer-Claude%20Sonnet-E8A07A?style=flat-square&logo=anthropic&logoColor=white" alt="Reviewer: Claude Sonnet"/>
   &nbsp;
   <img src="https://img.shields.io/badge/Engine-GitHub%20Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white" alt="Engine: GitHub Actions"/>
 </p>
