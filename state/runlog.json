@@ -2,6 +2,17 @@
   "schema": 1,
   "runs": [
     {
+      "timestamp": "2026-08-06_0309",
+      "status": "generated",
+      "version": "1.1",
+      "artifact": "docs/artifacts/CCPlus_2026-08-06_0309.html",
+      "new_items": 22,
+      "checked_sources": 6,
+      "generated_by": "claude-opus-4-8",
+      "review_verdict": "pass_with_edits",
+      "summary": "Highly significant period. Two new default models (Sonnet 5 v2.1.197, Opus 5 v2.1.219), base permission mode renamed 'Manual' (v2.1.200), subagents background-by-default + Claude in Chrome GA + /dataviz (v2.1.198), auto mode without opt-in on Bedrock/Vertex/Foundry (v2.1.207), org default models, screen reader mode, /config key=value, Tool(param:value) rules. CLI advanced v2.1.162 -> v2.1.223. Cross-model reviewed by Sonnet 5 (pass_with_edits): Opus 5 positioning and subagent-cap release attribution corrected."
+    },
+    {
       "timestamp": "2026-06-04_1803",
       "status": "generated",
       "version": "1.0",

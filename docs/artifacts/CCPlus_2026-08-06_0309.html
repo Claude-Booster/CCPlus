@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.1 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.1</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated August 06, 2026 at 03:09 (UTC) · by Claude Opus 4.8 · prior version: 1.0</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5 — <strong>pass_with_edits</strong> (cross-model accuracy review applied; see History Log)</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>The two months since the v1.0 baseline (Jun 4) brought the biggest changes yet — most of
+  all, <strong>two new default models</strong>. <strong>Claude Sonnet 5</strong> shipped in CLI
+  v2.1.197 (Jun 30) as the new default model in Claude Code, with a native 1M-token context and
+  introductory pricing of $2/$10 per Mtok through Aug 31<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref4">[4]</a></sup>.
+  <strong>Claude Opus 5</strong> followed in v2.1.219 (Jul 24) as the new default Opus model
+  (<code>claude-opus-5</code>), excelling at software engineering, knowledge work, and
+  problem-solving and coming close to Fable 5's intelligence at about half the
+  price<sup><a href="#ref3">[3]</a></sup><sup><a href="#ref5">[5]</a></sup>.
+  Alongside the models, several <strong>defaults changed</strong>: the "default" permission mode
+  was renamed <strong>Manual</strong><sup><a href="#ref6">[6]</a></sup>, <strong>subagents now run
+  in the background</strong> so Claude keeps working while they execute<sup><a href="#ref7">[7]</a></sup>,
+  auto mode no longer needs an opt-in on Bedrock/Vertex/Foundry<sup><a href="#ref8">[8]</a></sup>,
+  and <strong>Claude in Chrome</strong> reached general availability<sup><a href="#ref7">[7]</a></sup>.
+  New configuration surfaces landed too — <code>/config key=value</code>, parameter-scoped
+  permission rules like <code>Agent(model:opus)</code>, a <code>/dataviz</code> skill, and a
+  screen-reader mode. The current CLI is <strong>v2.1.223</strong> (Aug 6)<sup><a href="#ref1">[1]</a></sup>.
+  Every claim below is cited; sources are listed at the bottom.</p>
+
+  <h2 id="whats-new">What's New</h2>
+  <p class="meta">Highlights from Claude Code CLI v2.1.163 → v2.1.223 (June 4 – August 6, 2026)<sup><a href="#ref1">[1]</a></sup>.</p>
+  <ul>
+    <li><strong>Claude Sonnet 5 — new default model</strong> (v2.1.197, Jun 30). Native 1M-token
+      context; introductory pricing $2/$10 per Mtok through Aug 31 (standard $3/$15). Requires CLI
+      v2.1.197+<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref2">[2]</a></sup><sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Claude Opus 5 — new default Opus model</strong> (v2.1.219, Jul 24). The
+      <code>opus</code> alias now resolves to <code>claude-opus-5</code> on the Anthropic API; 1M
+      context, priced $5/$25 per Mtok (Fast mode ~2.5× speed at $10/$50). It is the default on
+      Claude Max and the strongest model on Pro, built for software engineering, knowledge work,
+      and problem-solving and approaching Fable 5 capability at about half the price. Requires
+      CLI v2.1.219+<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref3">[3]</a></sup><sup><a href="#ref5">[5]</a></sup><sup><a href="#ref9">[9]</a></sup>.</li>
+    <li><strong>Default permission mode renamed to "Manual"</strong> (v2.1.200, Jul 3), across the
+      CLI, <code>--help</code>, VS Code, and JetBrains; <code>--permission-mode manual</code> and
+      <code>"defaultMode": "manual"</code> are accepted. In the same release,
+      <code>AskUserQuestion</code> dialogs no longer auto-continue by default — opt into an idle
+      timeout via <code>/config</code><sup><a href="#ref6">[6]</a></sup>.</li>
+    <li><strong>Subagents run in the background by default</strong> (v2.1.198, Jul 1), so Claude
+      keeps working while they run and is notified when they finish. Background agents launched from
+      <code>claude agents</code> commit, push, and open a draft PR when they finish code work in a
+      worktree<sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Claude in Chrome is generally available</strong> (v2.1.198, Jul 1)<sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Auto mode without opt-in on cloud providers</strong> (v2.1.207, Jul 11) — auto mode
+      is now available on Bedrock, Vertex AI, and Foundry without
+      <code>CLAUDE_CODE_ENABLE_AUTO_MODE</code>; disable via <code>disableAutoMode</code> in
+      settings<sup><a href="#ref8">[8]</a></sup>.</li>
+    <li><strong>Organization default models</strong> (v2.1.196, Jun 29) — admins set an org default
+      in the console; it appears as "Org default" (or "Role default") in <code>/model</code> until
+      you pick your own<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong><code>/dataviz</code> skill</strong> (v2.1.198) — chart and dashboard design
+      guidance with a runnable color-palette validator<sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Screen reader mode</strong> (v2.1.208, Jul 14) — opt-in plain-text rendering via
+      <code>claude --ax-screen-reader</code>, <code>CLAUDE_AX_SCREEN_READER=1</code>, or
+      <code>"axScreenReader": true</code><sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong><code>/review</code> is now an alias of <code>/code-review</code></strong>
+      (v2.1.223, Aug 6), which reviews the current diff or a PR
+      (<code>/code-review &lt;level&gt; &lt;pr#&gt;</code>); use <code>/code-review ultra</code> for a
+      deep cloud review. <code>/code-review</code> also runs as a background subagent now
+      (v2.1.218)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Nested subagents</strong> (v2.1.219) — subagents can spawn their own subagents up
+      to depth 3 by default; set <code>CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1</code> to disable
+      nesting. Fan-out caps from earlier releases remain in effect: 20 concurrent
+      (v2.1.217, <code>CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS</code>) and 200 per session
+      (v2.1.212, <code>CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION</code>)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong><code>!</code> bash commands trigger a response</strong> (v2.1.186, Jun 22) — the
+      output of a <code>!</code> shell command now prompts Claude to respond automatically; set
+      <code>"respondToBashCommands": false</code> to keep the previous context-only
+      behavior<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Bash-permission security hardening</strong> — a run of releases (v2.1.214, v2.1.221,
+      v2.1.222, v2.1.223) closed permission-check bypasses (e.g. commands hiding parts of themselves
+      via tabs/invisible Unicode or zsh <code>[[ ]]</code> constructs) and tightened worktree
+      isolation so isolated sessions can't run destructive git against the main checkout. Keeping
+      current is a security update, not just a feature one<sup><a href="#ref1">[1]</a></sup>.</li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Set any setting from the prompt with <code>/config key=value</code></strong>
+      (v2.1.181) — e.g. <code>/config thinking=false</code>. Works in interactive, <code>-p</code>,
+      and Remote Control; run <code>/config --help</code> for the shorthand keys<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Scope permission rules by tool parameter</strong> (v2.1.178) — the new
+      <code>Tool(param:value)</code> syntax matches a tool's input parameters (with <code>*</code>
+      wildcard), so <code>Agent(model:opus)</code> can block Opus subagents while allowing
+      others<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Let subagents fan out while you keep working.</strong> Because subagents now run in
+      the background, delegate exploratory or parallelizable work and watch progress in
+      <code>claude agents</code>; the <code>Notification</code> hook fires
+      <code>agent_needs_input</code> / <code>agent_completed</code> events you can wire
+      up<sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Fork a conversation into its own background session</strong> with <code>/fork</code>
+      (v2.1.212) — it copies your conversation into a new <code>claude agents</code> row while you
+      keep working; the in-session subagent it used to launch is now <code>/subtask</code><sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Recover from a mistaken <code>/clear</code></strong> — <code>/rewind</code> can now
+      resume a conversation from before <code>/clear</code> was run (v2.1.191)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Pick the right model for the work.</strong> <code>opus</code> now resolves to Opus 5
+      (complex reasoning and software engineering), <code>sonnet</code> to Sonnet 5 (daily coding); <code>opusplan</code>
+      still plans on Opus and executes on Sonnet, and <code>fable</code> selects Fable 5 for your
+      hardest, longest-running tasks<sup><a href="#ref9">[9]</a></sup>.</li>
+    <li><strong>Trim <code>CLAUDE.md</code> automatically.</strong> <code>/doctor</code> now proposes
+      cutting checked-in <code>CLAUDE.md</code> content that Claude could derive from the codebase
+      (v2.1.206), keeping the file lean<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Enable screen reader mode</strong> if you use assistive tech —
+      <code>claude --ax-screen-reader</code> renders plain text and announces permission-mode changes
+      and deletions aloud<sup><a href="#ref1">[1]</a></sup>.</li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p class="meta">Lesser-known but documented power-user techniques (each corroborated by the release notes and docs).</p>
+  <ul>
+    <li><strong>Pin a model version instead of an alias.</strong> Aliases move over time; to lock a
+      version use the full name (<code>claude-opus-5</code>) or set
+      <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> / <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code>. This
+      also lets you select a newer model where an alias still resolves to an older one (e.g. Sonnet
+      on Bedrock)<sup><a href="#ref9">[9]</a></sup>.</li>
+    <li><strong>Cap runaway delegation and search loops.</strong> Tune
+      <code>CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS</code>, <code>CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION</code>,
+      and <code>CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION</code> to bound fan-out and web-search
+      budgets per session (v2.1.212, v2.1.217)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Cap unattended spend.</strong> <code>--max-budget-usd</code> now also stops
+      background subagents: once the cap is hit, new spawns are denied and running background agents
+      are halted (v2.1.217)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Suppress mobile push while you're at the machine</strong> by pointing
+      <code>CLAUDE_CLIENT_PRESENCE_FILE</code> at a marker file (v2.1.181)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Map <code>jj</code> to Escape in vim mode</strong> with the
+      <code>vimInsertModeRemaps</code> setting (v2.1.208)<sup><a href="#ref1">[1]</a></sup>.</li>
+  </ul>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <p>An updated starter <code>~/.claude/settings.json</code> (user scope) reflecting the new model
+  and permission defaults. On a managed/Enterprise machine, <strong>managed settings take
+  precedence</strong> and may restrict models or permissions — these are user-level suggestions that
+  apply where policy allows<sup><a href="#ref10">[10]</a></sup><sup><a href="#ref9">[9]</a></sup>.</p>
+  <pre><code>{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "opusplan",
+  "effortLevel": "high",
+  "outputStyle": "default",
+  "statusLine": { "type": "command", "command": "~/.claude/statusline.sh" },
+  "permissions": {
+    "allow": [
+      "Bash(git status)", "Bash(git diff *)", "Bash(git log *)",
+      "Bash(npm run lint)", "Bash(npm run test *)"
+    ],
+    "deny": [
+      "Read(./.env)", "Read(./.env.*)", "Read(./secrets/**)", "Bash(curl *)"
+    ]
+  },
+  "attribution": { "commit": "🤖 Generated with Claude Code" }
+}</code></pre>
+  <p class="meta">What changed since v1.0: the <code>opus</code>/<code>sonnet</code> aliases now
+  resolve to Opus 5 / Sonnet 5 on the Anthropic API<sup><a href="#ref9">[9]</a></sup>, so
+  <code>opusplan</code> gives you Opus-5 planning with Sonnet-5 execution. The keys above are
+  otherwise stable in the settings schema<sup><a href="#ref10">[10]</a></sup>.</p>
+
+  <h3>Decide your permission posture deliberately</h3>
+  <ul>
+    <li><strong>The base mode is now called "Manual"</strong> (formerly "default"): every tool use
+      is confirmed. Keep it for unfamiliar repos; relax to <code>acceptEdits</code> for trusted
+      edit-heavy work, or auto mode when you want the classifier to adjudicate<sup><a href="#ref6">[6]</a></sup>.</li>
+    <li><strong>Auto mode is now on by default on Bedrock/Vertex/Foundry.</strong> If your org
+      needs manual approval there, set <code>"disableAutoMode": true</code> in
+      settings<sup><a href="#ref8">[8]</a></sup><sup><a href="#ref10">[10]</a></sup>.</li>
+    <li><strong>Constrain models org-wide</strong> with <code>availableModels</code> plus
+      <code>enforceAvailableModels</code>, which also constrains what "Default" can resolve
+      to<sup><a href="#ref10">[10]</a></sup>.</li>
+  </ul>
+
+  <h3>Built-in slash commands worth knowing</h3>
+  <ul>
+    <li><code>/config key=value</code> — set any setting inline; <code>/config --help</code> lists keys<sup><a href="#ref1">[1]</a></sup></li>
+    <li><code>/code-review</code> (and its alias <code>/review</code>) — review the diff or a PR; <code>/code-review ultra</code> for a cloud review<sup><a href="#ref1">[1]</a></sup></li>
+    <li><code>/fork</code> &amp; <code>/subtask</code> — branch a conversation into a background session, or delegate an in-session subtask<sup><a href="#ref1">[1]</a></sup></li>
+    <li><code>/rewind</code> — step back, including across a <code>/clear</code><sup><a href="#ref1">[1]</a></sup></li>
+    <li><code>/doctor</code> — full setup checkup that can propose <code>CLAUDE.md</code> trims and fix issues<sup><a href="#ref1">[1]</a></sup></li>
+    <li><code>/model</code>, <code>/effort</code> — switch model / reasoning depth<sup><a href="#ref9">[9]</a></sup></li>
+  </ul>
+
+  <h3>Good habits</h3>
+  <ul>
+    <li>Keep the CLI current — recent releases include real permission-bypass and worktree-isolation security fixes, not just features<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li>Delegate parallelizable work to background subagents, then review their diffs and PRs before merging<sup><a href="#ref7">[7]</a></sup>.</li>
+    <li>Scope tasks tightly, commit frequently, and pin a model version when you need reproducibility<sup><a href="#ref9">[9]</a></sup>.</li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <div class="callout">
+    <p><span class="tag">v1.1 — August 6, 2026 · what changed since v1.0</span></p>
+    <p><strong>Added:</strong> Claude Sonnet 5 (v2.1.197) and Claude Opus 5 (v2.1.219) as the new
+    default Sonnet/Opus models; "Manual" as the renamed base permission mode (v2.1.200);
+    background-by-default subagents with auto-commit/PR (v2.1.198); Claude in Chrome GA (v2.1.198);
+    organization default models (v2.1.196); the <code>/dataviz</code> skill (v2.1.198); screen
+    reader mode (v2.1.208); <code>/config key=value</code> (v2.1.181); <code>Tool(param:value)</code>
+    permission rules (v2.1.178); <code>/fork</code> → background session with <code>/subtask</code>
+    (v2.1.212); nested subagents with concurrency/spend caps (v2.1.212–v2.1.219).</p>
+    <p><strong>Updated since v1.0:</strong> the <code>opus</code>/<code>sonnet</code> aliases now
+    resolve to Opus 5 / Sonnet 5 (were Opus 4.8 / Sonnet 4.6); auto mode is now available without
+    opt-in on Bedrock/Vertex/Foundry (v2.1.207) — the v1.0 note that it required
+    <code>CLAUDE_CODE_ENABLE_AUTO_MODE=1</code> there is superseded; latest CLI moved from v2.1.162
+    to v2.1.223.</p>
+    <p><strong>Removed:</strong> the <code>ultraplan</code> feature (v2.1.222) and the
+    <code>/agents</code> wizard (v2.1.198; create/manage subagents by asking Claude or editing
+    <code>.claude/agents/</code>).</p>
+    <p class="meta"><strong>Cross-model review:</strong> generated by Claude Opus 4.8, reviewed by
+    Claude Sonnet 5 (verdict: <em>pass_with_edits</em>). Three corrections were applied:
+    (1) Opus 5's positioning was rephrased from "long-running, multi-step agentic work" to the
+    software-engineering / knowledge-work / near-Fable-5-at-half-the-price framing Anthropic
+    actually uses (that "long-running agentic" framing describes Fable 5); (2) the same fix was
+    applied to the What's New bullet; (3) the subagent fan-out caps were re-attributed to their
+    real releases — 20 concurrent in v2.1.217 and 200 per session in v2.1.212, not v2.1.219. All
+    pricing, CLI versions, env-var names, and the permission-mode rename were confirmed accurate.</p>
+  </div>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="ref1"><strong>Claude Code releases</strong> — anthropics/claude-code GitHub Releases (v2.1.163–v2.1.223). <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a>. Accessed August 6, 2026.</li>
+    <li id="ref2"><strong>Introducing Claude Sonnet 5</strong> — Anthropic news (Jun 30, 2026). <a href="https://www.anthropic.com/news/claude-sonnet-5">anthropic.com/news/claude-sonnet-5</a>. Accessed August 6, 2026.</li>
+    <li id="ref3"><strong>Introducing Claude Opus 5</strong> — Anthropic news (Jul 24, 2026). <a href="https://www.anthropic.com/news/claude-opus-5">anthropic.com/news/claude-opus-5</a>. Accessed August 6, 2026.</li>
+    <li id="ref4"><strong>Claude Code v2.1.197 release notes</strong> (Sonnet 5 becomes the default). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.197">github.com/anthropics/claude-code/releases/tag/v2.1.197</a>. Accessed August 6, 2026.</li>
+    <li id="ref5"><strong>Claude Code v2.1.219 release notes</strong> (Opus 5 becomes the default Opus model). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.219">github.com/anthropics/claude-code/releases/tag/v2.1.219</a>. Accessed August 6, 2026.</li>
+    <li id="ref6"><strong>Claude Code v2.1.200 release notes</strong> ("default" mode renamed to Manual; AskUserQuestion no longer auto-continues). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.200">github.com/anthropics/claude-code/releases/tag/v2.1.200</a>. Accessed August 6, 2026.</li>
+    <li id="ref7"><strong>Claude Code v2.1.198 release notes</strong> (background subagents, Claude in Chrome GA, /dataviz). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.198">github.com/anthropics/claude-code/releases/tag/v2.1.198</a>. Accessed August 6, 2026.</li>
+    <li id="ref8"><strong>Claude Code v2.1.207 release notes</strong> (auto mode without opt-in on Bedrock/Vertex/Foundry). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.207">github.com/anthropics/claude-code/releases/tag/v2.1.207</a>. Accessed August 6, 2026.</li>
+    <li id="ref9"><strong>Model configuration</strong> — Anthropic docs (alias resolution, Opus 5 / Sonnet 5, version pinning). <a href="https://code.claude.com/docs/en/model-config">code.claude.com/docs/en/model-config</a>. Accessed August 6, 2026.</li>
+    <li id="ref10"><strong>Claude Code settings</strong> — Anthropic docs (permissions, disableAutoMode, availableModels/enforceAvailableModels). <a href="https://code.claude.com/docs/en/settings">code.claude.com/docs/en/settings</a>. Accessed August 6, 2026.</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>

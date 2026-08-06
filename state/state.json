@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "latest_cli_version": "2.1.162",
-  "latest_changelog_date": "2026-06-03",
+  "latest_cli_version": "2.1.223",
+  "latest_changelog_date": "2026-08-06",
   "versions": [
     {
       "version": "1.0",
@@ -11,6 +11,15 @@
       "reviewed_by": "claude-sonnet-4-6",
       "review_verdict": "pass_with_edits",
       "summary": "Baseline: recommended default Claude Code config + release state (CLI v2.1.162, Opus 4.8), tips, hacks, starter settings.json/CLAUDE.md."
+    },
+    {
+      "version": "1.1",
+      "timestamp": "2026-08-06_0309",
+      "artifact": "docs/artifacts/CCPlus_2026-08-06_0309.html",
+      "generated_by": "claude-opus-4-8",
+      "reviewed_by": "claude-sonnet-5",
+      "review_verdict": "pass_with_edits",
+      "summary": "Two new default models (Sonnet 5 in v2.1.197, Opus 5 in v2.1.219); base permission mode renamed 'Manual' (v2.1.200); subagents background-by-default + Claude in Chrome GA + /dataviz (v2.1.198); auto mode without opt-in on Bedrock/Vertex/Foundry (v2.1.207); /config key=value, Tool(param:value) rules, screen reader mode. CLI now v2.1.223."
     }
   ],
   "items": [
@@ -28,6 +37,32 @@
     "release:v2.1.152:messagedisplay-hook",
     "doc:settings",
     "doc:memory",
-    "doc:model-config"
+    "doc:model-config",
+    "release:v2.1.197:sonnet-5-default",
+    "release:v2.1.219:opus-5-default",
+    "release:v2.1.219:nested-subagents-depth3",
+    "release:v2.1.200:manual-mode-default",
+    "release:v2.1.200:askuserquestion-no-autocontinue",
+    "release:v2.1.198:subagents-background-default",
+    "release:v2.1.198:claude-in-chrome-ga",
+    "release:v2.1.198:dataviz-skill",
+    "release:v2.1.198:agents-wizard-removed",
+    "release:v2.1.207:auto-mode-cloud-no-optin",
+    "release:v2.1.196:org-default-models",
+    "release:v2.1.208:screen-reader-mode",
+    "release:v2.1.223:review-alias-code-review",
+    "release:v2.1.218:code-review-background",
+    "release:v2.1.186:respond-to-bash-commands",
+    "release:v2.1.181:config-key-value",
+    "release:v2.1.178:tool-param-permission-rules",
+    "release:v2.1.212:fork-background-subtask",
+    "release:v2.1.212:subagents-per-session-cap",
+    "release:v2.1.217:subagent-concurrency-cap",
+    "release:v2.1.191:rewind-across-clear",
+    "release:v2.1.206:doctor-claude-md-trim",
+    "release:v2.1.222:ultraplan-removed",
+    "release:v2.1.214:bash-permission-hardening",
+    "news:claude-sonnet-5",
+    "news:claude-opus-5"
   ]
 }
