@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "latest_cli_version": "2.1.223",
-  "latest_changelog_date": "2026-08-06",
+  "latest_cli_version": "2.1.226",
+  "latest_changelog_date": "2026-08-08",
   "versions": [
     {
       "version": "1.0",
@@ -20,6 +20,15 @@
       "reviewed_by": "claude-sonnet-5",
       "review_verdict": "pass_with_edits",
       "summary": "Two new default models (Sonnet 5 in v2.1.197, Opus 5 in v2.1.219); base permission mode renamed 'Manual' (v2.1.200); subagents background-by-default + Claude in Chrome GA + /dataviz (v2.1.198); auto mode without opt-in on Bedrock/Vertex/Foundry (v2.1.207); /config key=value, Tool(param:value) rules, screen reader mode. CLI now v2.1.223."
+    },
+    {
+      "version": "1.2",
+      "timestamp": "2026-08-10_0615",
+      "artifact": "docs/artifacts/CCPlus_2026-08-10_0615.html",
+      "generated_by": "claude-opus-4-8",
+      "reviewed_by": "claude-sonnet-5",
+      "review_verdict": "pass_with_edits",
+      "summary": "Infrastructure-focused period, no new models. Self-hosted runners via `claude self-hosted-runner` (v2.1.224, Team/Enterprise); cross-session SendMessage across machines with ListAgents (v2.1.224), extended to start Remote Control conversations by name (v2.1.225); archive plugin source with SHA-256 pinning (v2.1.224); crossSessionInbound/dialogExpiry settings (v2.1.224); ANTHROPIC_BEDROCK_REGION_PREFIX and sandbox credential-masking (v2.1.224); 200-subagent-per-session cap removed (v2.1.224); claude agents workspace-trust prompt + gateway spend-limit surfacing (v2.1.225). CLI now v2.1.226."
     }
   ],
   "items": [
@@ -63,6 +72,20 @@
     "release:v2.1.222:ultraplan-removed",
     "release:v2.1.214:bash-permission-hardening",
     "news:claude-sonnet-5",
-    "news:claude-opus-5"
+    "news:claude-opus-5",
+    "release:v2.1.224:self-hosted-runner",
+    "release:v2.1.224:cross-session-sendmessage",
+    "release:v2.1.224:archive-plugin-source",
+    "release:v2.1.224:sandbox-credential-masking",
+    "release:v2.1.224:cross-session-inbound-settings",
+    "release:v2.1.224:bedrock-region-prefix",
+    "release:v2.1.224:subagent-per-session-cap-removed",
+    "release:v2.1.224:feedback-survey-model-settings",
+    "release:v2.1.225:gateway-spend-limit",
+    "release:v2.1.225:agents-workspace-trust",
+    "release:v2.1.225:sendmessage-remote-control-start",
+    "release:v2.1.226:bugfixes",
+    "doc:settings-cross-session",
+    "doc:plugins-archive"
   ]
 }

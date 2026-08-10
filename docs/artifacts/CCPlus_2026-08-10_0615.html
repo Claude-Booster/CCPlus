@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.2 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.2</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated August 10, 2026 at 06:15 (UTC) · by Claude Opus 4.8 · prior version: 1.1</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5 — <strong>pass_with_edits</strong> (cross-model accuracy review applied; see History Log)</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>The short window since v1.1 (Aug 6) was quieter and infrastructure-focused — <strong>no new
+  models or default-model changes</strong> — but three releases (v2.1.224–v2.1.226) still landed
+  several things worth acting on<sup><a href="#ref1">[1]</a></sup>. The headline is
+  <strong>self-hosted runners</strong>: <code>claude self-hosted-runner</code> turns your own
+  machines or containers into a place Claude Code web, mobile, and desktop sessions can run, on
+  Team and Enterprise plans<sup><a href="#ref2">[2]</a></sup>. Sessions can now also
+  <strong>message each other</strong> — cross-session <code>SendMessage</code> works across your
+  machines, with <code>ListAgents</code> to discover them<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref3">[3]</a></sup>.
+  New configuration surfaces arrived too: an <code>archive</code> plugin source (install from a zip
+  over HTTPS with optional SHA-256 pinning)<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref6">[6]</a></sup>,
+  the <code>crossSessionInbound</code> and <code>dialogExpiry</code> settings<sup><a href="#ref5">[5]</a></sup>,
+  a <code>ANTHROPIC_BEDROCK_REGION_PREFIX</code> env var, and richer sandbox
+  credential-masking<sup><a href="#ref2">[2]</a></sup>. On the ops/security side, <code>claude
+  agents</code> now shows a workspace-trust prompt in untrusted directories, gateway spend limits
+  surface in the usage warning, and the <strong>200-subagent-per-session cap was
+  removed</strong><sup><a href="#ref2">[2]</a></sup><sup><a href="#ref3">[3]</a></sup>. The current
+  CLI is <strong>v2.1.226</strong> (Aug 8)<sup><a href="#ref1">[1]</a></sup>. Every claim below is
+  cited; sources are listed at the bottom.</p>
+
+  <h2 id="whats-new">What's New</h2>
+  <p class="meta">Highlights from Claude Code CLI v2.1.224 → v2.1.226 (August 7–8, 2026)<sup><a href="#ref1">[1]</a></sup>.</p>
+  <ul>
+    <li><strong>Self-hosted runners</strong> (v2.1.224, Aug 7). <code>claude self-hosted-runner</code>
+      turns your own machines or containers into a place Claude Code web, mobile, and desktop
+      sessions can run, on Team and Enterprise plans. It exits at startup with a clear error if
+      <code>--base-dir</code> cannot be created or written (v2.1.225)<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Sessions can message each other</strong> (v2.1.224, Aug 7). Cross-session
+      <code>SendMessage</code> lets Claude Code sessions message one another across any of your
+      machines, with <code>ListAgents</code> to discover them (macOS and Linux). In v2.1.225,
+      <code>SendMessage</code> can also <em>start</em> a conversation with your Remote Control
+      sessions on other machines by name (<code>ListAgents</code> shows them as
+      <code>name [ref]</code>), instead of only replying after they message you
+      first<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong><code>archive</code> plugin source</strong> (v2.1.224, Aug 7) — install plugins from
+      a zip over HTTPS without git or npm, with optional SHA-256 pinning. This complements the
+      existing zip support in the docs: <code>--plugin-dir ./my-plugin.zip</code> loads a local
+      archive, and <code>--plugin-url https://…/my-plugin.zip</code> fetches one at startup for that
+      session only<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref6">[6]</a></sup>.</li>
+    <li><strong>Sandbox credential-masking options</strong> (v2.1.224, Aug 7) — new
+      <code>extract</code> / <code>onExtractNoMatch</code> handling for structured env values,
+      <code>decode: "jwt"</code> with <code>maskClaims</code> for JWT-aware masking, and
+      <code>awsPairs</code> / <code>sigv4</code> for AWS SigV4 re-signing. These require
+      <code>network.tlsTerminate</code> and are honored only from user, managed, or
+      <code>--settings</code> settings<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Workspace-trust prompt for <code>claude agents</code></strong> (v2.1.225, Aug 8) —
+      launching <code>claude agents</code> in an untrusted directory now shows a trust prompt,
+      matching the behavior of <code>claude</code><sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Gateway spend-limit awareness</strong> (v2.1.225, Aug 8) — Claude Code's usage
+      warning now names the cap, its reset time, and the operator's message when a gateway
+      spend-limit is hit (requires the gateway on 2.1.225)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>The 200-subagent-per-session spawn cap was removed</strong> (v2.1.224, Aug 7) —
+      long-running sessions no longer refuse new agents; concurrency and depth limits still apply.
+      This supersedes the v1.1 note that a per-session cap of 200
+      (<code>CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION</code>) was in
+      effect<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Feedback-survey share now includes model settings (with consent)</strong> (v2.1.224,
+      Aug 7) — the survey's transcript share can now also upload the last request's model settings:
+      the system prompt (which includes your <code>CLAUDE.md</code> instructions), tool definitions,
+      and model parameters. Secrets are redacted as before, and these fields are dropped first if the
+      share is too large<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>v2.1.226 is a bug-fix / reliability release</strong> (Aug 8) — no new features,
+      defaults, or flags<sup><a href="#ref4">[4]</a></sup>.</li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Control what other sessions can send you</strong> with <code>crossSessionInbound</code>
+      (v2.1.224): <code>"accept"</code> delivers inbound messages to Claude, <code>"hold"</code> shows
+      a notice per message without delivering it, and <code>"refuse"</code> drops them. Pair it with
+      <code>dialogExpiry</code> (default <code>"5m"</code>; accepts <code>"60s"</code>, <code>"5m"</code>,
+      <code>"10m"</code>, or <code>"never"</code>) to bound how long held messages and forwarded
+      dialogs wait before Claude falls back to its no-action default<sup><a href="#ref5">[5]</a></sup>.</li>
+    <li><strong>Pin a Bedrock cross-region inference profile</strong> with the new
+      <code>ANTHROPIC_BEDROCK_REGION_PREFIX</code> env var, which is preferred over the
+      <code>AWS_REGION</code>-derived one (v2.1.224)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Fullscreen mode keeps your full history.</strong> After v2.1.224, fullscreen mode
+      retains the full pre-compaction history in scrollback across repeated compactions, instead of
+      only the most recent interval<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Remember Bash output goes to the model, not the user.</strong> The Bash tool
+      description now always notes that command output is displayed to the model and not reliably to
+      the user — surface anything the human needs to see in your reply, not just in a command's
+      output (v2.1.224)<sup><a href="#ref2">[2]</a></sup>.</li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p class="meta">Lesser-known but documented power-user techniques (each corroborated by the release notes and docs).</p>
+  <ul>
+    <li><strong>Ship a plugin straight from a CI artifact.</strong> Point <code>--plugin-url</code> at
+      a hosted <code>.zip</code> to load a plugin for one session, or use the <code>archive</code>
+      source to install one over HTTPS — no git or npm required<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref6">[6]</a></sup>.</li>
+    <li><strong>Pin plugin integrity with SHA-256.</strong> The <code>archive</code> plugin source
+      supports optional SHA-256 pinning, so a zip that changes upstream won't silently swap what you
+      install<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Quarantine a bypassed-permissions session's inbox.</strong> Set
+      <code>"crossSessionInbound": "hold"</code> (or <code>"refuse"</code>) so messages sent to a
+      session running with bypassed permissions are held for your approval rather than acted on
+      automatically<sup><a href="#ref5">[5]</a></sup><sup><a href="#ref2">[2]</a></sup>.</li>
+  </ul>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <p>Nothing this period forces a change to the v1.1 starter <code>settings.json</code> (models and
+  permission defaults are unchanged). The new keys are opt-in and mostly matter if you use
+  cross-session messaging, Remote Control, or self-hosted runners. On a managed/Enterprise machine,
+  <strong>managed settings take precedence</strong><sup><a href="#ref5">[5]</a></sup>.</p>
+  <pre><code>{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "opusplan",
+  "effortLevel": "high",
+  "crossSessionInbound": "hold",
+  "dialogExpiry": "5m"
+}</code></pre>
+  <p class="meta">What's new here vs v1.1: <code>crossSessionInbound</code> and
+  <code>dialogExpiry</code> both require CLI v2.1.224+. <code>crossSessionInbound</code> follows a
+  precedence of managed → <code>--settings</code> → user → per-message defaults (project/local apply
+  only when stricter); <code>dialogExpiry</code> is read from user, managed, and <code>--settings</code>
+  sources only, and can be overridden per-session with
+  <code>CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS</code><sup><a href="#ref5">[5]</a></sup>.</p>
+
+  <h3>If you run cross-session or self-hosted setups</h3>
+  <ul>
+    <li><strong>Set an inbox posture deliberately.</strong> The default is
+      session-class-dependent: bypassed-permission sessions hold inbound messages automatically,
+      while other sessions auto-deliver. Set <code>"hold"</code> explicitly for any unattended
+      session so the behavior is stable regardless of permission
+      state<sup><a href="#ref5">[5]</a></sup>.</li>
+    <li><strong>Prefer pinned plugin sources.</strong> When installing via the <code>archive</code>
+      source, add the SHA-256 pin so builds are reproducible and tamper-evident<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>For Bedrock, set <code>ANTHROPIC_BEDROCK_REGION_PREFIX</code></strong> if you need a
+      specific cross-region inference profile rather than the one derived from
+      <code>AWS_REGION</code><sup><a href="#ref2">[2]</a></sup>.</li>
+  </ul>
+
+  <h3>Good habits</h3>
+  <ul>
+    <li>Keep the CLI current — v2.1.226 is the latest and includes reliability fixes; recent releases
+      also hardened sandbox deny-rules and cross-session delivery error reporting<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref2">[2]</a></sup>.</li>
+    <li>Treat cross-session messages as untrusted input: hold or refuse them for privileged sessions,
+      and rely on the new <code>claude agents</code> workspace-trust prompt in unfamiliar
+      directories<sup><a href="#ref5">[5]</a></sup><sup><a href="#ref3">[3]</a></sup>.</li>
+    <li>Remember that a feedback-survey share can now upload your system prompt (including
+      <code>CLAUDE.md</code>), tool definitions, and model parameters — review before consenting if
+      those contain anything sensitive<sup><a href="#ref2">[2]</a></sup>.</li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <div class="callout">
+    <p><span class="tag">v1.2 — August 10, 2026 · what changed since v1.1</span></p>
+    <p><strong>Added:</strong> self-hosted runners via <code>claude self-hosted-runner</code>
+      (v2.1.224, Team/Enterprise); cross-session <code>SendMessage</code> across machines with
+      <code>ListAgents</code> discovery (v2.1.224), extended to start Remote Control conversations by
+      name (v2.1.225); the <code>archive</code> plugin source with optional SHA-256 pinning
+      (v2.1.224); the <code>crossSessionInbound</code> and <code>dialogExpiry</code> settings
+      (v2.1.224); the <code>ANTHROPIC_BEDROCK_REGION_PREFIX</code> env var (v2.1.224); sandbox
+      credential-masking options (<code>extract</code>, <code>decode: "jwt"</code>/<code>maskClaims</code>,
+      <code>awsPairs</code>/<code>sigv4</code>, v2.1.224); a workspace-trust prompt for
+      <code>claude agents</code> (v2.1.225); and gateway spend-limit surfacing in the usage warning
+      (v2.1.225).</p>
+    <p><strong>Updated since v1.1:</strong> the 200-subagent-per-session cap
+      (<code>CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION</code>) noted in v1.1 has been
+      <em>removed</em> in v2.1.224 — concurrency and nesting-depth limits still apply. The
+      feedback-survey transcript share can now also upload the last request's model settings (system
+      prompt including <code>CLAUDE.md</code>, tool definitions, model parameters) with consent
+      (v2.1.224). Latest CLI moved from v2.1.223 to v2.1.226.</p>
+    <p><strong>Removed:</strong> the 200-subagent-per-session spawn cap (v2.1.224).</p>
+    <p class="meta"><strong>Cross-model review:</strong> generated by Claude Opus 4.8, reviewed by
+      Claude Sonnet 5 (verdict: <em>pass_with_edits</em>). All feature claims were verified against
+      the v2.1.224–v2.1.226 GitHub release notes and the live settings/plugins docs; version math,
+      release dates, and the removed 200-subagent cap were confirmed. One correction was applied:
+      the <code>crossSessionInbound</code> default was rephrased from "accept" to its real
+      session-class-dependent behavior (bypassed-permission sessions hold inbound messages by
+      default; other sessions auto-deliver).</p>
+  </div>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="ref1"><strong>Claude Code releases</strong> — anthropics/claude-code GitHub Releases (v2.1.224–v2.1.226). <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a>. Accessed August 10, 2026.</li>
+    <li id="ref2"><strong>Claude Code v2.1.224 release notes</strong> (self-hosted runners, cross-session SendMessage, archive plugin source, sandbox credential masking, removed 200-subagent cap, ANTHROPIC_BEDROCK_REGION_PREFIX, feedback-survey model settings). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.224">github.com/anthropics/claude-code/releases/tag/v2.1.224</a>. Accessed August 10, 2026.</li>
+    <li id="ref3"><strong>Claude Code v2.1.225 release notes</strong> (gateway spend-limit awareness, claude agents workspace-trust prompt, SendMessage starts Remote Control conversations by name). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.225">github.com/anthropics/claude-code/releases/tag/v2.1.225</a>. Accessed August 10, 2026.</li>
+    <li id="ref4"><strong>Claude Code v2.1.226 release notes</strong> (bug fixes and reliability improvements). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.226">github.com/anthropics/claude-code/releases/tag/v2.1.226</a>. Accessed August 10, 2026.</li>
+    <li id="ref5"><strong>Claude Code settings</strong> — Anthropic docs (crossSessionInbound, dialogExpiry, precedence and version requirements). <a href="https://code.claude.com/docs/en/settings">code.claude.com/docs/en/settings</a>. Accessed August 10, 2026.</li>
+    <li id="ref6"><strong>Claude Code plugins</strong> — Anthropic docs (zip-archive plugin loading via --plugin-dir and --plugin-url). <a href="https://code.claude.com/docs/en/plugins">code.claude.com/docs/en/plugins</a>. Accessed August 10, 2026.</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>

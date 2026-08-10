@@ -2,6 +2,17 @@
   "schema": 1,
   "runs": [
     {
+      "timestamp": "2026-08-10_0615",
+      "status": "generated",
+      "version": "1.2",
+      "artifact": "docs/artifacts/CCPlus_2026-08-10_0615.html",
+      "new_items": 11,
+      "checked_sources": 6,
+      "generated_by": "claude-opus-4-8",
+      "review_verdict": "pass_with_edits",
+      "summary": "Significant (feature/config changes; no new models). Three releases since v2.1.223: v2.1.224 added self-hosted runners (claude self-hosted-runner, Team/Enterprise), cross-session SendMessage across machines, the archive plugin source with SHA-256 pinning, crossSessionInbound/dialogExpiry settings, ANTHROPIC_BEDROCK_REGION_PREFIX, sandbox credential-masking, and removed the 200-subagent-per-session cap; v2.1.225 added a claude agents workspace-trust prompt, gateway spend-limit surfacing, and Remote Control SendMessage-by-name; v2.1.226 is bug-fixes only. CLI advanced v2.1.223 -> v2.1.226. WebSearch/HN/Reddit unavailable in CI; relied on GitHub Releases API + settings/plugins docs. Cross-model reviewed by Sonnet 5 (pass_with_edits): REVIEW_NOTES_PLACEHOLDER removed and the crossSessionInbound default description corrected to its session-class-dependent behavior."
+    },
+    {
       "timestamp": "2026-08-06_0309",
       "status": "generated",
       "version": "1.1",
