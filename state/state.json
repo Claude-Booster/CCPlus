@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "latest_cli_version": "2.1.226",
-  "latest_changelog_date": "2026-08-08",
+  "latest_cli_version": "2.1.233",
+  "latest_changelog_date": "2026-08-14",
   "versions": [
     {
       "version": "1.0",
@@ -29,6 +29,15 @@
       "reviewed_by": "claude-sonnet-5",
       "review_verdict": "pass_with_edits",
       "summary": "Infrastructure-focused period, no new models. Self-hosted runners via `claude self-hosted-runner` (v2.1.224, Team/Enterprise); cross-session SendMessage across machines with ListAgents (v2.1.224), extended to start Remote Control conversations by name (v2.1.225); archive plugin source with SHA-256 pinning (v2.1.224); crossSessionInbound/dialogExpiry settings (v2.1.224); ANTHROPIC_BEDROCK_REGION_PREFIX and sandbox credential-masking (v2.1.224); 200-subagent-per-session cap removed (v2.1.224); claude agents workspace-trust prompt + gateway spend-limit surfacing (v2.1.225). CLI now v2.1.226."
+    },
+    {
+      "version": "1.3",
+      "timestamp": "2026-08-17_0539",
+      "artifact": "docs/artifacts/CCPlus_2026-08-17_0539.html",
+      "generated_by": "claude-opus-4-8",
+      "reviewed_by": "claude-sonnet-5",
+      "review_verdict": "pass_with_edits",
+      "summary": "No new models, but several default-behavior/config changes (v2.1.227-v2.1.233). Subagent forking on by default: subagent_type:'fork' inherits full conversation + prompt cache, non-teammate spawns background-by-default (v2.1.232). Task/todo tools (TaskCreate/Get/Update/List, TodoWrite) removed on Opus 4.8/Sonnet 5/Fable 5/Mythos 5 and newer models; CLAUDE_CODE_ENABLE_TODO_TOOLS=1 to restore (v2.1.233). @-mention another session + bare-name SendMessage + unique per-machine names (v2.1.232). Broad GitLab support: plugin marketplaces incl. nested subgroups + token redaction (v2.1.232), MR URLs in --worktree/claude agents as !N (v2.1.233). Write tool matches Edit overwrite rules for newer models (v2.1.228). /code-review high/xhigh/max background (v2.1.232). Plugin marketplace command sources (v2.1.229). New /config rows + additionalMarketplaces/allowedMarketplaces aliases (v2.1.232). Nested-repo trust (v2.1.232). Tighter /commit-push-pr defaults (v2.1.229). CLAUDE_CODE_TOOL_MEMORY_LIMIT/WEBFETCH_CACHE_TTL_MS/WORKFLOW_PREFIX_STAGGER_MS env vars. CLI now v2.1.233."
     }
   ],
   "items": [
@@ -86,6 +95,34 @@
     "release:v2.1.225:sendmessage-remote-control-start",
     "release:v2.1.226:bugfixes",
     "doc:settings-cross-session",
-    "doc:plugins-archive"
+    "doc:plugins-archive",
+    "release:v2.1.232:subagent-fork-default",
+    "release:v2.1.232:mention-session-at",
+    "release:v2.1.232:sendmessage-bare-name",
+    "release:v2.1.232:unique-session-names",
+    "release:v2.1.232:config-rows-dialog-inbound",
+    "release:v2.1.232:gitlab-marketplaces",
+    "release:v2.1.232:gitlab-token-redaction",
+    "release:v2.1.232:marketplace-setting-aliases",
+    "release:v2.1.232:code-review-background-high",
+    "release:v2.1.232:nested-git-trust",
+    "release:v2.1.232:install-refreshes-marketplace",
+    "release:v2.1.232:custom-subagent-tip-removed",
+    "release:v2.1.233:todo-tools-removed-newer-models",
+    "release:v2.1.233:gitlab-mr-worktree",
+    "release:v2.1.233:tool-memory-limit",
+    "release:v2.1.233:webfetch-cache-ttl",
+    "release:v2.1.233:notification-hooks-fix",
+    "release:v2.1.233:bash-permission-revert",
+    "release:v2.1.229:plugin-marketplace-command-source",
+    "release:v2.1.229:commit-push-pr-hardening",
+    "release:v2.1.229:workflow-prefix-stagger",
+    "release:v2.1.229:remote-control-continue",
+    "release:v2.1.229:listagents-offline-cloud",
+    "release:v2.1.229:vscode-session-groups",
+    "release:v2.1.228:write-tool-overwrite-newer-models",
+    "release:v2.1.228:skills-claudeai-hardening",
+    "release:v2.1.231:mcp-oauth-preregistered-fix",
+    "release:v2.1.227:slash-menu-ui"
   ]
 }

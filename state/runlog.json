@@ -2,6 +2,17 @@
   "schema": 1,
   "runs": [
     {
+      "timestamp": "2026-08-17_0539",
+      "status": "generated",
+      "version": "1.3",
+      "artifact": "docs/artifacts/CCPlus_2026-08-17_0539.html",
+      "new_items": 28,
+      "checked_sources": 6,
+      "generated_by": "claude-opus-4-8",
+      "review_verdict": "pass_with_edits",
+      "summary": "Significant (default-behavior/config changes; no new models). Releases v2.1.227-v2.1.233 since prior v2.1.226. Headlines: subagent forking on by default (subagent_type:'fork' inherits full conversation + prompt cache; non-teammate spawns background-by-default, v2.1.232); task/todo tools (TaskCreate/Get/Update/List, TodoWrite) removed on Opus 4.8/Sonnet 5/Fable 5/Mythos 5 and newer models, gated behind CLAUDE_CODE_ENABLE_TODO_TOOLS=1 (v2.1.233); @-mention another session + bare-name SendMessage + unique per-machine names (v2.1.232); broad GitLab support (marketplaces incl. nested subgroups + token redaction v2.1.232, MR URLs in --worktree/claude agents v2.1.233); Write tool matches Edit overwrite rules for newer models (v2.1.228); /code-review high/xhigh/max background + plugin marketplace command sources + tighter /commit-push-pr defaults (v2.1.229/232); new env vars CLAUDE_CODE_TOOL_MEMORY_LIMIT/WEBFETCH_CACHE_TTL_MS/WORKFLOW_PREFIX_STAGGER_MS. CLI advanced v2.1.226 -> v2.1.233. WebSearch/HN/Reddit unavailable in CI; relied on GitHub Releases API (authoritative) + settings docs corroboration. Cross-model reviewed by Sonnet 5 (pass_with_edits): added the omitted v2.1.231 MCP OAuth fix (Slack-style pre-registered clients) to complete range coverage; all other claims verified."
+    },
+    {
       "timestamp": "2026-08-10_0615",
       "status": "generated",
       "version": "1.2",

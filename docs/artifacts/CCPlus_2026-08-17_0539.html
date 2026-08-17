@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.3 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.3</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated August 17, 2026 at 05:39 (UTC) · by Claude Opus 4.8 · prior version: 1.2</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5 — <strong>pass_with_edits</strong> (cross-model accuracy review applied; see History Log)</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>The week since v1.2 (Aug 10) brought no new models but several <strong>default-behavior and
+  config changes</strong> across CLI v2.1.227&ndash;v2.1.233<sup><a href="#ref1">[1]</a></sup>. Two
+  stand out. First, <strong>subagent forking is now on by default</strong>: a
+  <code>subagent_type:&nbsp;"fork"</code> subagent inherits the full conversation and prompt cache,
+  and non-teammate agent spawns in interactive sessions now run in the background by
+  default<sup><a href="#ref2">[2]</a></sup>. Second, the built-in <strong>Todo / task-tracking
+  tools</strong> (<code>TaskCreate</code>/<code>Get</code>/<code>Update</code>/<code>List</code> and
+  <code>TodoWrite</code>) are <strong>no longer available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5,
+  and newer models</strong>; set <code>CLAUDE_CODE_ENABLE_TODO_TOOLS=1</code> to bring them
+  back<sup><a href="#ref3">[3]</a></sup>. Session-to-session workflow got friendlier too&mdash;type
+  <code>@</code> to mention another Claude session by name, and <code>SendMessage</code> now delivers
+  to a bare name that matches one live session<sup><a href="#ref2">[2]</a></sup>. There is broad new
+  <strong>GitLab support</strong> (plugin marketplaces, token redaction, and merge-request worktrees),
+  the <code>Write</code> tool now lets newer models overwrite an unread file to match
+  <code>Edit</code>, and <code>/code-review</code> at high/xhigh/max now runs in the background like
+  the other levels<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref3">[3]</a></sup><sup><a href="#ref5">[5]</a></sup>.
+  The current CLI is <strong>v2.1.233</strong> (Aug 14)<sup><a href="#ref1">[1]</a></sup>. Every claim
+  below is cited; sources are listed at the bottom.</p>
+
+  <h2 id="whats-new">What's New</h2>
+  <p class="meta">Highlights from Claude Code CLI v2.1.227 → v2.1.233 (August 10–14, 2026)<sup><a href="#ref1">[1]</a></sup>.</p>
+  <ul>
+    <li><strong>Subagent forking is on by default</strong> (v2.1.232, Aug 13). A
+      <code>subagent_type:&nbsp;"fork"</code> subagent inherits the parent's full conversation and
+      prompt cache, and non-teammate agent spawns in interactive sessions now run in the
+      <em>background</em> by default<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Todo / task-tracking tools removed on newer models</strong> (v2.1.233, Aug 14).
+      <code>TaskCreate</code>, <code>TaskGet</code>, <code>TaskUpdate</code>, <code>TaskList</code>,
+      and <code>TodoWrite</code> are no longer offered to Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and
+      newer models; set <code>CLAUDE_CODE_ENABLE_TODO_TOOLS=1</code> to re-enable
+      them<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Mention another session with <code>@</code></strong> (v2.1.232, Aug 13). Typing
+      <code>@</code> in the prompt lets you mention another Claude session by name; Claude then uses
+      <code>SendMessage</code> to reach it directly. <code>SendMessage</code> now delivers to a bare
+      name that exactly matches one live session instead of asking you to confirm a
+      <code>[ref]</code> first, and interactive sessions on one machine keep unique names (a clashing
+      name gets a <code>name-word-word</code> variant)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>GitLab support</strong> (v2.1.232–v2.1.233, Aug 13–14). Plugin marketplaces now clone
+      bare <code>gitlab.com</code> repo URLs (including nested subgroups) like GitHub URLs; GitLab
+      token families are redacted (routable <code>glpat-</code>/<code>gldt-</code> tokens are fully
+      redacted) and the <code>glab</code> CLI config gets the same sandbox protection as
+      <code>gh</code><sup><a href="#ref2">[2]</a></sup>. In v2.1.233, the <code>--worktree</code> flag
+      and the <code>claude agents</code> view accept GitLab merge-request URLs (MRs display as
+      <code>!N</code>)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong><code>Write</code> tool matches <code>Edit</code>'s overwrite rules for newer
+      models</strong> (v2.1.228, Aug 11). Newer models can overwrite an existing file they haven't
+      read this session; older models still require reading it first<sup><a href="#ref5">[5]</a></sup>.</li>
+    <li><strong><code>/code-review</code> at high, xhigh, and max now runs in a background
+      agent</strong> (v2.1.232, Aug 13), matching the other effort levels<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Plugin marketplace <code>command</code> sources</strong> (v2.1.229, Aug 12). A local
+      command (for example, an IDE) prints the plugin directory, which is re-resolved each session and
+      applied without a restart; <code>mode:&nbsp;"link"</code> uses the directory in
+      place<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>New <code>/config</code> rows and settings aliases</strong> (v2.1.232, Aug 13).
+      <code>/config</code> gained "Dialog expiry" and "Messages from your other sessions"
+      (cross-session inbound accept/hold/refuse) rows, and <code>additionalMarketplaces</code> /
+      <code>allowedMarketplaces</code> are now accepted as friendlier aliases for
+      <code>extraKnownMarketplaces</code> / <code>strictKnownMarketplaces</code><sup><a href="#ref2">[2]</a></sup><sup><a href="#ref6">[6]</a></sup>.</li>
+    <li><strong>Nested git repositories require their own trust</strong> (v2.1.232, Aug 13). A nested
+      repo no longer inherits trust from a parent directory&mdash;each requires its own
+      confirmation<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Tighter defaults for <code>/commit-push-pr</code></strong> (v2.1.229, Aug 12).
+      git/gh commands with dangerous flags (<code>--force</code>, <code>--amend</code>,
+      <code>--no-verify</code>, etc.) are no longer auto-approved<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>New env-var controls</strong> (v2.1.233, Aug 14). <code>CLAUDE_CODE_TOOL_MEMORY_LIMIT</code>
+      opt-in memory cgroups for Bash commands on Linux (so a runaway build can't stall the session),
+      and <code>CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS</code> to tune the WebFetch URL cache (default
+      unchanged at 15 minutes)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Notification hooks fixed under Desktop / VS Code</strong> (v2.1.233, Aug 14).
+      Notification hooks now fire for permission prompts when running under Claude Desktop or
+      VS Code<sup><a href="#ref3">[3]</a></sup>. Also this period: <code>ListAgents</code> marks
+      disconnected Remote Control sessions as <code>offline</code> and labels cloud sessions as
+      <code>cloud</code>, and <code>claude remote-control --continue</code> resumes the most recent
+      Remote Control session (v2.1.229)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>MCP OAuth sign-in fix for pre-registered clients</strong> (v2.1.231, Aug 13). Fixed
+      MCP OAuth sign-in failing with a redirect-URI mismatch for servers that use a pre-registered
+      OAuth client, such as Slack<sup><a href="#ref1">[1]</a></sup>.</li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Hand a subtask your full context with a fork.</strong> Because
+      <code>subagent_type:&nbsp;"fork"</code> now inherits the whole conversation and warm prompt
+      cache, use it when a subagent needs everything you already know rather than a fresh brief; the
+      fork also runs in the background by default in interactive sessions
+      (v2.1.232)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Route work between your own sessions by name.</strong> Type <code>@</code> to mention a
+      live session and Claude will <code>SendMessage</code> it directly&mdash;handy for coordinating a
+      long-running build session and an interactive one on the same machine
+      (v2.1.232)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Cap Bash memory on Linux for flaky builds.</strong> Set
+      <code>CLAUDE_CODE_TOOL_MEMORY_LIMIT</code> so a memory-hungry command is contained in a cgroup
+      instead of stalling the whole session (v2.1.233)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Speed up large fan-outs.</strong> Same-prefix sibling agents in a workflow are now
+      staggered so later agents read the cached prompt prefix instead of re-paying for it; set
+      <code>CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS=0</code> to disable
+      (v2.1.229)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Keep TodoWrite if your workflow depends on it.</strong> If your prompts or automation
+      lean on the task/todo tools, export <code>CLAUDE_CODE_ENABLE_TODO_TOOLS=1</code>; otherwise
+      newer models will simply plan inline without them (v2.1.233)<sup><a href="#ref3">[3]</a></sup>.</li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p class="meta">Lesser-known but documented power-user techniques (each corroborated by the release notes and docs).</p>
+  <ul>
+    <li><strong>Work a GitLab MR from a worktree.</strong> Pass a GitLab merge-request URL to
+      <code>--worktree</code> (or open it from <code>claude agents</code>, where it shows as
+      <code>!N</code>) to check out and iterate on it just like a GitHub PR
+      (v2.1.233)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Serve a plugin directory straight from your IDE.</strong> A marketplace
+      <code>command</code> source runs a local command that prints the plugin directory, re-resolved
+      each session without a restart&mdash;use <code>mode:&nbsp;"link"</code> to develop against a live
+      checkout (v2.1.229)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Install a freshly published plugin without a manual refresh.</strong>
+      <code>/plugin install plugin@marketplace</code> now refreshes the marketplace first, so newly
+      published plugins install without running a marketplace update yourself
+      (v2.1.232)<sup><a href="#ref2">[2]</a></sup>.</li>
+  </ul>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <p>Models and permission defaults are unchanged since v1.1, so the starter
+  <code>settings.json</code> still holds. The important change this period is behavioral rather than a
+  new key: on newer models the task/todo tools are gone by default, and a few commands got safer
+  defaults. Decide whether any of the following applies to you.</p>
+  <pre><code>{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "opusplan",
+  "effortLevel": "high",
+  "crossSessionInbound": "hold",
+  "dialogExpiry": "5m"
+}</code></pre>
+  <p class="meta">Unchanged from v1.2. The new movement is in behavior and environment variables, not
+  in these keys.</p>
+
+  <h3>Decide on the task/todo tools</h3>
+  <ul>
+    <li>On Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and newer models the task/todo tools
+      (<code>TaskCreate</code>/<code>Get</code>/<code>Update</code>/<code>List</code>,
+      <code>TodoWrite</code>) are no longer offered. If your CLAUDE.md, hooks, or automation reference
+      them, add <code>CLAUDE_CODE_ENABLE_TODO_TOOLS=1</code> to your environment (or the
+      <code>env</code> block in <code>settings.json</code>); otherwise remove those references and let
+      the model plan inline<sup><a href="#ref3">[3]</a></sup>.</li>
+  </ul>
+
+  <h3>Review your automation defaults</h3>
+  <ul>
+    <li><strong><code>/commit-push-pr</code> no longer auto-approves dangerous git/gh flags</strong>
+      (<code>--force</code>, <code>--amend</code>, <code>--no-verify</code>, &hellip;). If you relied on
+      that command running unattended, expect an approval prompt for those flags now
+      (v2.1.229)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Nested repositories each need their own trust</strong> confirmation, so scripted runs
+      that <code>cd</code> into a submodule or vendored repo may now pause for trust
+      (v2.1.232)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Marketplace keys have friendlier aliases.</strong> New configs can use
+      <code>additionalMarketplaces</code> / <code>allowedMarketplaces</code> in place of
+      <code>extraKnownMarketplaces</code> / <code>strictKnownMarketplaces</code>; both spellings are
+      accepted (v2.1.232)<sup><a href="#ref2">[2]</a></sup><sup><a href="#ref6">[6]</a></sup>.</li>
+  </ul>
+
+  <h3>Good habits</h3>
+  <ul>
+    <li>Keep the CLI current&mdash;v2.1.233 is the latest and this window closed several PowerShell,
+      Windows Git Bash symlink, and Linux sandbox permission-bypass vectors, and reverted an
+      over-broad v2.1.232 Bash permission change (narrower version to return
+      later)<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref2">[2]</a></sup><sup><a href="#ref3">[3]</a></sup>.</li>
+    <li>Skills synced from claude.ai are now sandboxed (they don't shadow local commands/MCP prompts,
+      their bodies don't run <code>!</code> commands or expand <code>@</code> files on your machine);
+      still review any synced skill before trusting it (v2.1.228)<sup><a href="#ref5">[5]</a></sup>.</li>
+    <li>If you use Notification hooks under Claude Desktop or VS Code, upgrade to v2.1.233&mdash;those
+      hooks now fire on permission prompts again<sup><a href="#ref3">[3]</a></sup>.</li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <div class="callout">
+    <p><span class="tag">v1.3 — August 17, 2026 · what changed since v1.2</span></p>
+    <p><strong>Added:</strong> subagent forking on by default (<code>subagent_type:&nbsp;"fork"</code>
+      inherits full conversation + prompt cache; non-teammate spawns background-by-default, v2.1.232);
+      <code>@</code>-mention another session by name plus bare-name <code>SendMessage</code> delivery
+      and unique per-machine session names (v2.1.232); broad GitLab support&mdash;plugin marketplaces
+      for <code>gitlab.com</code> incl. nested subgroups, GitLab token redaction and <code>glab</code>
+      protection (v2.1.232), and merge-request URLs in <code>--worktree</code> / <code>claude agents</code>
+      as <code>!N</code> (v2.1.233); the <code>Write</code> tool matching <code>Edit</code>'s
+      overwrite rules for newer models (v2.1.228); <code>/code-review</code> high/xhigh/max running in
+      the background (v2.1.232); plugin marketplace <code>command</code> sources (v2.1.229); new
+      <code>/config</code> rows (Dialog expiry, Messages from your other sessions) and the
+      <code>additionalMarketplaces</code>/<code>allowedMarketplaces</code> aliases (v2.1.232); nested-repo
+      trust (v2.1.232); tighter <code>/commit-push-pr</code> defaults (v2.1.229); and the
+      <code>CLAUDE_CODE_TOOL_MEMORY_LIMIT</code>, <code>CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS</code>, and
+      <code>CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS</code> environment variables (v2.1.229/v2.1.233);
+      and an MCP OAuth sign-in fix for pre-registered clients such as Slack (v2.1.231).</p>
+    <p><strong>Updated / Removed since v1.2:</strong> the built-in task/todo tools
+      (<code>TaskCreate</code>/<code>Get</code>/<code>Update</code>/<code>List</code>,
+      <code>TodoWrite</code>) are <em>removed</em> for Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and newer
+      models, gated behind <code>CLAUDE_CODE_ENABLE_TODO_TOOLS=1</code> (v2.1.233). The startup tip
+      suggesting you create custom subagents was removed (v2.1.232). The v2.1.232 Bash permission
+      changes for Cygwin-style symlinks and input redirections were reverted in v2.1.233, with a
+      narrower version to return later. Latest CLI moved from v2.1.226 to v2.1.233.</p>
+    <p class="meta"><strong>Cross-model review:</strong> generated by Claude Opus 4.8, reviewed by
+      Claude Sonnet 5 (verdict: <em>pass_with_edits</em>). All feature claims were verified against
+      the v2.1.227–v2.1.233 GitHub release notes; version math, release dates, and the task/todo-tool
+      removal (including the model list and <code>CLAUDE_CODE_ENABLE_TODO_TOOLS</code> escape hatch)
+      were confirmed. The marketplace-alias keys were cross-checked against the live settings docs.
+      One correction was applied: v2.1.231 (an MCP OAuth sign-in fix for pre-registered clients such
+      as Slack) was added to complete coverage of the v2.1.227–v2.1.233 range (v2.1.230 does not
+      exist).</p>
+  </div>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="ref1"><strong>Claude Code releases</strong> — anthropics/claude-code GitHub Releases (v2.1.227–v2.1.233). <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a>. Accessed August 17, 2026.</li>
+    <li id="ref2"><strong>Claude Code v2.1.232 release notes</strong> (subagent forking on by default, @-mention another session, bare-name SendMessage, unique session names, new /config rows, GitLab marketplaces &amp; token redaction, marketplace-setting aliases, /code-review background at high/xhigh/max, nested-repo trust, install refreshes marketplace, custom-subagent tip removed). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.232">github.com/anthropics/claude-code/releases/tag/v2.1.232</a>. Accessed August 17, 2026.</li>
+    <li id="ref3"><strong>Claude Code v2.1.233 release notes</strong> (task/todo tools removed on newer models + CLAUDE_CODE_ENABLE_TODO_TOOLS, GitLab MR URLs in --worktree/claude agents, CLAUDE_CODE_TOOL_MEMORY_LIMIT, CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS, Notification hooks fix under Desktop/VS Code, reverted v2.1.232 Bash permission changes). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.233">github.com/anthropics/claude-code/releases/tag/v2.1.233</a>. Accessed August 17, 2026.</li>
+    <li id="ref4"><strong>Claude Code v2.1.229 release notes</strong> (plugin marketplace command sources, /commit-push-pr no longer auto-approving dangerous flags, CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS fan-out staggering, remote-control --continue, ListAgents offline/cloud labels, VS Code session groups). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.229">github.com/anthropics/claude-code/releases/tag/v2.1.229</a>. Accessed August 17, 2026.</li>
+    <li id="ref5"><strong>Claude Code v2.1.228 release notes</strong> (Write tool overwrite rules for newer models, skills-from-claude.ai hardening, cross-session message inline display, auto-mode cost note removed). <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.228">github.com/anthropics/claude-code/releases/tag/v2.1.228</a>. Accessed August 17, 2026.</li>
+    <li id="ref6"><strong>Claude Code settings</strong> — Anthropic docs (extraKnownMarketplaces / strictKnownMarketplaces, managed-settings merge behavior). <a href="https://code.claude.com/docs/en/settings">code.claude.com/docs/en/settings</a>. Accessed August 17, 2026.</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>
