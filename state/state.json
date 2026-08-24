@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "latest_cli_version": "2.1.233",
-  "latest_changelog_date": "2026-08-14",
+  "latest_cli_version": "2.1.241",
+  "latest_changelog_date": "2026-08-23",
   "versions": [
     {
       "version": "1.0",
@@ -38,6 +38,15 @@
       "reviewed_by": "claude-sonnet-5",
       "review_verdict": "pass_with_edits",
       "summary": "No new models, but several default-behavior/config changes (v2.1.227-v2.1.233). Subagent forking on by default: subagent_type:'fork' inherits full conversation + prompt cache, non-teammate spawns background-by-default (v2.1.232). Task/todo tools (TaskCreate/Get/Update/List, TodoWrite) removed on Opus 4.8/Sonnet 5/Fable 5/Mythos 5 and newer models; CLAUDE_CODE_ENABLE_TODO_TOOLS=1 to restore (v2.1.233). @-mention another session + bare-name SendMessage + unique per-machine names (v2.1.232). Broad GitLab support: plugin marketplaces incl. nested subgroups + token redaction (v2.1.232), MR URLs in --worktree/claude agents as !N (v2.1.233). Write tool matches Edit overwrite rules for newer models (v2.1.228). /code-review high/xhigh/max background (v2.1.232). Plugin marketplace command sources (v2.1.229). New /config rows + additionalMarketplaces/allowedMarketplaces aliases (v2.1.232). Nested-repo trust (v2.1.232). Tighter /commit-push-pr defaults (v2.1.229). CLAUDE_CODE_TOOL_MEMORY_LIMIT/WEBFETCH_CACHE_TTL_MS/WORKFLOW_PREFIX_STAGGER_MS env vars. CLI now v2.1.233."
+    },
+    {
+      "version": "1.4",
+      "timestamp": "2026-08-24_0542",
+      "artifact": "docs/artifacts/CCPlus_2026-08-24_0542.html",
+      "generated_by": "claude-opus-4-8",
+      "reviewed_by": "claude-sonnet-5",
+      "review_verdict": "pass",
+      "summary": "No new models; a wave of new settings/env vars/defaults (v2.1.234-v2.1.241). ANTHROPIC_DEFAULT_MODEL env var sets the starting model softly (yields to /model pick and to a file model key), unlike ANTHROPIC_MODEL (v2.1.236). Built-in 'Concise' output style (v2.1.237). Auto-continue session when claude.ai usage limit resets, toggle in /config (v2.1.234). spellcheck setting via aspell/hunspell/ispell (v2.1.235). keybindingFlavor:'readline' for Bash-style word keys (v2.1.238/239). Plugin-marketplace headersHelper mints short-lived HTTP auth headers with trust/credential isolation (v2.1.238). Windows cross-session messaging + notify_when_idle on SendMessage (v2.1.236/239). Self-hosted-runner --defer-shutdown-max-min and --proxy-authorization-command/file (v2.1.238). Auto-mode classifier parity on Bedrock/Vertex/Foundry + Monitor reviewed like Bash (v2.1.236). CLAUDE_CODE_PROJECT_DIR_NAME + GitLab MR badge + 'Default teammate model' removed + mid-turn /permissions & /add-dir (v2.1.234). Cost estimates include 1.1x US-only-inference premium; /claude-api upgrade for anthropic 0.x->1.x; cloud plugins name@synced (v2.1.239). NTLM NT-namespace path hardening (v2.1.234) + macOS sandbox wildcard read-deny precedence (v2.1.236). v2.1.240/241 bugfix-only. CLI now v2.1.241. Sonnet 5 reviewed: pass (all claims verified, no corrections)."
     }
   ],
   "items": [
@@ -123,6 +132,47 @@
     "release:v2.1.228:write-tool-overwrite-newer-models",
     "release:v2.1.228:skills-claudeai-hardening",
     "release:v2.1.231:mcp-oauth-preregistered-fix",
-    "release:v2.1.227:slash-menu-ui"
+    "release:v2.1.227:slash-menu-ui",
+    "release:v2.1.236:anthropic-default-model-env",
+    "release:v2.1.237:concise-output-style",
+    "release:v2.1.234:auto-continue-usage-limit",
+    "release:v2.1.235:spellcheck-setting",
+    "release:v2.1.238:keybinding-flavor-readline",
+    "release:v2.1.239:keybinding-flavor-word-keys",
+    "release:v2.1.238:marketplace-headers-helper",
+    "release:v2.1.238:mcp-headers-helper-trust",
+    "release:v2.1.238:self-hosted-runner-defer-shutdown",
+    "release:v2.1.238:self-hosted-runner-proxy-auth",
+    "release:v2.1.238:clear-shortcut-removed",
+    "release:v2.1.238:mcp-list-disabled-servers",
+    "release:v2.1.236:notify-when-idle-sendmessage",
+    "release:v2.1.239:windows-cross-session-messaging",
+    "release:v2.1.239:listagents-own-name-teammates",
+    "release:v2.1.236:auto-mode-classifier-cloud-parity",
+    "release:v2.1.236:monitor-auto-mode-review",
+    "release:v2.1.236:auto-mode-git-status-hardening",
+    "release:v2.1.236:usage-credits-team-enterprise",
+    "release:v2.1.236:slash-typo-no-fuzzy",
+    "release:v2.1.236:sandbox-wildcard-read-deny-macos",
+    "release:v2.1.236:vscode-screen-reader",
+    "release:v2.1.234:project-dir-name-env",
+    "release:v2.1.234:gitlab-mr-badge",
+    "release:v2.1.234:selection-clear-keybinding",
+    "release:v2.1.234:default-teammate-model-removed",
+    "release:v2.1.234:permissions-add-dir-midturn",
+    "release:v2.1.234:task-notifications-system-reminder",
+    "release:v2.1.234:prompt-markdown-render",
+    "release:v2.1.234:claude-api-skill-context-cut",
+    "release:v2.1.234:ntlm-path-hardening",
+    "release:v2.1.234:goal-checkin-minutes",
+    "release:v2.1.235:agent-tool-error-lists-agents",
+    "release:v2.1.237:gateway-prompt-cache-fix",
+    "release:v2.1.239:cost-us-inference-premium",
+    "release:v2.1.239:fullscreen-offer-cloud",
+    "release:v2.1.239:claude-api-upgrade-command",
+    "release:v2.1.239:cloud-plugins-synced",
+    "release:v2.1.239:chrome-clear-tab-group",
+    "release:v2.1.240:bugfixes",
+    "release:v2.1.241:bugfixes"
   ]
 }

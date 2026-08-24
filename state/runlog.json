@@ -2,6 +2,17 @@
   "schema": 1,
   "runs": [
     {
+      "timestamp": "2026-08-24_0542",
+      "status": "generated",
+      "version": "1.4",
+      "artifact": "docs/artifacts/CCPlus_2026-08-24_0542.html",
+      "new_items": 42,
+      "checked_sources": 9,
+      "generated_by": "claude-opus-4-8",
+      "review_verdict": "pass",
+      "summary": "Significant (new settings/env vars/defaults; no new models). Releases v2.1.234-v2.1.241 since prior v2.1.233. Headlines: ANTHROPIC_DEFAULT_MODEL env var sets the starting model softly, yielding to a /model pick and to a file model key, unlike ANTHROPIC_MODEL (v2.1.236); built-in 'Concise' output style (v2.1.237); auto-continue session when a claude.ai usage limit resets, toggle in /config (v2.1.234); spellcheck setting via aspell/hunspell/ispell (v2.1.235); keybindingFlavor:'readline' for Bash-style word keys (v2.1.238/239); plugin-marketplace headersHelper mints short-lived HTTP auth headers with trust + credential isolation (v2.1.238); Windows cross-session messaging + notify_when_idle on SendMessage (v2.1.236/239); self-hosted-runner --defer-shutdown-max-min and --proxy-authorization-command/file (v2.1.238); auto-mode classifier parity on Bedrock/Vertex/Foundry + Monitor reviewed like Bash (v2.1.236); CLAUDE_CODE_PROJECT_DIR_NAME + GitLab MR badge + 'Default teammate model' removed + mid-turn /permissions & /add-dir (v2.1.234); cost estimates include the 1.1x US-only-inference premium + /claude-api upgrade for anthropic 0.x->1.x + cloud plugins name@synced (v2.1.239). v2.1.240/241 bugfix-only. CLI advanced v2.1.233 -> v2.1.241. WebSearch/HN/Reddit unavailable in CI; relied on the GitHub Releases API (authoritative, all 8 release bodies) + Claude Code settings docs (ANTHROPIC_DEFAULT_MODEL precedence corroborated). Cross-model reviewed by Sonnet 5 (pass): every claim verified against v2.1.234-v2.1.241 release notes and settings docs, no fabrications, citations clean, version math correct; no corrections needed."
+    },
+    {
       "timestamp": "2026-08-17_0539",
       "status": "generated",
       "version": "1.3",
