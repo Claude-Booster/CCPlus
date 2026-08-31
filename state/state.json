@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "latest_cli_version": "2.1.241",
-  "latest_changelog_date": "2026-08-23",
+  "latest_cli_version": "2.1.251",
+  "latest_changelog_date": "2026-08-28",
   "versions": [
     {
       "version": "1.0",
@@ -47,6 +47,15 @@
       "reviewed_by": "claude-sonnet-5",
       "review_verdict": "pass",
       "summary": "No new models; a wave of new settings/env vars/defaults (v2.1.234-v2.1.241). ANTHROPIC_DEFAULT_MODEL env var sets the starting model softly (yields to /model pick and to a file model key), unlike ANTHROPIC_MODEL (v2.1.236). Built-in 'Concise' output style (v2.1.237). Auto-continue session when claude.ai usage limit resets, toggle in /config (v2.1.234). spellcheck setting via aspell/hunspell/ispell (v2.1.235). keybindingFlavor:'readline' for Bash-style word keys (v2.1.238/239). Plugin-marketplace headersHelper mints short-lived HTTP auth headers with trust/credential isolation (v2.1.238). Windows cross-session messaging + notify_when_idle on SendMessage (v2.1.236/239). Self-hosted-runner --defer-shutdown-max-min and --proxy-authorization-command/file (v2.1.238). Auto-mode classifier parity on Bedrock/Vertex/Foundry + Monitor reviewed like Bash (v2.1.236). CLAUDE_CODE_PROJECT_DIR_NAME + GitLab MR badge + 'Default teammate model' removed + mid-turn /permissions & /add-dir (v2.1.234). Cost estimates include 1.1x US-only-inference premium; /claude-api upgrade for anthropic 0.x->1.x; cloud plugins name@synced (v2.1.239). NTLM NT-namespace path hardening (v2.1.234) + macOS sandbox wildcard read-deny precedence (v2.1.236). v2.1.240/241 bugfix-only. CLI now v2.1.241. Sonnet 5 reviewed: pass (all claims verified, no corrections)."
+    },
+    {
+      "version": "1.5",
+      "timestamp": "2026-08-31_1130",
+      "artifact": "docs/artifacts/CCPlus_2026-08-31_1130.html",
+      "generated_by": "claude-opus-4-8",
+      "reviewed_by": "claude-sonnet-5",
+      "review_verdict": "pass",
+      "summary": "Model-default change + a substantial security batch (v2.1.245-v2.1.251). Seat-based Enterprise subscriptions now default to Opus 5, matching other premium plans (v2.1.251) - no new model shipped. New PreModelSwitch/PostModelSwitch hook events (block/confirm/annotate a model switch) + SessionStart resume hooks receive session staleness and re-cache cost (v2.1.251). New --restricted / CLAUDE_CODE_RESTRICTED=1 locked-down mode: drops command/code tools + WebFetch, confines file tools to the working dir, refuses bypassPermissions, ignores settings files (v2.1.248). Per-agent experimental.cacheTtl frontmatter (v2.1.248). CLAUDE_CODE_SUBAGENT_MODEL softened to a default that per-agent/per-spawn models override (v2.1.251). SendFeedback tool + feedbackDrafts setting (v2.1.247). Auto-mode tab in /permissions (v2.1.246) + one-keystroke switch-to-auto-mode on Bash prompts (v2.1.247). /claude-api cost-optimize + Admin API coverage (v2.1.247). Prompt-cache line in /cost + prompt_cache status-line object; Spend-limit bar in /usage + rate_limits.spend_limit (v2.1.251). claude attach <id> + attach/logs/stop/respawn/rm in --help (v2.1.251). /effort saved per model; Opus 5 effort xhigh/max with thinking off sends effort=high (v2.1.251). Sonnet 5 auto-compacts on full 1M window (~967K) (v2.1.247). Broad file-access/sandbox hardening: Read/Write/Edit symlink-swap TOCTOU fix, Grep/Glob honor Read deny rules through symlinks, plugin-command path-traversal rejection, project settings can't enable beta tracing/raw logging, project env can't set CLAUDE_CONFIG_DIR/TMPDIR, ANTHROPIC_CUSTOM_HEADERS + sandbox-weakening managed settings require approval (v2.1.251). /usage-credits for Enterprise (AWS Marketplace/self-serve/trials), same-machine cross-session messaging on Bedrock/Vertex/Foundry, /loop dynamic+autonomous always available (v2.1.248). Workflow tool description ~5.7k->~1k tokens + workflow-authoring skill (v2.1.248). Removed syntax highlighting for six langs; binary ~5MB smaller (v2.1.251). v2.1.245 (glibc 2.44 crash fix) & v2.1.250 bugfix-only. CLI now v2.1.251. Sonnet 5 reviewed: pass (all claims verified against v2.1.245-v2.1.251 release bodies + hooks docs, no corrections)."
     }
   ],
   "items": [
@@ -173,6 +182,48 @@
     "release:v2.1.239:cloud-plugins-synced",
     "release:v2.1.239:chrome-clear-tab-group",
     "release:v2.1.240:bugfixes",
-    "release:v2.1.241:bugfixes"
+    "release:v2.1.241:bugfixes",
+    "release:v2.1.251:enterprise-seat-opus5-default",
+    "release:v2.1.251:premodelswitch-postmodelswitch-hooks",
+    "release:v2.1.251:sessionstart-resume-staleness-recache",
+    "release:v2.1.248:restricted-mode",
+    "release:v2.1.248:experimental-cachettl-agent",
+    "release:v2.1.251:subagent-model-soft-default",
+    "release:v2.1.247:sendfeedback-tool-feedbackdrafts",
+    "release:v2.1.247:claude-api-cost-optimize",
+    "release:v2.1.247:claude-api-admin-api",
+    "release:v2.1.246:permissions-auto-mode-tab",
+    "release:v2.1.247:bash-prompt-auto-mode-tip",
+    "release:v2.1.251:cost-prompt-cache-line",
+    "release:v2.1.251:usage-spend-limit-bar",
+    "release:v2.1.251:claude-attach-help",
+    "release:v2.1.251:effort-per-model",
+    "release:v2.1.251:opus5-effort-thinking-off-fix",
+    "release:v2.1.247:sonnet5-1m-autocompact",
+    "release:v2.1.251:security-symlink-toctou",
+    "release:v2.1.251:grep-glob-deny-symlink",
+    "release:v2.1.251:plugin-command-path-traversal",
+    "release:v2.1.251:project-settings-beta-tracing-block",
+    "release:v2.1.251:project-env-config-dir-block",
+    "release:v2.1.251:anthropic-custom-headers-approval",
+    "release:v2.1.251:sandbox-weakening-approval",
+    "release:v2.1.248:usage-credits-enterprise",
+    "release:v2.1.248:cross-session-cloud-providers",
+    "release:v2.1.248:loop-dynamic-autonomous-cloud",
+    "release:v2.1.247:spinner-tips-override",
+    "release:v2.1.248:workflow-tool-prompt-trim",
+    "release:v2.1.248:desktop-session-cleanup-days",
+    "release:v2.1.248:self-hosted-runner-client-label",
+    "release:v2.1.248:managed-settings-diagnostics",
+    "release:v2.1.251:remote-control-subagent-streaming",
+    "release:v2.1.251:syntax-highlight-removed",
+    "release:v2.1.251:binary-size-reduction",
+    "release:v2.1.251:commit-trailer-non-claude",
+    "release:v2.1.246:cd-applies-project-config",
+    "release:v2.1.246:end-of-turn-completion-time",
+    "release:v2.1.246:subagent-maxturns-partial",
+    "release:v2.1.245:bugfixes-glibc",
+    "release:v2.1.250:bugfixes",
+    "doc:hooks-model-switch"
   ]
 }

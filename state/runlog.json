@@ -2,6 +2,17 @@
   "schema": 1,
   "runs": [
     {
+      "timestamp": "2026-08-31_1130",
+      "status": "generated",
+      "version": "1.5",
+      "artifact": "docs/artifacts/CCPlus_2026-08-31_1130.html",
+      "new_items": 42,
+      "checked_sources": 8,
+      "generated_by": "claude-opus-4-8",
+      "review_verdict": "pass",
+      "summary": "Significant (a model-default change + a substantial security batch; no new model shipped). Releases v2.1.245-v2.1.251 since prior v2.1.241 (v2.1.242-244/249 never released). Headlines: seat-based Enterprise subscriptions now default to Opus 5, matching other premium plans (v2.1.251); new PreModelSwitch/PostModelSwitch hook events that can block/confirm/annotate a model switch + SessionStart resume hooks receive session staleness and re-cache cost (v2.1.251, corroborated by hooks docs); new --restricted / CLAUDE_CODE_RESTRICTED=1 locked-down mode that drops command/code tools + WebFetch, confines file tools to the working dir, refuses bypassPermissions, and ignores settings files (v2.1.248); per-agent experimental.cacheTtl frontmatter (v2.1.248); CLAUDE_CODE_SUBAGENT_MODEL softened to a default that per-agent/per-spawn models override (v2.1.251); SendFeedback tool + feedbackDrafts setting (v2.1.247); Auto-mode tab in /permissions (v2.1.246) + one-keystroke switch-to-auto-mode on Bash prompts (v2.1.247); prompt-cache line in /cost + Spend-limit bar in /usage with status-line fields (v2.1.251); claude attach <id> + attach/logs/stop/respawn/rm in --help (v2.1.251); /effort saved per model (v2.1.251); Sonnet 5 auto-compacts on the full 1M window ~967K (v2.1.247); /claude-api cost-optimize + Admin API coverage (v2.1.247); a broad file-access/sandbox hardening pass (Read/Write/Edit symlink-swap TOCTOU, Grep/Glob deny rules through symlinks, plugin-command path traversal, project settings can't enable beta tracing/raw logging, project env can't set CLAUDE_CONFIG_DIR/TMPDIR, ANTHROPIC_CUSTOM_HEADERS + sandbox-weakening managed settings require approval; all v2.1.251); /usage-credits for Enterprise + same-machine cross-session messaging on Bedrock/Vertex/Foundry + /loop dynamic/autonomous always available (v2.1.248); Workflow tool description ~5.7k->~1k tokens (v2.1.248); syntax highlighting removed for six langs + binary ~5MB smaller (v2.1.251). v2.1.245 (glibc 2.44 startup crash fix) and v2.1.250 are bugfix-only. CLI advanced v2.1.241 -> v2.1.251. WebSearch/HN/Reddit unavailable in CI; relied on the GitHub Releases API (authoritative, all 6 release bodies) + Claude Code hooks docs (PreModelSwitch/PostModelSwitch corroborated). Cross-model reviewed by Sonnet 5 (pass): every version-attributed claim verified against v2.1.245-v2.1.251 release bodies (v2.1.249 confirmed non-existent), no fabrications, all 7 citations resolve, version math correct; no corrections needed."
+    },
+    {
       "timestamp": "2026-08-24_0542",
       "status": "generated",
       "version": "1.4",

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.5 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.5</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated August 31, 2026 at 11:30 UTC · by Claude Opus 4.8 · prior version: 1.4</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5 — pass</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>The week since v1.4 (Aug 24) brought a <strong>model-default change and a substantial security
+  batch</strong> across CLI v2.1.245&ndash;v2.1.251<sup><a href="#ref6">[6]</a></sup>. The headline
+  default change: <strong>seat-based Enterprise subscriptions now default to Opus 5</strong>, matching
+  the other premium plans<sup><a href="#ref4">[4]</a></sup>. Two new
+  <strong><code>PreModelSwitch</code> / <code>PostModelSwitch</code> hook events</strong> let you block,
+  confirm, or annotate a model change, and <code>SessionStart</code> resume hooks now receive session
+  staleness and the estimated re-cache cost<sup><a href="#ref4">[4]</a></sup><sup><a href="#ref7">[7]</a></sup>.
+  A new locked-down <strong><code>--restricted</code></strong> mode (also
+  <code>CLAUDE_CODE_RESTRICTED=1</code>) strips the tools that run commands or code plus
+  <code>WebFetch</code>, keeps file tools inside the working directory, refuses
+  <code>bypassPermissions</code>, and ignores your settings files<sup><a href="#ref3">[3]</a></sup>.
+  Agents gained a per-agent <code>experimental.cacheTtl</code> frontmatter key, and
+  <code>CLAUDE_CODE_SUBAGENT_MODEL</code> was softened to a <em>default</em> that a per-agent or
+  per-spawn model can override<sup><a href="#ref3">[3]</a></sup><sup><a href="#ref4">[4]</a></sup>.
+  Rounding out the period: a new <code>SendFeedback</code> tool with a <code>feedbackDrafts</code>
+  setting<sup><a href="#ref2">[2]</a></sup>, an Auto-mode tab in <code>/permissions</code><sup><a href="#ref1">[1]</a></sup>,
+  prompt-cache and spend-limit surfacing in <code>/cost</code> and <code>/usage</code><sup><a href="#ref4">[4]</a></sup>,
+  and a wide file-access / sandbox hardening pass<sup><a href="#ref4">[4]</a></sup>. The current CLI is
+  <strong>v2.1.251</strong> (Aug 28); v2.1.245 and v2.1.250 are bug-fix / reliability
+  releases<sup><a href="#ref5">[5]</a></sup>. Every claim below is cited; sources are listed at the
+  bottom.</p>
+
+  <h2 id="whats-new">What's New</h2>
+  <p class="meta">Highlights from Claude Code CLI v2.1.245 → v2.1.251 (August 25–28, 2026)<sup><a href="#ref6">[6]</a></sup>.</p>
+  <ul>
+    <li><strong>Seat-based Enterprise now defaults to Opus 5</strong> (v2.1.251, Aug 28). The default
+      model for seat-based Enterprise subscriptions changed to Opus 5, matching the other premium
+      plans<sup><a href="#ref4">[4]</a></sup>. No new model shipped this period — this is a default
+      alignment, not a new release.</li>
+    <li><strong><code>PreModelSwitch</code> and <code>PostModelSwitch</code> hook events</strong>
+      (v2.1.251, Aug 28). New hooks fire around a model change: <code>PreModelSwitch</code> runs before
+      Claude Code applies a switch you or a client requested and can block it, while
+      <code>PostModelSwitch</code> runs after the session's model changes (including changes Claude Code
+      makes on its own, such as restoring the model on resume). Both match on the model's canonical name
+      (e.g. <code>claude-opus-5</code>). <code>SessionStart</code> resume hooks now also receive session
+      staleness and the estimated re-cache cost<sup><a href="#ref4">[4]</a></sup><sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong><code>--restricted</code> locked-down mode</strong> (v2.1.248, Aug 27).
+      <code>--restricted</code> (or <code>CLAUDE_CODE_RESTRICTED=1</code>) removes the built-in tools that
+      run commands or code and <code>WebFetch</code> (unless you name them in <code>--tools</code>), keeps
+      file tools inside the working directory, refuses <code>bypassPermissions</code>, and ignores user,
+      project, and local settings files<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Per-agent prompt-cache TTL</strong> (v2.1.248, Aug 27). Agent frontmatter now accepts
+      <code>experimental.cacheTtl</code> (<code>"5m"</code> or <code>"1h"</code>), used as that agent's
+      prompt-cache TTL when no subagent TTL setting is configured<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong><code>CLAUDE_CODE_SUBAGENT_MODEL</code> is now a soft default</strong> (v2.1.251, Aug 28).
+      It sets the <em>default</em> subagent model rather than overriding everything: an agent
+      definition's <code>model:</code> and an explicit per-spawn model now take precedence over
+      it<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong><code>SendFeedback</code> tool and <code>feedbackDrafts</code> setting</strong> (v2.1.247,
+      Aug 26). When something goes wrong in a session, Claude can draft a feedback report for you to
+      review and send from <code>/feedback</code>; turn it off with the <code>feedbackDrafts</code>
+      setting<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Auto-mode controls surface in <code>/permissions</code></strong> (v2.1.246–v2.1.247,
+      Aug 25–26). <code>/permissions</code> gained an <em>Auto mode</em> tab for viewing and editing the
+      auto-mode classifier rules<sup><a href="#ref1">[1]</a></sup>, and Bash permission prompts now show a
+      tip pointing to auto mode with a one-keystroke "Yes, and switch to auto mode"
+      option<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Prompt-cache and spend visibility</strong> (v2.1.251, Aug 28). <code>/cost</code> gained a
+      per-session prompt-cache line (hit ratio, misses, tokens re-cached, warm/cold) plus a matching
+      <code>prompt_cache</code> object for status-line scripts; and <code>/usage</code> gained a
+      <em>Spend limit</em> bar with a <code>rate_limits.spend_limit</code> status-line field for
+      developers behind a Claude apps gateway with spend limits<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong><code>claude attach &lt;id&gt;</code> for background sessions</strong> (v2.1.251, Aug 28).
+      <code>attach</code>, <code>logs</code>, <code>stop</code>, <code>respawn</code>, and <code>rm</code>
+      are now listed in <code>claude --help</code>, and the <code>--resume</code> message for a running
+      background session names the exact <code>claude attach &lt;id&gt;</code> command to
+      use<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong><code>/effort</code> is now per-model</strong> (v2.1.251, Aug 28). Your default effort
+      level is saved per model, so each model keeps its own setting when you
+      switch<sup><a href="#ref4">[4]</a></sup>. Relatedly, Opus 5 requests with effort
+      <code>xhigh</code>/<code>max</code> and thinking turned off no longer fail with "effort … is not
+      supported when thinking is disabled" — effort is sent as <code>high</code> in that
+      case<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong><code>/claude-api cost-optimize</code> and Admin API coverage</strong> (v2.1.247, Aug 26).
+      A new <code>/claude-api cost-optimize</code> profiles an existing project's Claude API spend and
+      works through cost levers (caching, token hygiene, batch, effort, model choice) one measured change
+      at a time; the <code>/claude-api</code> skill also gained Admin API coverage (members, invites,
+      workspaces, API keys, rate-limit reports, workload identity federation,
+      CMEK)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Broad file-access and sandbox hardening</strong> (v2.1.251, Aug 28). Several security
+      fixes landed together: Read/Write/Edit no longer follow a symlink swapped inside the working
+      directory <em>after</em> the permission check (a TOCTOU that could read or write outside the
+      approved location); Grep and Glob now apply <code>Read(...)</code> deny rules to files reached
+      through a symlinked search path; plugin commands can no longer point outside the plugin directory
+      (rejected as path traversal); project settings can no longer enable detailed beta tracing or raw
+      API-body logging; project-level <code>.claude/settings.json</code> <code>env</code> can no longer
+      set <code>CLAUDE_CONFIG_DIR</code>, <code>CLAUDE_CODE_TMPDIR</code>, or
+      <code>TMPDIR</code>/<code>TMP</code>/<code>TEMP</code>; and <code>ANTHROPIC_CUSTOM_HEADERS</code>
+      from managed or project settings now requires approval when it sets a credential, org/tenant,
+      routing, or API-behavior header<sup><a href="#ref4">[4]</a></sup>. Managed settings that terminate
+      sandbox TLS, route sandbox traffic through your own proxy, inject credentials, or weaken sandbox
+      isolation now require approval before they apply<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Enterprise <code>/usage-credits</code> and provider parity</strong> (v2.1.248, Aug 27).
+      <code>/usage-credits</code> is now available for Enterprise organizations billed through AWS
+      Marketplace, self-serve Enterprise, and Enterprise trials, so members can request a higher usage
+      limit from their admin; cross-session messaging (<code>SendMessage</code> / <code>ListAgents</code>)
+      now works between same-machine sessions on Bedrock, Vertex, and Foundry and when telemetry is
+      disabled; and <code>/loop</code>'s self-paced dynamic mode and no-prompt autonomous default are now
+      always available, including on those providers<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Sonnet 5 auto-compacts later on the 1M window</strong> (v2.1.247, Aug 26). Sonnet 5's
+      default auto-compact window was changed to its full 1M context, so 1M-window sessions now
+      auto-compact at about 967K tokens instead of about 934K<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Smaller, quicker, and more streamable</strong> (v2.1.248, v2.1.251). The Workflow tool's
+      description dropped from ~5.7k to ~1k tokens, with its script-writing reference moved into a bundled
+      <code>workflow-authoring</code> skill<sup><a href="#ref3">[3]</a></sup>; the native binary is about
+      5&nbsp;MB smaller and drops syntax highlighting for six rarely used languages (1c, gml, isbl,
+      mathematica, maxima, sqf); and Remote Control clients now get live streaming of a foreground
+      subagent's tool calls and results (background subagents still show status
+      only)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>v2.1.245 and v2.1.250 are bug-fix / reliability releases</strong> (Aug 25, Aug 28).
+      v2.1.245 fixes a startup crash on Linux distributions shipping glibc 2.44 (Arch, CachyOS, Fedora
+      Rawhide); v2.1.250 is reliability improvements only<sup><a href="#ref5">[5]</a></sup>.</li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Gate model switches with a hook.</strong> Use the new <code>PreModelSwitch</code> event to
+      block or confirm a switch away from your chosen model (match on the canonical model name), and
+      <code>PostModelSwitch</code> to annotate or react after one — including switches Claude Code makes
+      on its own, like restoring the model on resume
+      (v2.1.251)<sup><a href="#ref4">[4]</a></sup><sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Run untrusted or sensitive tasks in <code>--restricted</code> mode.</strong> Launch with
+      <code>claude --restricted</code> (or <code>CLAUDE_CODE_RESTRICTED=1</code>) to drop command/code
+      execution and <code>WebFetch</code>, keep file tools scoped to the working directory, and ignore
+      settings files — a fast way to sandbox a review or read-only session
+      (v2.1.248)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Tune prompt caching per agent.</strong> Add <code>experimental.cacheTtl: "1h"</code> to a
+      long-lived agent's frontmatter to hold its prompt cache longer when you have no global subagent TTL
+      set (v2.1.248)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Watch cache health from the status line.</strong> Read the new <code>prompt_cache</code>
+      object (or the per-session line in <code>/cost</code>) to see hit ratio, misses, and re-cached
+      tokens — useful for spotting cache-busting patterns
+      (v2.1.251)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Reattach to background work by name.</strong> When <code>--resume</code> reports a session
+      is already running, use the exact <code>claude attach &lt;id&gt;</code> it prints instead of
+      starting a second process (v2.1.251)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Profile and trim API spend.</strong> Run <code>/claude-api cost-optimize</code> on a
+      project to work through caching, token hygiene, batching, effort, and model choice one measured
+      change at a time (v2.1.247)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Edit auto-mode rules from <code>/permissions</code>.</strong> The new Auto-mode tab shows
+      and lets you edit the classifier rules directly; a Bash permission prompt can also switch you into
+      auto mode in one keystroke (v2.1.246–v2.1.247)<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref2">[2]</a></sup>.</li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No community "hack" cleared this pipeline's corroboration bar
+  (<code>&ge;2</code> distinct reputable sources) this cycle. WebSearch and the Hacker News / Reddit
+  endpoints were unavailable in the CI environment, so only Anthropic's authoritative GitHub release
+  notes and product docs were sweepable, and single-source or unverifiable community claims are omitted
+  by design<sup><a href="#ref6">[6]</a></sup>.</p>
+  <p>The closest thing to a "trick" this period is official but underused:
+  <code>--restricted</code> gives you a genuinely locked-down session in one flag — no shell, no code
+  execution, no <code>WebFetch</code>, file tools confined to the working directory, and settings files
+  ignored — which makes it a clean way to hand Claude a repo for read-only triage or to run an agent you
+  don't fully trust, without hand-writing deny rules<sup><a href="#ref3">[3]</a></sup>.</p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Enterprise model default.</strong> Seat-based Enterprise subscriptions now start on
+      Opus 5 by default; if you standardized on a specific model, confirm your org/user
+      <code>model</code> settings still reflect what you want
+      (v2.1.251)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Add a model-switch guardrail.</strong> If your team must stay on a particular model,
+      register a <code>PreModelSwitch</code> hook that blocks switches to anything else
+      (v2.1.251)<sup><a href="#ref4">[4]</a></sup><sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Reach for <code>--restricted</code> for review/CI sessions.</strong> Prefer
+      <code>--restricted</code> (or <code>CLAUDE_CODE_RESTRICTED=1</code>) over hand-rolled deny lists
+      when you want a session with no command/code execution and no <code>WebFetch</code>, file tools
+      confined to the working directory, and settings files ignored
+      (v2.1.248)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Set subagent models where they belong.</strong> With
+      <code>CLAUDE_CODE_SUBAGENT_MODEL</code> now a soft default, put a specific model in an agent's
+      <code>model:</code> frontmatter (or pass it at spawn) when a subagent must use a particular model;
+      the env var only fills the gap (v2.1.251)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Per-agent cache TTL.</strong> Add <code>experimental.cacheTtl</code> to agent frontmatter
+      for long-running agents instead of relying on a single global subagent TTL
+      (v2.1.248)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Decide on feedback drafts.</strong> The <code>SendFeedback</code> tool lets Claude draft
+      a report when something breaks; leave it on for easy bug reports, or set
+      <code>feedbackDrafts</code> off if you don't want it (v2.1.247)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Move sensitive env out of project settings.</strong> Project-level
+      <code>.claude/settings.json</code> <code>env</code> no longer sets <code>CLAUDE_CONFIG_DIR</code>,
+      <code>CLAUDE_CODE_TMPDIR</code>, or <code>TMPDIR</code>/<code>TMP</code>/<code>TEMP</code> — set
+      these in your shell, user, or managed settings instead
+      (v2.1.251)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Org spinner tips.</strong> Organizations can now rotate their own tips via
+      <code>spinnerTipsOverride</code> (<code>{id, text, cooldownSessions, priority}</code> entries,
+      <code>tipsFile</code>, and <code>label</code>) alongside the built-in ones
+      (v2.1.247)<sup><a href="#ref2">[2]</a></sup>.</li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p class="tag">What changed since v1.4</p>
+  <ul>
+    <li><strong>Added — hooks:</strong> <code>PreModelSwitch</code> and <code>PostModelSwitch</code>
+      events, and session staleness / re-cache cost passed to <code>SessionStart</code> resume hooks
+      (v2.1.251)<sup><a href="#ref4">[4]</a></sup><sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Added — flags/settings:</strong> <code>--restricted</code> /
+      <code>CLAUDE_CODE_RESTRICTED</code> (v2.1.248), <code>experimental.cacheTtl</code> agent frontmatter
+      (v2.1.248), <code>feedbackDrafts</code> (v2.1.247), <code>desktopSessionCleanupPeriodDays</code>
+      (v2.1.248), <code>self-hosted-runner --client-label</code> /
+      <code>SELF_HOSTED_RUNNER_CLIENT_LABEL</code> (v2.1.248), and expanded
+      <code>spinnerTipsOverride</code> (v2.1.247).</li>
+    <li><strong>Added — features:</strong> <code>SendFeedback</code> tool (v2.1.247);
+      <code>/claude-api cost-optimize</code> + Admin API coverage (v2.1.247); an Auto-mode tab in
+      <code>/permissions</code> (v2.1.246); a per-session prompt-cache line in <code>/cost</code> and a
+      Spend-limit bar in <code>/usage</code> with status-line fields (v2.1.251);
+      <code>attach</code>/<code>logs</code>/<code>stop</code>/<code>respawn</code>/<code>rm</code> in
+      <code>claude --help</code> with <code>claude attach &lt;id&gt;</code> (v2.1.251); live streaming of
+      a foreground subagent's tool calls to Remote Control (v2.1.251); server-managed-settings load
+      diagnostics (v2.1.248).</li>
+    <li><strong>Changed — defaults:</strong> seat-based Enterprise default model → Opus 5 (v2.1.251);
+      <code>CLAUDE_CODE_SUBAGENT_MODEL</code> is now a soft default that per-agent/per-spawn models
+      override (v2.1.251); <code>/effort</code> is saved per model (v2.1.251); Sonnet 5 auto-compacts on
+      the full 1M window (~967K) (v2.1.247); default commit trailer becomes
+      <code>Co-Authored-By: Claude Code</code> for non-Claude models (v2.1.251); the Workflow tool's
+      description shrank ~5.7k→~1k tokens (v2.1.248).</li>
+    <li><strong>Security:</strong> Read/Write/Edit symlink-swap (TOCTOU) fix; Grep/Glob honor
+      <code>Read(...)</code> deny rules through symlinks; plugin-command path-traversal rejection; project
+      settings can't enable beta tracing / raw API-body logging; project <code>env</code> can't set
+      <code>CLAUDE_CONFIG_DIR</code>/<code>TMPDIR</code>; <code>ANTHROPIC_CUSTOM_HEADERS</code> and
+      sandbox-weakening managed settings now require approval (all v2.1.251)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Removed:</strong> syntax highlighting for six rarely used languages (1c, gml, isbl,
+      mathematica, maxima, sqf), shrinking the binary ~2.5&nbsp;MB (v2.1.251).</li>
+    <li><strong>State:</strong> CLI advanced v2.1.241 → <strong>v2.1.251</strong>; no new model shipped,
+      but the seat-based Enterprise default moved to Opus 5.</li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="ref1"><strong>Claude Code Release Notes — v2.1.246.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.246">github.com/anthropics/claude-code/releases/tag/v2.1.246</a>. Accessed 2026-08-31.</li>
+    <li id="ref2"><strong>Claude Code Release Notes — v2.1.247.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.247">github.com/anthropics/claude-code/releases/tag/v2.1.247</a>. Accessed 2026-08-31.</li>
+    <li id="ref3"><strong>Claude Code Release Notes — v2.1.248.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.248">github.com/anthropics/claude-code/releases/tag/v2.1.248</a>. Accessed 2026-08-31.</li>
+    <li id="ref4"><strong>Claude Code Release Notes — v2.1.251.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.251">github.com/anthropics/claude-code/releases/tag/v2.1.251</a>. Accessed 2026-08-31.</li>
+    <li id="ref5"><strong>Claude Code Release Notes — v2.1.245 &amp; v2.1.250 (bug-fix releases).</strong>
+      Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.245">github.com/anthropics/claude-code/releases/tag/v2.1.245</a>. Accessed 2026-08-31.</li>
+    <li id="ref6"><strong>Claude Code Releases (index).</strong> Anthropic / GitHub — used to enumerate
+      versions and publish dates for v2.1.245–v2.1.251.
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a>. Accessed 2026-08-31.</li>
+    <li id="ref7"><strong>Claude Code hooks.</strong> Anthropic docs — <code>PreModelSwitch</code> and
+      <code>PostModelSwitch</code> hook events and their model-name matchers.
+      <a href="https://code.claude.com/docs/en/hooks">code.claude.com/docs/en/hooks</a>. Accessed 2026-08-31.</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5 — pass.
+  </footer>
+
+</div>
+</body>
+</html>
