@@ -2,6 +2,17 @@
   "schema": 1,
   "runs": [
     {
+      "timestamp": "2026-09-07_1004",
+      "status": "generated",
+      "version": "1.6",
+      "artifact": "docs/artifacts/CCPlus_2026-09-07_1004.html",
+      "new_items": 41,
+      "checked_sources": 8,
+      "generated_by": "claude-opus-4-8",
+      "review_verdict": "pass_with_edits",
+      "summary": "Significant (a new model + a wave of settings/flags/security defaults). Releases v2.1.252-v2.1.263 since prior v2.1.251 (v2.1.253-254/256/262 have no GitHub Release tags; v2.1.255 shipped briefly and introduced the macOS 12 launch regression fixed in v2.1.258). Headline: Claude Fable 5.1 (claude-fable-5-1) is the new default Fable model - 1M context, $10/$50 per Mtok, cache reads 2.5% of input (~$0.25/Mtok), adaptive thinking always on, high default effort, Jun 2026 cutoff (v2.1.257, corroborated by the Anthropic models overview docs); gateways keep resolving fable/best to Fable 5 until configured, so pick 5.1 in /model. Other new: timeFormat/timeZone settings; auto-mode 'Containment Escape' rule (no longer auto-approving cloud metadata-credential fetches/egress evasion/cross-tenant reach); CLAUDE_CODE_SUBAGENT_MODEL_FORCE; permissions.blockReadsOutsideWorkingDirectories; 's' in /effort; project-settings defaultMode bypassPermissions now ignored; --add-dir refuses network paths (v2.1.257). managedMcpServers managed setting + allowedMcpServers scope change; --permission-prompts none for headless; claude plugin validate --json; unparseable managed settings refuse startup (v2.1.259). /diff fullscreen panel; /cost cache-miss cause; text /advisor + /reload-plugins in headless; 1M-model auto-compact tuning; managed claudeMd no longer triggers approval; ! bash-mode outside sandbox in strict; removed 1h subagent-bg-command limit; reverted the v2.1.259 Read()-deny-on-Bash-args change (v2.1.260). bashOutputMaxChars/taskOutputMaxChars (up to 128K); --append-subagent-system-prompt-file; /skill-doctor; keybindingFlavor removed (word keys always Bash); dangerous-rm detection extended; diagram-renderer-URL upload no longer auto-approved (v2.1.261). v2.1.252/258/263 are bug-fix/reliability releases. CLI advanced v2.1.251 -> v2.1.263. WebSearch/HN/Reddit unavailable in CI; relied on the GitHub Releases API (authoritative, all 7 new release bodies) + the Anthropic models overview docs (Fable 5.1 specs/pricing corroborated). Cross-model reviewed by Sonnet 5 (pass_with_edits): fixed the 'v2.1.255 never published' overstatement (v2.1.258 confirms it shipped) and added the v2.1.260 citation for ANTHROPIC_DEFAULT_FABLE_MODEL; two other reviewer claims were rejected as misreads of the release bodies (keybindingFlavor is v2.1.261-only; ANTHROPIC_DEFAULT_FABLE_MODEL is a real setting, documented in v2.1.260)."
+    },
+    {
       "timestamp": "2026-08-31_1130",
       "status": "generated",
       "version": "1.5",

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.6 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.6</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated September 07, 2026 at 10:04 UTC · by Claude Opus 4.8 · prior version: 1.5</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5 — pass_with_edits</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>The stretch since v1.5 (Aug 31) is headlined by a <strong>new model</strong>: CLI v2.1.257 adds
+  <strong>Claude Fable 5.1</strong> (<code>claude-fable-5-1</code>), now the default Fable model — a
+  1M-context model at $10 / $50 per Mtok with cache reads at 2.5% of input (~$0.25 /
+  Mtok)<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref7">[7]</a></sup>. Around it came a wave of new
+  settings, flags, and security defaults across v2.1.257&ndash;v2.1.261<sup><a href="#ref6">[6]</a></sup>:
+  <code>timeFormat</code> / <code>timeZone</code>, an auto-mode <strong>Containment Escape</strong> rule
+  that stops auto-approving cloud credential-metadata fetches and cross-tenant reach,
+  <code>CLAUDE_CODE_SUBAGENT_MODEL_FORCE</code>, and
+  <code>permissions.blockReadsOutsideWorkingDirectories</code><sup><a href="#ref1">[1]</a></sup>. Orgs get a
+  <code>managedMcpServers</code> managed setting and headless hosts get
+  <code>--permission-prompts none</code><sup><a href="#ref2">[2]</a></sup>. Fullscreen mode gains a
+  <code>/diff</code> panel and <code>/cost</code> now explains <em>why</em> the prompt cache
+  missed<sup><a href="#ref3">[3]</a></sup>. New this period too: <code>/skill-doctor</code>,
+  <code>bashOutputMaxChars</code> / <code>taskOutputMaxChars</code> (up to 128K), and the retirement of
+  <code>keybindingFlavor</code> — word-editing keys now always match Bash<sup><a href="#ref4">[4]</a></sup>.
+  The current CLI is <strong>v2.1.263</strong> (Sep 6); v2.1.252, v2.1.258, and v2.1.263 are bug-fix /
+  reliability releases<sup><a href="#ref5">[5]</a></sup>. Every claim below is cited; sources are listed at
+  the bottom.</p>
+
+  <h2 id="whats-new">What's New</h2>
+  <p class="meta">Highlights from Claude Code CLI v2.1.252 → v2.1.263 (August 31 – September 6, 2026)<sup><a href="#ref6">[6]</a></sup>.</p>
+  <ul>
+    <li><strong>Claude Fable 5.1 is the new default Fable model</strong> (v2.1.257, Sep 1).
+      <code>claude-fable-5-1</code> is a 1M-context model priced at $10 / input Mtok and $50 / output Mtok,
+      with prompt-cache reads at 2.5% of input (~$0.25 / Mtok)<sup><a href="#ref1">[1]</a></sup>. Anthropic's
+      model docs position it "for demanding reasoning and long-horizon agentic work," with adaptive
+      thinking always on, a <code>high</code> default effort, and a June 2026 knowledge
+      cutoff<sup><a href="#ref7">[7]</a></sup>. Note the rollout caveat: in Claude apps gateway sessions
+      <code>fable</code> and <code>best</code> keep resolving to Fable 5 for now (gateways not yet
+      configured for 5.1 reject it) — pick Fable 5.1 explicitly in <code>/model</code> to use
+      it<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong><code>timeFormat</code> and <code>timeZone</code> settings</strong> (v2.1.257, Sep 1). Choose
+      12-hour, 24-hour, 24-hour UTC, or a <code>strftime</code> pattern for the turn-end clock and
+      transcript-view timestamps<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Auto mode gets a "Containment Escape" rule</strong> (v2.1.257, Sep 1). Cloud
+      metadata-credential fetches, egress evasion, and cross-tenant reach are no longer auto-approved
+      unless your environment marks them expected<sup><a href="#ref1">[1]</a></sup>. Relatedly, v2.1.261
+      makes auto mode treat a link that packs content into a public diagram renderer's URL as an upload to
+      that site — no longer auto-approved unless you asked for it<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong><code>CLAUDE_CODE_SUBAGENT_MODEL_FORCE</code></strong> (v2.1.257, Sep 1). Applies
+      <code>CLAUDE_CODE_SUBAGENT_MODEL</code> (or the main model) to <em>every</em> subagent, ignoring
+      per-spawn and agent-definition model overrides<sup><a href="#ref1">[1]</a></sup> — the hard-override
+      complement to v2.1.251's soft default.</li>
+    <li><strong>Block reads outside the working directory</strong> (v2.1.257, Sep 1). Auto mode now shows a
+      one-time prompt before the first file read outside the working directories, with an option to block
+      such reads entirely via <code>permissions.blockReadsOutsideWorkingDirectories</code><sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong><code>managedMcpServers</code> managed setting</strong> (v2.1.259, Sep 2). Organizations can
+      push HTTP/SSE MCP servers to every user (same entry shape as <code>.mcp.json</code>); entries that
+      name a local command to run are skipped<sup><a href="#ref2">[2]</a></sup>. Alongside it,
+      <code>allowedMcpServers</code> now governs only servers users add, so a literal
+      <code>managed-mcp.json</code> server it used to filter out will load on upgrade — use
+      <code>deniedMcpServers</code> to keep one off<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong><code>--permission-prompts none</code> for unattended hosts</strong> (v2.1.259, Sep 2).
+      Anything that would prompt is denied automatically while the active permission mode (including auto
+      mode) keeps deciding — a clean posture for headless CI<sup><a href="#ref2">[2]</a></sup>.
+      <code>claude plugin validate</code> also gained <code>--json</code> for a machine-readable
+      report<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong><code>/diff</code> panel in fullscreen mode</strong> (v2.1.260, Sep 3). A diff panel opens
+      beside the conversation and shows your uncommitted changes as Claude edits; toggle it with
+      <code>/diff</code><sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong><code>/cost</code> now explains cache misses</strong> (v2.1.260, Sep 3). A likely cause for
+      a prompt-cache miss (e.g. tool definitions or system prompt changed, or idle past the TTL) is now
+      surfaced in <code>/cost</code> and the status line's <code>prompt_cache</code>
+      field<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong><code>/skill-doctor</code></strong> (v2.1.261, Sep 4). Shows which loaded skills go unused
+      and what they cost in context, so you can prune them<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Bigger inline command/task output</strong> (v2.1.261, Sep 4). New
+      <code>bashOutputMaxChars</code> and <code>taskOutputMaxChars</code> settings raise how much command
+      and background-task output Claude receives inline before it is saved to a file — up to 128K
+      characters<sup><a href="#ref4">[4]</a></sup>. <code>--append-subagent-system-prompt-file</code> reads
+      the subagent system prompt from a file for prompts too large to pass on the command
+      line<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong><code>keybindingFlavor</code> is gone; word keys always match Bash</strong> (v2.1.261,
+      Sep 4). The prompt's word-editing keys now behave like Bash — <code>Ctrl+W</code> deletes back to
+      whitespace, <code>Alt+F</code> / <code>Alt+D</code> stop at word end, punctuation separates words —
+      and <code>keybindingFlavor</code> no longer has any effect<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Auto-compact for 1M-context models</strong> (v2.1.260, Sep 3). Opus and Fable sessions now
+      compact shortly before the 1M-token limit, and recovery compaction on very large contexts no longer
+      times out at 10 minutes<sup><a href="#ref3">[3]</a></sup>. Text forms of <code>/advisor</code>
+      (<code>/advisor &lt;model&gt;</code>, <code>/advisor off</code>) and <code>/reload-plugins</code> also
+      came to headless (<code>-p</code> / Agent SDK) and desktop sessions<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Sandbox and settings hardening</strong> (v2.1.257–v2.1.261). Several safety-oriented
+      defaults landed: <code>defaultMode: "bypassPermissions"</code> in project
+      <code>.claude/settings.json</code>/<code>settings.local.json</code> is now ignored (set it in user or
+      managed settings, or pass <code>--permission-mode</code>) and <code>--add-dir</code> refuses network
+      paths like UNC shares (v2.1.257)<sup><a href="#ref1">[1]</a></sup>; a managed <code>claudeMd</code> no
+      longer triggers the security-approval dialog, and <code>!</code> bash-mode commands run outside the
+      sandbox even under strict mode, like your own terminal (v2.1.260)<sup><a href="#ref3">[3]</a></sup>;
+      the dangerous-<code>rm</code> prompt now also catches <code>rm -rf</code> on positional parameters
+      and inside double-quoted <code>sh -c</code> scripts (v2.1.261)<sup><a href="#ref4">[4]</a></sup>; and
+      managed settings that cannot be parsed now make Claude Code refuse to start and name the source,
+      instead of silently going unenforced (v2.1.259)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>v2.1.252, v2.1.258, and v2.1.263 are bug-fix / reliability releases</strong> (Aug 31,
+      Sep 1, Sep 6). v2.1.252 fixes Bash "task output swap refused" errors and "always allow" not saving in
+      a project with no local settings file yet; v2.1.258 fixes a launch regression on macOS 12
+      (Monterey); v2.1.263 is bug fixes and reliability improvements<sup><a href="#ref5">[5]</a></sup>.
+      (v2.1.253–254, v2.1.256, and v2.1.262 have no GitHub Release tags; v2.1.255 shipped briefly and
+      introduced the macOS 12 launch regression that v2.1.258 then fixed.)</li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Reach for Fable 5.1 on hard, long-horizon work.</strong> Anthropic positions
+      <code>claude-fable-5-1</code> for demanding reasoning and long-horizon agentic tasks; on a Claude
+      apps gateway, pick it explicitly in <code>/model</code> since <code>fable</code>/<code>best</code>
+      still resolve to Fable 5 until the gateway is configured for it
+      (v2.1.257)<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Prune skills you don't use.</strong> Run <code>/skill-doctor</code> to see which loaded
+      skills go unused and what they cost in context, then remove them to reclaim the window
+      (v2.1.261)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Watch edits land with <code>/diff</code>.</strong> In fullscreen mode, toggle the
+      <code>/diff</code> panel to see uncommitted changes accumulate beside the conversation as Claude
+      works (v2.1.260)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Diagnose a cold cache.</strong> When costs spike, check <code>/cost</code> (or the
+      <code>prompt_cache</code> status-line field) for the <em>reason</em> the cache missed — changed tool
+      definitions, a changed system prompt, or an idle gap past the TTL
+      (v2.1.260)<sup><a href="#ref3">[3]</a></sup>.</li>
+    <li><strong>Give commands room before they spill to a file.</strong> Raise
+      <code>bashOutputMaxChars</code> / <code>taskOutputMaxChars</code> (up to 128K) so long build logs or
+      test output stay inline for the model instead of being truncated to a file
+      (v2.1.261)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Lock every subagent to one model.</strong> Set
+      <code>CLAUDE_CODE_SUBAGENT_MODEL_FORCE</code> when you need a subagent model applied everywhere,
+      overriding per-agent and per-spawn choices — handy for cost control in CI
+      (v2.1.257)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Confine reads on a sensitive repo.</strong> Turn on
+      <code>permissions.blockReadsOutsideWorkingDirectories</code> to keep file reads inside your working
+      directories, and expect a one-time prompt the first time a read would step outside
+      (v2.1.257)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Set your clock.</strong> Use <code>timeZone</code> and <code>timeFormat</code> (12h / 24h /
+      24h-UTC / <code>strftime</code>) so the turn-end clock and transcript timestamps read the way you
+      expect, especially across teammates in different zones (v2.1.257)<sup><a href="#ref1">[1]</a></sup>.</li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No community "hack" cleared this pipeline's corroboration bar
+  (<code>&ge;2</code> distinct reputable sources) this cycle. WebSearch and the Hacker News / Reddit
+  endpoints were unavailable in the CI environment, so only Anthropic's authoritative GitHub release
+  notes and product docs were sweepable; single-source or unverifiable community claims are omitted by
+  design<sup><a href="#ref6">[6]</a></sup>.</p>
+  <p>The most "hack"-like moves this period are official but underused. For unattended runs,
+  <code>--permission-prompts none</code> denies anything that would otherwise prompt while your active
+  mode (including auto mode) keeps deciding — a one-flag way to make a headless session fail closed
+  instead of hanging on a prompt<sup><a href="#ref2">[2]</a></sup>. And <code>/skill-doctor</code> turns
+  "which of my skills are actually earning their context?" into a single command
+  answer<sup><a href="#ref4">[4]</a></sup>.</p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Decide your Fable default.</strong> Fable 5.1 is now the default Fable model; if you pin a
+      Fable model via <code>ANTHROPIC_DEFAULT_FABLE_MODEL</code> or a gateway, confirm it resolves to the
+      version you intend (gateways may still serve Fable 5 until configured for 5.1)
+      (v2.1.257 / v2.1.260)<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref3">[3]</a></sup><sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Move <code>bypassPermissions</code> out of project settings.</strong>
+      <code>defaultMode: "bypassPermissions"</code> in <code>.claude/settings.json</code> or
+      <code>settings.local.json</code> is now ignored — set it in user or managed settings, or pass
+      <code>--permission-mode</code> (v2.1.257)<sup><a href="#ref1">[1]</a></sup>.</li>
+    <li><strong>Drop <code>keybindingFlavor</code>.</strong> It no longer has any effect; word-editing keys
+      always follow Bash now, so you can remove the setting
+      (v2.1.261)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Standardize org MCP via <code>managedMcpServers</code>.</strong> Push HTTP/SSE MCP servers
+      to every user from managed settings instead of hand-adding them per machine; use
+      <code>deniedMcpServers</code> to suppress any you don't want
+      (v2.1.259)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Set headless posture explicitly.</strong> For CI and other unattended hosts, add
+      <code>--permission-prompts none</code> so nothing silently waits on a prompt
+      (v2.1.259)<sup><a href="#ref2">[2]</a></sup>.</li>
+    <li><strong>Tune inline output caps.</strong> Add <code>bashOutputMaxChars</code> /
+      <code>taskOutputMaxChars</code> (up to 128K) if your builds/tests routinely produce output the model
+      should see in full (v2.1.261)<sup><a href="#ref4">[4]</a></sup>.</li>
+    <li><strong>Confine reads and set the clock.</strong> Consider
+      <code>permissions.blockReadsOutsideWorkingDirectories</code> on sensitive repos, and set
+      <code>timeZone</code> / <code>timeFormat</code> for consistent timestamps
+      (v2.1.257)<sup><a href="#ref1">[1]</a></sup>.</li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p class="tag">What changed since v1.5</p>
+  <ul>
+    <li><strong>Added — models:</strong> Claude Fable 5.1 (<code>claude-fable-5-1</code>), the new default
+      Fable model — 1M context, $10 / $50 per Mtok, cache reads ~$0.25 / Mtok
+      (v2.1.257)<sup><a href="#ref1">[1]</a></sup><sup><a href="#ref7">[7]</a></sup>.</li>
+    <li><strong>Added — flags/settings:</strong> <code>timeFormat</code> / <code>timeZone</code>,
+      <code>CLAUDE_CODE_SUBAGENT_MODEL_FORCE</code>,
+      <code>permissions.blockReadsOutsideWorkingDirectories</code> (v2.1.257);
+      <code>managedMcpServers</code>, <code>--permission-prompts none</code>,
+      <code>claude plugin validate --json</code> (v2.1.259);
+      <code>bashOutputMaxChars</code> / <code>taskOutputMaxChars</code>,
+      <code>--append-subagent-system-prompt-file</code> (v2.1.261).</li>
+    <li><strong>Added — features:</strong> <code>/diff</code> panel in fullscreen (v2.1.260); prompt-cache
+      miss cause in <code>/cost</code> + status line (v2.1.260); text <code>/advisor</code> and
+      <code>/reload-plugins</code> in headless sessions (v2.1.260); <code>/skill-doctor</code> (v2.1.261);
+      an auto-mode "Containment Escape" rule and a <code>/doctor</code> stale-sandbox-mask warning
+      (v2.1.257); an "Organization policy" line in <code>/status</code> and <code>claude doctor</code>
+      (v2.1.261).</li>
+    <li><strong>Changed — defaults:</strong> auto-compact for 1M-context Opus and Fable sessions moves to
+      just before the 1M limit (v2.1.260); <code>!</code> bash-mode runs outside the sandbox even under
+      strict mode, and a managed <code>claudeMd</code> no longer triggers the approval dialog (v2.1.260);
+      <code>ctrl+l</code> / <code>cmd+k</code> clear the transcript view in fullscreen (v2.1.260);
+      <code>allowedMcpServers</code> governs only user-added servers (v2.1.259).</li>
+    <li><strong>Security:</strong> project-settings <code>defaultMode: "bypassPermissions"</code> ignored
+      and <code>--add-dir</code> refuses network paths (v2.1.257); Cowork/claude.ai reads of an artifact
+      that isn't yours always ask, even in auto mode (v2.1.257); auto mode no longer auto-approves cloud
+      credential-metadata fetches, cross-tenant reach, or content packed into a public diagram-renderer URL
+      (v2.1.257 / v2.1.261); dangerous-<code>rm</code> detection extended, and unparseable managed settings
+      now refuse startup (v2.1.261 / v2.1.259).</li>
+    <li><strong>Removed:</strong> <code>keybindingFlavor</code> now has no effect — word-editing keys always
+      match Bash (v2.1.261); the one-hour time limit on background commands started by subagents
+      (v2.1.260).</li>
+    <li><strong>State:</strong> CLI advanced v2.1.251 → <strong>v2.1.263</strong>; one new model shipped
+      (Fable 5.1, v2.1.257). v2.1.252 / v2.1.258 / v2.1.263 are bug-fix releases; v2.1.253–254, v2.1.256,
+      and v2.1.262 have no GitHub Release tags, and v2.1.255 shipped briefly (its macOS 12 regression was
+      fixed in v2.1.258).</li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="ref1"><strong>Claude Code Release Notes — v2.1.257.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.257">github.com/anthropics/claude-code/releases/tag/v2.1.257</a>. Accessed 2026-09-07.</li>
+    <li id="ref2"><strong>Claude Code Release Notes — v2.1.259.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.259">github.com/anthropics/claude-code/releases/tag/v2.1.259</a>. Accessed 2026-09-07.</li>
+    <li id="ref3"><strong>Claude Code Release Notes — v2.1.260.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.260">github.com/anthropics/claude-code/releases/tag/v2.1.260</a>. Accessed 2026-09-07.</li>
+    <li id="ref4"><strong>Claude Code Release Notes — v2.1.261.</strong> Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.261">github.com/anthropics/claude-code/releases/tag/v2.1.261</a>. Accessed 2026-09-07.</li>
+    <li id="ref5"><strong>Claude Code Release Notes — v2.1.252, v2.1.258 &amp; v2.1.263 (bug-fix releases).</strong>
+      Anthropic / GitHub.
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.252">github.com/anthropics/claude-code/releases/tag/v2.1.252</a>. Accessed 2026-09-07.</li>
+    <li id="ref6"><strong>Claude Code Releases (index).</strong> Anthropic / GitHub — used to enumerate
+      versions and publish dates for v2.1.252–v2.1.263.
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a>. Accessed 2026-09-07.</li>
+    <li id="ref7"><strong>Claude models overview.</strong> Anthropic docs — Claude Fable 5.1
+      (<code>claude-fable-5-1</code>) specs and pricing: 1M context, $10 / $50 per Mtok, cache reads 2.5% of
+      input.
+      <a href="https://platform.claude.com/docs/en/about-claude/models/overview">platform.claude.com/docs/en/about-claude/models/overview</a>. Accessed 2026-09-07.</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>

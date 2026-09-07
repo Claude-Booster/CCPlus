@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "latest_cli_version": "2.1.251",
-  "latest_changelog_date": "2026-08-28",
+  "latest_cli_version": "2.1.263",
+  "latest_changelog_date": "2026-09-06",
   "versions": [
     {
       "version": "1.0",
@@ -56,6 +56,15 @@
       "reviewed_by": "claude-sonnet-5",
       "review_verdict": "pass",
       "summary": "Model-default change + a substantial security batch (v2.1.245-v2.1.251). Seat-based Enterprise subscriptions now default to Opus 5, matching other premium plans (v2.1.251) - no new model shipped. New PreModelSwitch/PostModelSwitch hook events (block/confirm/annotate a model switch) + SessionStart resume hooks receive session staleness and re-cache cost (v2.1.251). New --restricted / CLAUDE_CODE_RESTRICTED=1 locked-down mode: drops command/code tools + WebFetch, confines file tools to the working dir, refuses bypassPermissions, ignores settings files (v2.1.248). Per-agent experimental.cacheTtl frontmatter (v2.1.248). CLAUDE_CODE_SUBAGENT_MODEL softened to a default that per-agent/per-spawn models override (v2.1.251). SendFeedback tool + feedbackDrafts setting (v2.1.247). Auto-mode tab in /permissions (v2.1.246) + one-keystroke switch-to-auto-mode on Bash prompts (v2.1.247). /claude-api cost-optimize + Admin API coverage (v2.1.247). Prompt-cache line in /cost + prompt_cache status-line object; Spend-limit bar in /usage + rate_limits.spend_limit (v2.1.251). claude attach <id> + attach/logs/stop/respawn/rm in --help (v2.1.251). /effort saved per model; Opus 5 effort xhigh/max with thinking off sends effort=high (v2.1.251). Sonnet 5 auto-compacts on full 1M window (~967K) (v2.1.247). Broad file-access/sandbox hardening: Read/Write/Edit symlink-swap TOCTOU fix, Grep/Glob honor Read deny rules through symlinks, plugin-command path-traversal rejection, project settings can't enable beta tracing/raw logging, project env can't set CLAUDE_CONFIG_DIR/TMPDIR, ANTHROPIC_CUSTOM_HEADERS + sandbox-weakening managed settings require approval (v2.1.251). /usage-credits for Enterprise (AWS Marketplace/self-serve/trials), same-machine cross-session messaging on Bedrock/Vertex/Foundry, /loop dynamic+autonomous always available (v2.1.248). Workflow tool description ~5.7k->~1k tokens + workflow-authoring skill (v2.1.248). Removed syntax highlighting for six langs; binary ~5MB smaller (v2.1.251). v2.1.245 (glibc 2.44 crash fix) & v2.1.250 bugfix-only. CLI now v2.1.251. Sonnet 5 reviewed: pass (all claims verified against v2.1.245-v2.1.251 release bodies + hooks docs, no corrections)."
+    },
+    {
+      "version": "1.6",
+      "timestamp": "2026-09-07_1004",
+      "artifact": "docs/artifacts/CCPlus_2026-09-07_1004.html",
+      "generated_by": "claude-opus-4-8",
+      "reviewed_by": "claude-sonnet-5",
+      "review_verdict": "pass_with_edits",
+      "summary": "New model + a wave of settings/flags/security defaults (v2.1.252-v2.1.263). Claude Fable 5.1 (claude-fable-5-1) is the new default Fable model: 1M context, $10/$50 per Mtok, cache reads 2.5% of input (~$0.25/Mtok), 'demanding reasoning and long-horizon agentic work', adaptive thinking always on, high default effort, Jun 2026 cutoff (v2.1.257, corroborated by models overview docs); gateways keep resolving fable/best to Fable 5 until configured, pick 5.1 in /model. New timeFormat/timeZone settings; auto-mode 'Containment Escape' rule stops auto-approving cloud metadata-credential fetches/egress evasion/cross-tenant reach; CLAUDE_CODE_SUBAGENT_MODEL_FORCE (hard override vs the v2.1.251 soft default); permissions.blockReadsOutsideWorkingDirectories + one-time prompt; 's' in /effort for session-only; /doctor stale-sandbox-mask warning (v2.1.257). managedMcpServers managed setting (HTTP/SSE, command entries skipped) + allowedMcpServers scope change; --permission-prompts none for headless; claude plugin validate --json; unparseable managed settings now refuse startup (v2.1.259). /diff panel in fullscreen; /cost + status-line prompt_cache now name the likely cache-miss cause; text /advisor + /reload-plugins in headless; auto-compact for 1M Opus/Fable moves to just before 1M; managed claudeMd no longer triggers approval dialog; ! bash-mode runs outside sandbox even in strict; ctrl+l/cmd+k clear fullscreen transcript; removed 1h limit on subagent background commands; reverted the v2.1.259 Read()-deny-on-Bash-args change; ANTHROPIC_DEFAULT_FABLE_MODEL [1m] tag fix (v2.1.260). bashOutputMaxChars/taskOutputMaxChars (up to 128K); --append-subagent-system-prompt-file; /skill-doctor; 'Organization policy' line in /status & claude doctor; keybindingFlavor removed (word keys always Bash); dangerous-rm detection extended; /context local estimate; diagram-renderer-URL upload no longer auto-approved (v2.1.261). v2.1.252 (task-output-swap/always-allow fixes), v2.1.258 (macOS 12 launch regression from v2.1.255), v2.1.263 bugfix-only. v2.1.253-254/256/262 have no GitHub Release tags; v2.1.255 shipped briefly. CLI now v2.1.263. Sonnet 5 reviewed: pass_with_edits - fixed the 'v2.1.255 never published' overstatement (v2.1.258 notes confirm it shipped) and added the v2.1.260 ANTHROPIC_DEFAULT_FABLE_MODEL citation; rejected two reviewer claims that misread the release bodies (keybindingFlavor is v2.1.261-only; ANTHROPIC_DEFAULT_FABLE_MODEL is real, in v2.1.260)."
     }
   ],
   "items": [
@@ -224,6 +233,48 @@
     "release:v2.1.246:subagent-maxturns-partial",
     "release:v2.1.245:bugfixes-glibc",
     "release:v2.1.250:bugfixes",
-    "doc:hooks-model-switch"
+    "doc:hooks-model-switch",
+    "news:claude-fable-5-1",
+    "doc:models-fable-5-1",
+    "release:v2.1.257:fable-5-1-default",
+    "release:v2.1.257:time-format-zone",
+    "release:v2.1.257:auto-mode-containment-escape",
+    "release:v2.1.257:subagent-model-force",
+    "release:v2.1.257:block-reads-outside-workdir",
+    "release:v2.1.257:effort-session-only",
+    "release:v2.1.257:doctor-stale-sandbox-mask",
+    "release:v2.1.257:gateway-model-discovery-description",
+    "release:v2.1.257:project-bypass-permissions-ignored",
+    "release:v2.1.257:add-dir-refuse-network-paths",
+    "release:v2.1.257:cowork-artifact-read-ask",
+    "release:v2.1.257:plugin-symlink-path-refused",
+    "release:v2.1.259:managed-mcp-servers",
+    "release:v2.1.259:permission-prompts-none",
+    "release:v2.1.259:plugin-validate-json",
+    "release:v2.1.259:glab-mr-recognition",
+    "release:v2.1.259:allowed-mcp-servers-scope",
+    "release:v2.1.259:managed-settings-parse-refuse-start",
+    "release:v2.1.260:diff-panel-fullscreen",
+    "release:v2.1.260:cost-cache-miss-cause",
+    "release:v2.1.260:advisor-text-headless",
+    "release:v2.1.260:reload-plugins-headless",
+    "release:v2.1.260:auto-compact-1m-opus-fable",
+    "release:v2.1.260:managed-claudemd-no-approval",
+    "release:v2.1.260:bash-mode-outside-sandbox-strict",
+    "release:v2.1.260:fullscreen-clear-transcript",
+    "release:v2.1.260:subagent-bg-command-no-1h-limit",
+    "release:v2.1.260:read-deny-bash-args-revert",
+    "release:v2.1.260:anthropic-default-fable-model-1m-tag",
+    "release:v2.1.261:bash-task-output-max-chars",
+    "release:v2.1.261:append-subagent-system-prompt-file",
+    "release:v2.1.261:skill-doctor",
+    "release:v2.1.261:keybinding-flavor-removed",
+    "release:v2.1.261:organization-policy-status",
+    "release:v2.1.261:dangerous-rm-positional",
+    "release:v2.1.261:context-local-estimate",
+    "release:v2.1.261:diagram-renderer-upload-auto-mode",
+    "release:v2.1.252:bugfixes",
+    "release:v2.1.258:bugfixes-macos12",
+    "release:v2.1.263:bugfixes"
   ]
 }
