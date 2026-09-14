@@ -2,6 +2,17 @@
   "schema": 1,
   "runs": [
     {
+      "timestamp": "2026-09-14_1829",
+      "status": "generated",
+      "version": "1.7",
+      "artifact": "docs/artifacts/CCPlus_2026-09-14_1829.html",
+      "new_items": 46,
+      "checked_sources": 8,
+      "generated_by": "claude-opus-4-8",
+      "review_verdict": "pass_with_edits",
+      "summary": "Significant (a config-surface batch plus security and prompt-cache hardening; no new model). Releases v2.1.265-v2.1.270 since prior v2.1.263 (v2.1.264 never tagged; v2.1.266 & v2.1.270 are pure regression fixes). Headlines: maxEffortLevel setting caps effort on every provider incl Bedrock/Vertex/Foundry, top-level or per-model under modelSettings, lowest cap wins (v2.1.267, corroborated by the settings docs which state it requires v2.1.267+); --system-prompt-snapshot off renders the system prompt fresh each request; effort: frontmatter now honored on pinned-effort models Opus 4.7/4.8/Fable 5 (v2.1.267); claude plugin eval runs scored reproducible plugin eval suites (JSON+HTML report), /output-style [name] lists/switches styles incl headless/cloud, bashEditDiffEnabled adds a diff of files a Bash command changed, plus env vars CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS/OTEL_METRICS_INCLUDE_REPOSITORY/CLAUDE_CODE_GATEWAY_MODEL_DISCOVERY_TIMEOUT_MS/CLAUDE_CODE_BG_TASKS_REPORT_RUNNING (v2.1.269); --json across the plugin CLI + configDirectory in auth status --json, gateway.yaml pricing: propagation + gatewayInternalNetworks + empty-allow_cidrs warning, self-hosted-runner --remove-session-state, CLAUDE_CODE_WEBFETCH_DEADLINE_MS (WebFetch 300s deadline), the task-tracking-tools model list made explicit (Claude 3.x/Opus 4.0-4.7/Sonnet 4.0-4.6/Haiku 4.5, refining v2.1.233), WebFetch rules no longer covering Artifact reads, Bedrock/Vertex/Foundry system-prompt-as-attachments + byte-stable tool list (v2.1.268); a security-hardening pass (symlinked-dir deny rules, deny rules through env -C/eval and tee, ${VAR} secret redaction in /mcp & plugin errors, !-negation rules scoped to their source, PermissionRequest hooks in --print, plugin archive permissions; v2.1.268/269); --plugin-dir folder support, 1GB tool-result disk cap, non-interactive cd persistence, MCP http->SSE fallback (v2.1.265); and a large prompt-cache-stability pass across resume/model-switch/MCP-reconnect (v2.1.265/267/269). CLI advanced v2.1.263 -> v2.1.270. WebSearch/HN/Reddit unavailable in CI; relied on the GitHub Releases API (authoritative, all 6 new release bodies) + the Claude Code settings docs (maxEffortLevel corroborated, requires v2.1.267+). Cross-model reviewed by Sonnet 5 (pass_with_edits): every version-attributed claim verified against v2.1.265-v2.1.270 release bodies; the only defect was two orphan references (v2.1.266, v2.1.270), fixed by adding inline [2]/[6] markers in the History Log."
+    },
+    {
       "timestamp": "2026-09-07_1004",
       "status": "generated",
       "version": "1.6",
