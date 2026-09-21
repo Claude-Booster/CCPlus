@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.8 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.8</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated September 21, 2026 at 18:34 MPST · by Claude Opus 4.8 · prior version: 1.7</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5 — pass_with_edits</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>No new model shipped this period, but two default behaviors changed in ways worth acting on.
+  First, Claude Code now reads <code>AGENTS.md</code> directly: a repository with no
+  <code>CLAUDE.md</code> loads its <code>AGENTS.md</code> as project instructions automatically,
+  configurable under <strong>Project instructions</strong> in <code>/config</code>
+  (v2.1.277). <sup><a href="#r7">[7]</a></sup><sup><a href="#r10">[10]</a></sup>
+  Second, auto mode's safety classifier now runs server-side by default for Claude API and
+  Enterprise users and on Bedrock, Vertex, Foundry and gateways, and those server-side checks are
+  no longer billed as classifier-overhead tokens (v2.1.278). <sup><a href="#r8">[8]</a></sup><sup><a href="#r9">[9]</a></sup>
+  Around those, releases <code>v2.1.271</code>–<code>v2.1.278</code> landed since the prior period's
+  <code>v2.1.270</code> (<code>v2.1.272</code> and <code>v2.1.276</code> are bugfix/regression-only).
+  <sup><a href="#r11">[11]</a></sup>
+  Other notables: the deprecated <code>TaskOutput</code> tool was removed, a send-now key batches
+  queued messages, skills and plugins enabled on your claude.ai account now sync to terminal
+  sessions, per-command <code>allowed_domains</code> arrived for sandboxed auto mode, and subagents
+  can skip project <code>CLAUDE.md</code> files with <code>omitClaudeMd</code>. CLI advanced
+  <code>v2.1.270</code> → <code>v2.1.278</code>.</p>
+
+  <h2 id="whats-new">What's New</h2>
+
+  <h3>Project instructions &amp; AGENTS.md</h3>
+  <ul>
+    <li><strong><code>AGENTS.md</code> read directly (v2.1.277).</strong> A repository already set up
+      for other coding agents works with no <code>CLAUDE.md</code>, import, or setting: when your
+      working directory (and the directories above it) have no <code>CLAUDE.md</code> or
+      <code>CLAUDE.local.md</code>, Claude Code loads every <code>AGENTS.md</code> / <code>.claude/AGENTS.md</code>
+      it finds. The default <strong>Project instructions</strong> value is
+      <code>claude-md-or-agents-md</code>; switch to <code>claude-md-and-agents-md</code> to read both,
+      <code>claude-md</code> to ignore <code>AGENTS.md</code>, or <code>managed-only</code>. Reading
+      <code>AGENTS.md</code> directly requires v2.1.277+ and is not yet available on Bedrock, Vertex,
+      Foundry, or telemetry-disabled sessions (import it from a <code>CLAUDE.md</code> there).
+      <sup><a href="#r7">[7]</a></sup><sup><a href="#r10">[10]</a></sup></li>
+    <li><strong><code>omitClaudeMd</code> for subagents (v2.1.271).</strong> A new agent-frontmatter and
+      <code>--agents</code> JSON field lets custom and plugin subagents run without your user, project,
+      and local <code>CLAUDE.md</code> files; managed policy files still load. <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Auto mode &amp; the safety classifier</h3>
+  <ul>
+    <li><strong>Server-side classifier is now the default — and free of classifier-overhead charges
+      (v2.1.278).</strong> For Claude API and Enterprise accounts, and on Bedrock, Vertex, Foundry and
+      gateways, auto mode now asks the server to run its safety checks as part of the
+      session's own model requests and does not charge for them. When the server's checks can't reach a
+      session (typically a gateway/proxy that strips or rewrites the <code>safeguards</code> request
+      field or <code>safeguard_results</code> responses), Claude Code falls back to its own billed
+      classifier requests and shows a one-time notice. A new <strong>Auto mode server</strong> row in
+      <code>/status</code> reads <code>Enabled</code> or <code>Disabled</code> accordingly. Pro, Max and
+      Team plans never see the notice. <sup><a href="#r8">[8]</a></sup><sup><a href="#r9">[9]</a></sup></li>
+    <li><strong><code>CLAUDE_CODE_AUTO_MODE_SERVER=0</code> opt-out.</strong> Set it before starting a
+      session to keep using Claude Code's own classifier on a gateway that can't pass the checks
+      through; the variable is not read on a direct connection to the Anthropic API and is documented as
+      temporary. <sup><a href="#r8">[8]</a></sup><sup><a href="#r9">[9]</a></sup></li>
+    <li><strong>Per-command <code>allowed_domains</code> in sandboxed auto mode (v2.1.271).</strong>
+      Bash, PowerShell and Monitor calls can declare the hosts they need; those hosts are reviewed
+      alongside the command and opened for that command alone, and other hosts are refused.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Inline <code>!</code> commands and subagent hand-backs (v2.1.271).</strong> A skill's or
+      slash command's inline <code>!</code> shell commands now follow default-mode permission rules
+      instead of the classifier (a command no rule decides runs as a reviewed tool call), and a subagent
+      reports back to its caller through a dedicated hand-back call the classifier reviews, rather than
+      its last message being reviewed after the fact. <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Tools &amp; session controls</h3>
+  <ul>
+    <li><strong><code>TaskOutput</code> tool removed (v2.1.277).</strong> Claude now reads a background
+      task's output file with <code>Read</code>; the <code>taskOutputMaxChars</code> setting and
+      <code>TASK_MAX_OUTPUT_LENGTH</code> no longer have any effect. <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Send-now key (v2.1.275).</strong> <code>Ctrl+Enter</code> (or <code>Ctrl+X Ctrl+S</code>)
+      interrupts the current turn and sends all queued messages at once; sent and queued messages show
+      in gray until the model receives them. <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong>Monitor watches always have a deadline (v2.1.271).</strong> At most 30 minutes (10 in a
+      single-prompt <code>-p</code> run), after which Claude is notified to re-arm — replacing the
+      no-timeout <code>persistent</code> option. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Subagent results are framed as subagent output (v2.1.277).</strong> A subagent's result
+      now reaches the main agent under a header marking it as subagent output, indented, so text in a
+      result cannot pass as the session's own instructions; workflow-script <code>agent()</code> prompts
+      on Bedrock/Vertex/Foundry are likewise framed as script-authored text for the classifier.
+      <sup><a href="#r7">[7]</a></sup></li>
+  </ul>
+
+  <h3>Skills, plugins &amp; marketplaces</h3>
+  <ul>
+    <li><strong>claude.ai skills/plugins sync to the terminal (v2.1.275).</strong> The skills and
+      plugins you enable on your claude.ai account now sync to terminal sessions signed in with it; opt
+      out with <code>syncClaudeAiSkills: false</code> or <code>syncClaudeAiPlugins: false</code>.
+      <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong><code>/plugin install &lt;plugin&gt; --marketplace &lt;source&gt;</code> (v2.1.275).</strong>
+      Offers to add the marketplace before installing the plugin. <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong><code>--accept-command &lt;sha256&gt;</code> (v2.1.271).</strong> On
+      <code>claude plugin install</code> and <code>claude plugin update</code>, accepts exactly the
+      command a previous <code>--json</code> run displayed instead of a blanket <code>-y</code>.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>npm plugins install without running scripts (v2.1.275).</strong> Plugins from an npm
+      source are now fetched with <code>npm pack --ignore-scripts</code> and integrity-verified, so a
+      package's install scripts no longer run. <sup><a href="#r5">[5]</a></sup></li>
+  </ul>
+
+  <h3>Config, telemetry &amp; provider parity</h3>
+  <ul>
+    <li><strong>New environment variables.</strong> <code>CLAUDE_CODE_MCP_STARTUP_WAIT_MS</code> bounds
+      how long the first non-interactive turn waits for connecting MCP servers (<code>0</code> = don't
+      wait, v2.1.274) <sup><a href="#r4">[4]</a></sup>; <code>CLAUDE_CODE_GATEWAY_HINT_HEADERS=1</code>
+      opts in to new <code>x-claude-code-*</code> request-class/agent-type/compaction hint headers for
+      LLM gateways (v2.1.273) <sup><a href="#r3">[3]</a></sup>; and
+      <code>CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY=1</code> makes a Claude apps gateway hand its forward
+      proxy the hostname instead of resolving it locally (v2.1.277). <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>OpenTelemetry additions (v2.1.273–274).</strong> <code>OTEL_LOG_TOOL_DETAILS=1</code> now
+      includes real agent, skill, plugin and MCP server names on cost/token metrics
+      <sup><a href="#r3">[3]</a></sup>; the <code>claude_code.llm_request</code> trace span gains an
+      <code>effort</code> attribute; and a new <code>claude_code.managed_settings_resolved</code> event
+      (with redacted settings under <code>OTEL_LOG_MANAGED_SETTINGS=1</code>) reports managed-settings
+      sources and policy-helper state. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Chargeback markup in <code>modelPricing</code> (v2.1.271).</strong> The
+      <code>modelPricing</code> managed setting and the Claude apps gateway <code>pricing</code> block now
+      accept a <code>multiplier</code> above 1, up to 10, for marked-up internal chargeback rates.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Cloud-provider MCP defaults (v2.1.274).</strong> Bedrock, Vertex, Foundry and
+      telemetry-disabled installs now use the v2 MCP client and MCP 2026-07-28 negotiation with direct
+      HTTP servers by default, matching other installs; opt out with <code>MCP_SDK_GENERATION=v1</code>
+      or <code>MCP_PROTOCOL_NEGOTIATION=legacy</code>. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong><code>/code-review</code> uses leaner inline prompts (v2.1.274).</strong> For every model
+      that has no tuned settings of its own, <code>/code-review</code> now uses lean inline review prompts
+      instead of spawning many review subagents. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong><code>"type": "sdk"</code> MCP entries are skipped (v2.1.274).</strong> SDK-type MCP
+      entries in <code>.mcp.json</code>, settings, plugins and agent files are now skipped with a warning
+      — only an SDK host application can register in-process servers. <sup><a href="#r4">[4]</a></sup></li>
+  </ul>
+
+  <h3>UI, IDE &amp; smaller changes</h3>
+  <ul>
+    <li><strong>Fable always shows in <code>/model</code> on the Anthropic API (v2.1.277).</strong> It is
+      greyed out only when your organization's settings disable it. <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Mouse support in the fullscreen <code>/config</code> panel (v2.1.271).</strong> The wheel
+      scrolls the list and a click on a value changes it. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Fork a Remote Control session from the Claude app (v2.1.273).</strong> The fork runs as a
+      background session on your computer. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Markdown artifacts render as styled pages; watch up to 10 (v2.1.271).</strong> Markdown
+      files published as artifacts now render with document typography and syntax highlighting, and a
+      session can watch up to 10 published artifacts for republishes (up from 5).
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Smaller dynamic workflows on Pro (v2.1.271).</strong> The default dynamic-workflow size is
+      now small on Pro plans, and the medium-size guideline dropped from 15 to 10 agents.
+      <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Security hardening</h3>
+  <ul>
+    <li><strong>Prompt-injection framing (v2.1.277).</strong> Alongside the subagent-result framing
+      above, invisible Unicode formatting and tag characters in a prompt are now removed, and the cleaned
+      prompt is shown for review before it is sent. <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Secret redaction in plugin/marketplace URLs (v2.1.275).</strong> Plugin and marketplace
+      messages, logs, <code>claude plugin marketplace list</code>, and the VS Code plugin dialog no longer
+      show a password or token stored in a git, ssh or marketplace URL. <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong>Tighter Bash permission checks (v2.1.271, v2.1.274).</strong> The checker no longer misses
+      the file that <code>fmt</code>/<code>column</code>-style commands read after an unrecognized option,
+      no longer skips files a wildcard expands to, and cannot be fooled by shell variable-declaration
+      flags <sup><a href="#r1">[1]</a></sup>; commands that loop over or assign certain special shell
+      variables now ask for permission, and worktree-isolated sessions refuse Bash commands with certain
+      nested shell expansions. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong><code>${VAR}</code> redaction in MCP errors (v2.1.274).</strong> MCP connection errors and
+      the MCP login tool's description no longer show secrets resolved from <code>${VAR}</code>
+      placeholders in MCP configs. <sup><a href="#r4">[4]</a></sup></li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Adopt <code>AGENTS.md</code> for cross-tool repos.</strong> If your repo is already set up
+      for other agents, delete any <code>@AGENTS.md</code>-import <code>CLAUDE.md</code> or SessionStart-hook
+      workaround and let Claude read <code>AGENTS.md</code> directly; set <strong>Project instructions</strong>
+      to <code>claude-md-and-agents-md</code> when you want both files.
+      <sup><a href="#r7">[7]</a></sup><sup><a href="#r10">[10]</a></sup></li>
+    <li><strong>Give subagents a clean context.</strong> Set <code>omitClaudeMd</code> on a custom or plugin
+      subagent whose task shouldn't inherit your project's <code>CLAUDE.md</code>; managed policy still
+      applies. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Batch queued messages.</strong> Type several follow-ups while Claude works, then press
+      <code>Ctrl+Enter</code> to interrupt and send them all at once. <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong>Scope network access per command.</strong> In sandboxed auto mode, rely on the new
+      per-command <code>allowed_domains</code> review so a command's hosts open only for it rather than
+      widening access for the whole session. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Pin the exact plugin command in CI.</strong> Run <code>claude plugin install --json</code>,
+      capture the displayed command's SHA-256, and re-run with <code>--accept-command &lt;sha256&gt;</code>
+      instead of a blanket <code>-y</code>. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Read background output with <code>Read</code>.</strong> With <code>TaskOutput</code> gone,
+      point at the task's output file directly; drop any reliance on <code>taskOutputMaxChars</code> /
+      <code>TASK_MAX_OUTPUT_LENGTH</code>, which are now no-ops. <sup><a href="#r7">[7]</a></sup></li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No new community "hacks" this period. Community sources (Hacker News, Reddit, and general WebSearch)
+  were unavailable in this CI run, so nothing met the requirement of two or more distinct, reputable
+  corroborating sources for a reproducible technique. Everything above is drawn from the authoritative
+  GitHub release notes and the Claude Code documentation. <sup><a href="#r11">[11]</a></sup></p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Retire your <code>AGENTS.md</code> workarounds.</strong> If you previously symlinked or
+      imported <code>AGENTS.md</code> from a <code>CLAUDE.md</code>, or printed it from a SessionStart hook,
+      remove the workaround so Claude reads it once directly (v2.1.277+); note that a
+      <code>CLAUDE.local.md</code> on the path suppresses <code>AGENTS.md</code> unless you set
+      <code>claude-md-and-agents-md</code>. <sup><a href="#r7">[7]</a></sup><sup><a href="#r10">[10]</a></sup></li>
+    <li><strong>Decide your auto-mode classifier posture.</strong> Leave the default on so server-side
+      checks run un-billed; set <code>CLAUDE_CODE_AUTO_MODE_SERVER=0</code> only when you know your gateway
+      can't forward the <code>safeguards</code> field and <code>safeguard_results</code> unchanged. Fixing
+      the gateway to pass traffic through is the better long-term choice.
+      <sup><a href="#r8">[8]</a></sup><sup><a href="#r9">[9]</a></sup></li>
+    <li><strong>Control claude.ai sync.</strong> If you don't want your account's skills/plugins pulled
+      into terminal sessions, set <code>syncClaudeAiSkills: false</code> and/or
+      <code>syncClaudeAiPlugins: false</code>. <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong>Check anything that ran npm plugin install scripts.</strong> npm-sourced plugins now install
+      with <code>--ignore-scripts</code>; if a plugin relied on a postinstall step, adjust it.
+      <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong>Drop <code>taskOutputMaxChars</code>.</strong> Remove it from settings — it and
+      <code>TASK_MAX_OUTPUT_LENGTH</code> no longer do anything now that <code>TaskOutput</code> is gone.
+      <sup><a href="#r7">[7]</a></sup></li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p><strong>What changed since v1.7:</strong></p>
+  <ul>
+    <li><strong>Added:</strong> direct <code>AGENTS.md</code> project instructions with the
+      <strong>Project instructions</strong> setting (v2.1.277) <sup><a href="#r7">[7]</a></sup><sup><a href="#r10">[10]</a></sup>;
+      <code>omitClaudeMd</code>, per-command <code>allowed_domains</code>, <code>--accept-command</code>,
+      the <code>modelPricing</code> <code>multiplier</code>, and fullscreen <code>/config</code> mouse
+      support (v2.1.271) <sup><a href="#r1">[1]</a></sup>; the <code>x-claude-code-*</code> gateway hint
+      headers and Remote Control forking (v2.1.273) <sup><a href="#r3">[3]</a></sup>;
+      <code>CLAUDE_CODE_MCP_STARTUP_WAIT_MS</code>, the <code>effort</code> trace attribute, and the
+      <code>claude_code.managed_settings_resolved</code> OTel event (v2.1.274) <sup><a href="#r4">[4]</a></sup>;
+      the send-now key, claude.ai skill/plugin sync, and <code>/plugin install --marketplace</code>
+      (v2.1.275) <sup><a href="#r5">[5]</a></sup>; and <code>CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY</code>
+      plus the <code>/status</code> <strong>Auto mode server</strong> row (v2.1.277–278).
+      <sup><a href="#r7">[7]</a></sup><sup><a href="#r8">[8]</a></sup></li>
+    <li><strong>Updated:</strong> auto mode's classifier defaults to server-side and un-billed for
+      API/Enterprise and on Bedrock/Vertex/Foundry/gateways (v2.1.278), reversing the v2.1.273 change that
+      had flipped those cloud providers to the local classifier by default
+      <sup><a href="#r3">[3]</a></sup><sup><a href="#r8">[8]</a></sup>; inline <code>!</code> commands in
+      skills/slash commands now follow default-mode rules and subagent results are hand-back-reviewed and
+      framed as subagent output (v2.1.271, v2.1.277) <sup><a href="#r1">[1]</a></sup><sup><a href="#r7">[7]</a></sup>;
+      Monitor watches always carry a deadline instead of <code>persistent</code> (v2.1.271)
+      <sup><a href="#r1">[1]</a></sup>; Bedrock/Vertex/Foundry/telemetry-disabled installs default to the v2
+      MCP client and 2026-07-28 negotiation (v2.1.274) <sup><a href="#r4">[4]</a></sup>; and
+      <code>/code-review</code> uses lean inline prompts for untuned models (v2.1.274).
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Removed / reverted:</strong> the deprecated <code>TaskOutput</code> tool is gone, and
+      <code>taskOutputMaxChars</code> / <code>TASK_MAX_OUTPUT_LENGTH</code> are now no-ops (v2.1.277)
+      <sup><a href="#r7">[7]</a></sup>; the background Haiku auto-title request was removed from
+      <code>claude -p</code> runs launched outside an SDK or IDE (v2.1.277) <sup><a href="#r7">[7]</a></sup>;
+      and v2.1.273 reverted the v2.1.268 change that checked Read/Edit deny rules on Bash lines the checker
+      can't analyze (e.g. <code>eval</code>, <code>env -C</code>), so commands like <code>time -p make build</code>
+      prompt again instead of being denied. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Bugfix/regression-only:</strong> <code>v2.1.272</code> was reliability fixes
+      <sup><a href="#r2">[2]</a></sup>; <code>v2.1.276</code> fixed every request failing with a
+      <code>400 … Input tag 'advisor_20260301'</code> error behind a proxy/gateway (a v2.1.275 regression).
+      <sup><a href="#r6">[6]</a></sup></li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="r1">Claude Code Release v2.1.271 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.271">github.com/anthropics/claude-code/releases/tag/v2.1.271</a> (accessed 2026-09-21).</li>
+    <li id="r2">Claude Code Release v2.1.272 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.272">github.com/anthropics/claude-code/releases/tag/v2.1.272</a> (accessed 2026-09-21).</li>
+    <li id="r3">Claude Code Release v2.1.273 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.273">github.com/anthropics/claude-code/releases/tag/v2.1.273</a> (accessed 2026-09-21).</li>
+    <li id="r4">Claude Code Release v2.1.274 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.274">github.com/anthropics/claude-code/releases/tag/v2.1.274</a> (accessed 2026-09-21).</li>
+    <li id="r5">Claude Code Release v2.1.275 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.275">github.com/anthropics/claude-code/releases/tag/v2.1.275</a> (accessed 2026-09-21).</li>
+    <li id="r6">Claude Code Release v2.1.276 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.276">github.com/anthropics/claude-code/releases/tag/v2.1.276</a> (accessed 2026-09-21).</li>
+    <li id="r7">Claude Code Release v2.1.277 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.277">github.com/anthropics/claude-code/releases/tag/v2.1.277</a> (accessed 2026-09-21).</li>
+    <li id="r8">Claude Code Release v2.1.278 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.278">github.com/anthropics/claude-code/releases/tag/v2.1.278</a> (accessed 2026-09-21).</li>
+    <li id="r9">Auto mode classifier request charges — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/auto-mode-classifier-billing">code.claude.com/docs/en/auto-mode-classifier-billing</a> (accessed 2026-09-21).</li>
+    <li id="r10">How Claude remembers your project (<code>AGENTS.md</code>) — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/memory">code.claude.com/docs/en/memory</a> (accessed 2026-09-21).</li>
+    <li id="r11">Claude Code Releases (index) — GitHub, Anthropic —
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a> (accessed 2026-09-21).</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>
