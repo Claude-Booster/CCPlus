@@ -70,10 +70,11 @@ search_seeds:
 The weekly run executes on GitHub's runner, so local edits only take effect after you push:
 
 ```powershell
-git -C C:\path\to\CCPlus add config/sources.yaml
-git -C C:\path\to\CCPlus commit -m "Add sources: Simon Willison, Anthropic YouTube"
-git -C C:\path\to\CCPlus pull --rebase
-git -C C:\path\to\CCPlus push
+# Run from the repo root, or point -C at your clone via $env:USERPROFILE.
+git -C "$env:USERPROFILE\CCPlus" add config/sources.yaml
+git -C "$env:USERPROFILE\CCPlus" commit -m "Add sources: Simon Willison, Anthropic YouTube"
+git -C "$env:USERPROFILE\CCPlus" pull --rebase
+git -C "$env:USERPROFILE\CCPlus" push
 ```
 
 ## Step 5 — (Optional) test immediately
