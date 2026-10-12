@@ -80,9 +80,14 @@ new comment on the run-log issue ("no significant updates" if nothing changed). 
 
 ## A2. GitHub Actions (active engine while Routines are unavailable)
 
-The workflow is committed at `.github/workflows/ccplus.yml`. It runs weekly (Mon 05:00 UTC =
-13:00 Asia/Manila) and via the **Run workflow** button (on-demand). **Active** — `CLAUDE_CODE_OAUTH_TOKEN`
+The workflow is committed at `.github/workflows/ccplus.yml`. It runs **weekly via an external
+scheduler** (Mon 13:00 Asia/Manila — see §A3; GitHub's own `schedule` fires hours late, so it is
+not used) and via the **Run workflow** button (on-demand). **Active** — `CLAUDE_CODE_OAUTH_TOKEN`
 is set as a repo secret (uses subscription, no PAYG billing).
+
+Because `main` is a **protected branch** (requires the `verify` check), the workflow no longer
+pushes to `main` directly — it commits to a short-lived `ccplus/run-*` branch, opens a PR, and
+auto-merges it once `verify` passes. This needs a PAT and the auto-merge setting — see §A3.
 
 ### Activating
 
@@ -100,6 +105,63 @@ Pages automatically (push to `main` rebuilds Pages) and a GitHub Release is crea
 
 > Verify the `anthropics/claude-code-action` version and input names against its current docs
 > before enabling — the action evolves frequently.
+
+---
+
+## A3. Protected-branch publishing + reliable weekly trigger
+
+`main` is protected (requires the `verify` check), and GitHub's own `schedule` runs hours late.
+So the workflow (a) publishes through an **auto-merged PR** instead of pushing to `main`, and
+(b) is fired by an **external scheduler** at exactly 1:00 PM Philippine time. Both need one PAT.
+
+### A3.1 — Create the PAT (once)
+
+1. Go to <https://github.com/settings/tokens/new> (signed in as the account with admin on
+   `Claude-Booster/CCPlus`, i.e. **fredman08**).
+2. Scopes: **`repo`** + **`workflow`**. Set an expiry you'll remember to rotate.
+3. Generate and copy the token (shown once).
+
+### A3.2 — Store it as a repo secret
+
+At `https://github.com/Claude-Booster/CCPlus/settings/secrets/actions` → **New repository secret**:
+- Name: **`CCPLUS_PAT`**  · Value: the PAT.
+
+This is what the workflow uses to push the `ccplus/run-*` branch and open the PR. The PAT (not the
+default `GITHUB_TOKEN`) is required so the PR triggers the `verify` check — GitHub does not run
+workflows for events created by `GITHUB_TOKEN`, which would otherwise stall auto-merge forever.
+
+### A3.3 — Enable auto-merge (once)
+
+Already enabled via `gh api -X PATCH repos/Claude-Booster/CCPlus -f allow_auto_merge=true`.
+To confirm: repo **Settings → General → Pull Requests → Allow auto-merge** is checked. Without it,
+the publish step errors with "Auto-merge not enabled".
+
+### A3.4 — External weekly scheduler (cron-job.org)
+
+Create a free job at <https://console.cron-job.org> that fires a `repository_dispatch`:
+
+- **URL:** `https://api.github.com/repos/Claude-Booster/CCPlus/dispatches`
+- **Method:** `POST`
+- **Headers:**
+  - `Authorization: Bearer <the same CCPLUS_PAT>`
+  - `Accept: application/vnd.github+json`
+  - `Content-Type: application/json`
+- **Body:** `{"event_type":"ccplus-weekly"}`  (add `,"client_payload":{"force":true}` to force a build)
+- **Schedule:** every **Monday at 13:00**, timezone **Asia/Manila** (the Philippines has no DST, so
+  this is stable year-round).
+
+Test it with the equivalent curl, which triggers a run immediately:
+
+```bash
+curl -X POST https://api.github.com/repos/Claude-Booster/CCPlus/dispatches \
+  -H "Authorization: Bearer $CCPLUS_PAT" \
+  -H "Accept: application/vnd.github+json" \
+  -d '{"event_type":"ccplus-weekly"}'
+```
+
+> Rotate the PAT before it expires and update both places (the `CCPLUS_PAT` secret and the
+> cron-job.org Authorization header). If the token lapses, the weekly run simply won't fire and
+> the publish step will report the missing/again-invalid credential.
 
 ---
 

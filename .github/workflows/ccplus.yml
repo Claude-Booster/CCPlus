@@ -10,8 +10,11 @@ name: CCPlus weekly
 # enabling (https://github.com/anthropics/claude-code-action) — the AI tooling moves weekly.
 
 on:
-  schedule:
-    - cron: "0 5 * * 1"          # Mondays 05:00 UTC = 13:00 Asia/Manila
+  # Weekly trigger comes from an external scheduler (e.g. cron-job.org) that POSTs a
+  # repository_dispatch at 13:00 Asia/Manila. GitHub's own `schedule` fires hours late,
+  # so it is intentionally not used here. See SETUP.md §A3 for the scheduler setup.
+  repository_dispatch:
+    types: [ccplus-weekly]
   workflow_dispatch:             # manual "Run workflow" button (the on-demand trigger)
     inputs:
       force:
@@ -52,6 +55,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # PAT so the publish PR's `verify` check actually runs — events made with the
+          # default GITHUB_TOKEN do not trigger other workflows, which would stall
+          # auto-merge forever. Falls back to GITHUB_TOKEN so a missing secret never
+          # breaks checkout; the auto-merge publish flow still requires CCPLUS_PAT.
+          token: ${{ secrets.CCPLUS_PAT || github.token }}
 
       - name: Run CCPlus generator (Claude Code)
         uses: anthropics/claude-code-action@v1
@@ -71,22 +80,61 @@ jobs:
               a {"status":"no-update", ...} entry to state/runlog.json.
             - Run the cross-model review (spawn a Sonnet reviewer).
             - Update state/state.json, regenerate docs/index.html, and stage all changes.
-            ${{ github.event.inputs.force == 'true' && 'FORCE: generate even if not significant.' || '' }}
+            ${{ (github.event.inputs.force == 'true' || github.event.client_payload.force) && 'FORCE: generate even if not significant.' || '' }}
 
-      - name: Commit, push, and release
+      # main is a protected branch (requires the `verify` check), so the bot cannot push
+      # to it directly. Instead it commits to a short-lived branch and opens a PR with
+      # auto-merge: the PAT-authored PR fires the pull_request event so the required
+      # `verify` check runs (a GITHUB_TOKEN-authored PR would not), and the PR
+      # squash-merges itself once the check passes. This keeps full branch protection.
+      # Requires repo setting "Allow auto-merge" = ON (see SETUP.md §A3).
+      - name: Commit to a branch, open an auto-merging PR, and release
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.CCPLUS_PAT }}
         run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error title=CCPLUS_PAT missing::Add a repo secret CCPLUS_PAT (classic PAT, scopes repo+workflow) so the publish PR can run verify and auto-merge. See SETUP.md §A3."
+            exit 1
+          fi
           git config user.name  "ccplus-bot"
           git config user.email "ccplus-bot@users.noreply.github.com"
           if git diff --quiet && git diff --cached --quiet; then
             echo "No changes to commit (likely a no-update run)."
             exit 0
           fi
+          DAY=$(date -u +%Y-%m-%d)
+          BRANCH="ccplus/run-$(date -u +%Y-%m-%d_%H%M%S)"
+          git checkout -b "$BRANCH"
           git add -A
-          git commit -m "CCPlus: weekly run ($(date -u +%Y-%m-%d))"
-          git push
-          # Create a release if a new artifact was added this run.
+          git commit -m "CCPlus: weekly run ($DAY)"
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "CCPlus: weekly run ($DAY)" \
+            --body "Automated CCPlus run. Auto-merges once the \`verify\` check passes."
+          # --auto only *enables* auto-merge and returns immediately. Enabling it can fail
+          # if "Allow auto-merge" is off on the repo; surface that clearly.
+          if ! gh pr merge "$BRANCH" --squash --auto --delete-branch; then
+            echo "::error title=Auto-merge not enabled::Could not enable auto-merge. Turn on 'Allow auto-merge' in repo settings (SETUP.md §A3). The PR is open and will merge once that is on and verify passes."
+            exit 1
+          fi
+          # Wait (bounded) for the merge to land, so the release is published only when the
+          # artifact actually reached main. Releasing before verify passed would leave an
+          # orphaned release whose Pages "View:" URL 404s.
+          echo "Waiting for verify + auto-merge to complete..."
+          merged=""
+          for _ in $(seq 1 40); do
+            state=$(gh pr view "$BRANCH" --json state --jq '.state' 2>/dev/null || echo "")
+            if [ "$state" = "MERGED" ]; then merged=1; break; fi
+            if [ "$state" = "CLOSED" ]; then break; fi
+            sleep 15
+          done
+          if [ -z "$merged" ]; then
+            echo "::warning title=Publish pending::PR not merged (verify pending or failed); no release created. It will merge automatically once verify passes."
+            exit 0
+          fi
+          # Release the new artifact, if any — now that it is on main (tag points at the
+          # squash-merge commit on the default branch; asset is uploaded from disk).
           NEW=$(git show --name-only --pretty=format: HEAD | grep -E '^docs/artifacts/CCPlus_.*\.html$' || true)
           if [ -n "$NEW" ]; then
             BASENAME=$(basename "$NEW" .html)            # CCPlus_<timestamp>
