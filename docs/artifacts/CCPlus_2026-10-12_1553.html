@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.9 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.9</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated October 12, 2026 at 15:53 MPST · by Claude Opus 5.5 · prior version: 1.8</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5.5 — pass_with_edits</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>This period brought the biggest default changes in months. A new model generation arrived:
+  <strong>Claude Opus 5.5</strong> is now the default Opus model (v2.1.280), <strong>Sonnet 5.5</strong>
+  is the default Sonnet on the Anthropic API (v2.1.284), and <strong>Haiku 5.5</strong> is the default
+  Haiku there (v2.1.293). All three have 1M-token context windows.
+  <sup><a href="#r1">[1]</a></sup><sup><a href="#r5">[5]</a></sup><sup><a href="#r14">[14]</a></sup><sup><a href="#r18">[18]</a></sup>
+  Pro and Team Standard plans now default to Opus too, so the <code>default</code> model is Opus 5.5 on every
+  Anthropic plan. <sup><a href="#r1">[1]</a></sup><sup><a href="#r19">[19]</a></sup>
+  Second, <strong>auto mode is now the starting permission mode</strong> for interactive terminal and VS Code
+  sessions on every plan and provider when you haven't configured a mode (v2.1.283–284).
+  <sup><a href="#r4">[4]</a></sup><sup><a href="#r5">[5]</a></sup><sup><a href="#r20">[20]</a></sup>
+  Third, <strong>Claude Mods</strong> shipped (v2.1.287). Mods are plugins that run JavaScript/TypeScript
+  handlers inside Claude Code, so they can draw panes, add commands, and step into tool calls.
+  <sup><a href="#r8">[8]</a></sup><sup><a href="#r21">[21]</a></sup>
+  Other notable additions: <code>"attribution": false</code>, <code>maxProseWidth</code>,
+  <code>onFailure: "block"</code> for hooks, an <code>effort</code> parameter on the Agent tool, Ultracode as
+  its own toggle, and new managed model and provider controls (<code>deniedModels</code>,
+  <code>availableModelsMatch</code>, <code>allowedProviders</code>). Releases <code>v2.1.280</code>–<code>v2.1.296</code>
+  landed (no <code>v2.1.279</code> tag), so the CLI moved from <code>v2.1.278</code> to <code>v2.1.296</code>.
+  <sup><a href="#r22">[22]</a></sup></p>
+
+  <h2 id="whats-new">What's New</h2>
+
+  <h3>Models &amp; defaults</h3>
+  <ul>
+    <li><strong>Claude Opus 5.5 (<code>claude-opus-5-5</code>) is the default Opus (v2.1.280).</strong> It has a
+      1M context window and costs $4/$20 per Mtok, with cache reads at $0.20/Mtok. The models overview
+      recommends starting with it for most workloads, and lists its default API effort as <code>medium</code>.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r18">[18]</a></sup></li>
+    <li><strong>Claude Sonnet 5.5 (<code>claude-sonnet-5-5</code>) is the default Sonnet on the Anthropic API
+      (v2.1.284).</strong> 1M context, $2/$10 per Mtok, $0.10/Mtok cache reads (v2.1.284 first listed $0.20; v2.1.296 corrected the pricing).
+      <sup><a href="#r5">[5]</a></sup><sup><a href="#r17">[17]</a></sup><sup><a href="#r18">[18]</a></sup></li>
+    <li><strong>Claude Haiku 5.5 (<code>claude-haiku-5-5</code>) is the default Haiku on the Anthropic API
+      (v2.1.293).</strong> 1M context, $0.10/$0.50 per Mtok, rising to $0.50/$2.50 for prompts over 100K tokens.
+      <sup><a href="#r14">[14]</a></sup><sup><a href="#r18">[18]</a></sup></li>
+    <li><strong>Opus is now the default on Pro and Team Standard (v2.1.280).</strong> Those plans used to default to
+      Sonnet. They now match Max, Team Premium and Enterprise. The model docs list <code>default</code> → Opus 5.5
+      for Pro, Max, Team, Enterprise and the Anthropic API. On the Anthropic API, the
+      <code>opus</code>/<code>sonnet</code>/<code>haiku</code> aliases resolve to the 5.5 models; other providers
+      resolve some aliases to earlier versions. <sup><a href="#r1">[1]</a></sup><sup><a href="#r19">[19]</a></sup></li>
+    <li><strong>Effort carry-over changes (v2.1.280).</strong> An effort level saved before <code>/effort</code>
+      became per-model no longer applies to newly released models such as Opus 5.5; they start at their own
+      default. Opus 4.7, Opus 4.8 and Fable 5 no longer hold their launch-default effort over an explicitly
+      configured level. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>1M context by default beyond the Anthropic API.</strong> Sessions behind a custom
+      <code>ANTHROPIC_BASE_URL</code> now use the 1M window of models that have one (v2.1.285). Opus 4.7+ and Fable
+      default to 1M on Bedrock, Vertex, Foundry and the Claude apps gateway without a <code>[1m]</code> suffix
+      (v2.1.287). <code>CLAUDE_CODE_DISABLE_1M_CONTEXT=1</code> keeps 200K, and <code>/autocompact 200k</code>
+      helps if a gateway stops at 200K. <sup><a href="#r6">[6]</a></sup><sup><a href="#r8">[8]</a></sup></li>
+    <li><strong>Ultracode is its own toggle (v2.1.284).</strong> Toggle it with Tab in <code>/effort</code> or
+      <code>/effort ultracode [on|off]</code>. It no longer forces <code>xhigh</code> effort and stays on at any
+      effort level. <sup><a href="#r5">[5]</a></sup><sup><a href="#r19">[19]</a></sup></li>
+  </ul>
+
+  <h3>Permissions &amp; auto mode</h3>
+  <ul>
+    <li><strong>Auto mode is the starting mode (v2.1.283–284).</strong> In v2.1.283, interactive sessions on
+      third-party providers or with telemetry off began starting in auto mode when no permission mode is
+      configured. v2.1.284 extended this to interactive terminal and VS Code sessions on every plan and provider.
+      <code>permissions.defaultMode</code> still overrides it. v2.1.285 did the same for <code>claude -p</code>
+      and Python Agent SDK sessions on third-party providers or with telemetry off, where
+      <code>--permission-mode</code> still wins.
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r5">[5]</a></sup><sup><a href="#r6">[6]</a></sup><sup><a href="#r20">[20]</a></sup></li>
+    <li><strong>Server-side classifier is stricter and wider (v2.1.281–282).</strong> Where the classifier runs
+      server-side, read-only and sandboxed shell commands now also wait for its review.
+      <code>CLAUDE_CODE_AUTO_MODE_SERVER</code> now applies on direct Anthropic API connections too
+      (<code>0</code> opts out, <code>1</code> opts in), which reverses the v1.8 note that the API ignored it. The
+      server-side classifier is also the default on the direct API when telemetry is off.
+      <sup><a href="#r2">[2]</a></sup><sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Safer unattended <code>rm</code> (v2.1.281).</strong> A recursive <code>rm</code> whose target
+      comes only from command substitution (e.g. <code>rm -rf "$(pwd)"</code>) now asks, even under
+      <code>--dangerously-skip-permissions</code>. In skip-permissions and auto mode, the dangerous-<code>rm</code>
+      prompt now waits 2 minutes and then denies the command with a rewrite hint.
+      <code>CLAUDE_CODE_DISABLE_DANGEROUS_RM_TIMEOUT=1</code> turns the timeout off.
+      <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>"Yes, but ask again next time" (v2.1.284).</strong> Auto mode's prompt before a read outside the
+      working directories can now allow one read without allowing later ones. <sup><a href="#r5">[5]</a></sup></li>
+  </ul>
+
+  <h3>Mods, hooks &amp; plugins</h3>
+  <ul>
+    <li><strong>Claude Mods (v2.1.287).</strong> Plugins can now change deeper behavior through in-process
+      JS/TS event handlers. They can draw panes and bands, rewrite tool calls and prompts, and add instant
+      <code>/commands</code>. Mods are on by default from v2.1.287, are not sandboxed, and run with your
+      permissions, so install them only from trusted marketplaces. <code>disableAllHooks</code> or
+      <code>--safe-mode</code> turns installed mods off. Before installing, <code>claude plugin validate</code> lists
+      what a mod hooks and calls. Later releases extended the mods API (<code>agent.spawn</code>,
+      <code>prompt.autocomplete</code>, <code>$.ui.notify</code>, cached <code>$.model.complete</code>).
+      <sup><a href="#r8">[8]</a></sup><sup><a href="#r10">[10]</a></sup><sup><a href="#r13">[13]</a></sup><sup><a href="#r16">[16]</a></sup><sup><a href="#r21">[21]</a></sup></li>
+    <li><strong>"You should know" built-in mod (v2.1.287).</strong> A side agent watches longer tasks and flags
+      things you or Claude might miss. It is off by default; enable it with
+      <code>/plugin enable cc-plugin-you-should-know@builtin</code> (first-party sessions with telemetry on).
+      <sup><a href="#r8">[8]</a></sup><sup><a href="#r21">[21]</a></sup></li>
+    <li><strong><code>onFailure: "block"</code> for command and HTTP hooks (v2.1.295).</strong> With this set, a
+      hook that can't start, times out, or exits with an unexpected code blocks the action. Without it, the
+      action goes through. <sup><a href="#r16">[16]</a></sup></li>
+    <li><strong>Plugin CLI additions.</strong> <code>claude plugin configure</code> and
+      <code>plugin install --config &lt;server&gt;.&lt;key&gt;=&lt;value&gt;</code> (v2.1.285)
+      <sup><a href="#r6">[6]</a></sup>; <code>claude plugin install --marketplace &lt;source&gt;</code> (v2.1.292)
+      <sup><a href="#r13">[13]</a></sup>; and MCP-server checks in <code>claude plugin validate</code> (v2.1.281).
+      <sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h3>Agents, tools &amp; sessions</h3>
+  <ul>
+    <li><strong>Per-subagent effort and compaction.</strong> The Agent tool gained an <code>effort</code> parameter
+      (v2.1.292). Subagent frontmatter and <code>--agents</code> gained <code>autoCompactWindow</code>, and
+      <code>CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL</code> pins every workflow agent to one model (v2.1.296).
+      <sup><a href="#r13">[13]</a></sup><sup><a href="#r17">[17]</a></sup></li>
+    <li><strong>Background command time limit (v2.1.285, narrowed v2.1.288).</strong> Background Bash/PowerShell
+      commands stop at their <code>timeout</code> (default 30 min, max 2 h), but only in unattended sessions
+      (<code>-p</code>, Agent SDK, CI, cloud). Interactive sessions have no limit.
+      <sup><a href="#r6">[6]</a></sup><sup><a href="#r9">[9]</a></sup></li>
+    <li><strong>WebSearch budget refills (v2.1.290).</strong> Interactive sessions now get 100 calls/hour on a
+      rolling basis, replacing the old hard stop at 200 calls (<code>CLAUDE_CODE_WEB_SEARCH_REFILLS_PER_HOUR</code>
+      sets the rate). <code>CLAUDE_CODE_DISABLE_WEB_FETCH</code> turns WebFetch off (v2.1.285).
+      <sup><a href="#r11">[11]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Bigger MCP description limits.</strong> Up-front MCP tool descriptions and server instructions now
+      allow 4,096 characters, up from 2,048 (v2.1.296). Descriptions loaded through tool search allow 16,384
+      (v2.1.295). <code>CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH</code> overrides the cap (v2.1.280).
+      <sup><a href="#r17">[17]</a></sup><sup><a href="#r16">[16]</a></sup><sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Send-now backgrounds instead of cancelling (v2.1.281).</strong> <code>Ctrl+Enter</code> now moves
+      running tools to the background instead of cancelling the turn. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong><code>--bare</code> is barer (v2.1.286).</strong> It connects only the MCP servers named on the
+      command line, sends no system reminders, and starts no background tasks.
+      <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Misc.</strong> <code>/doctor prompt-audit</code> audits CLAUDE.md, skills, agents and commands for
+      prompting patterns written for older models (v2.1.283) <sup><a href="#r4">[4]</a></sup>;
+      <code>/mcp reconnect all</code> (v2.1.284) <sup><a href="#r5">[5]</a></sup>; <code>claude --desktop</code>
+      (v2.1.285) <sup><a href="#r6">[6]</a></sup>; <code>/code-review --max-findings</code> and Up-arrow recovery of
+      a prompt cleared with Ctrl+C (v2.1.288) <sup><a href="#r9">[9]</a></sup>; the Read tool's
+      <code>allow_large</code> option (v2.1.296). <sup><a href="#r17">[17]</a></sup></li>
+  </ul>
+
+  <h3>Settings &amp; enterprise controls</h3>
+  <ul>
+    <li><strong><code>"attribution": false</code> (v2.1.281).</strong> Hides all commit and PR attribution. Older
+      CLIs skip a settings file that contains it, so keep the object form in files shared across versions.
+      <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong><code>maxProseWidth</code> (v2.1.282).</strong> Caps how wide Claude's prose runs in wide terminals,
+      while tables and code blocks keep the full width. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Model and provider allow/deny (v2.1.283, v2.1.285).</strong> These are managed settings only.
+      <code>deniedModels</code> blocks named models even when <code>availableModels</code> allows them.
+      <code>availableModelsMatch: "exact"</code> keeps new releases blocked until they are listed.
+      <code>allowedProviders</code> limits which API providers a machine may use.
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r6">[6]</a></sup><sup><a href="#r19">[19]</a></sup></li>
+    <li><strong>Project settings can do less (v2.1.282–290).</strong> Project and local settings now ignore
+      OpenTelemetry export, endpoint and content-capture variables (v2.1.282). They can no longer widen or turn
+      off an admin-required sandbox (v2.1.285). They can no longer turn on Claude in Chrome or set
+      <code>CLAUDE_CODE_DISABLE_ATTACHMENTS</code> (v2.1.290).
+      <sup><a href="#r3">[3]</a></sup><sup><a href="#r6">[6]</a></sup><sup><a href="#r11">[11]</a></sup></li>
+    <li><strong>Reserved skill namespaces (v2.1.282).</strong> Local skills, commands and MCP servers named
+      <code>anthropic-skills</code> or <code>claude-ai</code> no longer load or list skills, and
+      <code>Skill(anthropic-skills:*)</code> allow rules now cover only skills synced from claude.ai.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>MCP protocol default (v2.1.292, v2.1.295).</strong> Local stdio servers and claude.ai connectors
+      now negotiate MCP 2026-07-28 by default; <code>MCP_PROTOCOL_NEGOTIATION=legacy</code> opts out.
+      <sup><a href="#r13">[13]</a></sup><sup><a href="#r16">[16]</a></sup></li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Re-tune effort for Opus 5.5.</strong> Opus 5.5 defaults to <code>medium</code> on the API, and old
+      saved effort levels no longer carry over to it. Try the default first, raise it with <code>/effort</code>
+      for hard tasks, and use Fable 5.1 when Opus 5.5 at higher effort still falls short.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r18">[18]</a></sup><sup><a href="#r19">[19]</a></sup></li>
+    <li><strong>Run cheap subagents cheaply.</strong> Use the Agent tool's new <code>effort</code> parameter (or ask
+      Claude for a low-effort subagent) for search and summarization fan-outs, and give long-running subagents an
+      earlier <code>autoCompactWindow</code>. <sup><a href="#r13">[13]</a></sup><sup><a href="#r17">[17]</a></sup></li>
+    <li><strong>Audit your prompts for the new models.</strong> Run <code>/doctor prompt-audit</code> to find
+      CLAUDE.md, skill and agent wording written for older models. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Make guard hooks fail closed.</strong> For security-critical PreToolUse command/HTTP hooks, set
+      <code>onFailure: "block"</code> so a crashed or timed-out hook can't silently let an action through.
+      <sup><a href="#r16">[16]</a></sup></li>
+    <li><strong>Vet mods before installing.</strong> Run <code>claude plugin validate ./some-mod</code> and read its
+      <code>hooks:</code>/<code>calls:</code> lines, because a mod runs unsandboxed with your permissions.
+      <sup><a href="#r21">[21]</a></sup></li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No new community "hacks" this period. Community sources (Hacker News, Reddit, and general WebSearch) were
+  unreachable in this CI run, so nothing met the bar of two or more distinct, reputable sources for a
+  reproducible technique. Everything above comes from the authoritative GitHub release notes and the Claude and
+  Claude Code documentation. <sup><a href="#r22">[22]</a></sup></p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Decide your starting permission mode explicitly.</strong> Auto mode is now the built-in start. If
+      your team or a sensitive repo should start in Manual or <code>acceptEdits</code>, set
+      <code>permissions.defaultMode</code> in settings rather than relying on the old default.
+      <sup><a href="#r5">[5]</a></sup><sup><a href="#r20">[20]</a></sup></li>
+    <li><strong>Pin or gate models deliberately (admins).</strong> Use <code>availableModelsMatch: "exact"</code>
+      if you want to approve each new model release before rollout, and <code>deniedModels</code> to block specific
+      ones. Remove stale <code>ANTHROPIC_DEFAULT_*_MODEL</code> pins that hold you on older models unintentionally.
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r19">[19]</a></sup></li>
+    <li><strong>Switch attribution off the simple way if you need to.</strong> Use <code>"attribution": false</code>
+      only in files read by v2.1.281+ CLIs. Keep the object form in shared files.
+      <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Set <code>maxProseWidth</code></strong> if you work in very wide terminals.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Move telemetry config out of project settings.</strong> OTel export variables in
+      <code>.claude/settings.json</code> are now ignored. Set them in user or managed settings or the environment.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Check gateways for 1M context.</strong> If your <code>ANTHROPIC_BASE_URL</code> gateway or cloud
+      provider can't serve 1M, set <code>/autocompact 200k</code> or <code>CLAUDE_CODE_DISABLE_1M_CONTEXT=1</code>.
+      <sup><a href="#r6">[6]</a></sup><sup><a href="#r8">[8]</a></sup></li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p><strong>What changed since v1.8:</strong></p>
+  <ul>
+    <li><strong>Added:</strong> Opus 5.5 (v2.1.280), Sonnet 5.5 (v2.1.284) and Haiku 5.5 (v2.1.293)
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r5">[5]</a></sup><sup><a href="#r14">[14]</a></sup>;
+      Claude Mods and the "You should know" built-in mod (v2.1.287) <sup><a href="#r8">[8]</a></sup>;
+      <code>"attribution": false</code> (v2.1.281) <sup><a href="#r2">[2]</a></sup>; <code>maxProseWidth</code>
+      (v2.1.282) <sup><a href="#r3">[3]</a></sup>; <code>deniedModels</code>, <code>availableModelsMatch</code>,
+      <code>/doctor prompt-audit</code> (v2.1.283) <sup><a href="#r4">[4]</a></sup>; <code>allowedProviders</code>,
+      <code>claude plugin configure</code>, <code>claude --desktop</code>, <code>CLAUDE_CODE_DISABLE_WEB_FETCH</code>
+      (v2.1.285) <sup><a href="#r6">[6]</a></sup>; the Agent-tool <code>effort</code> parameter (v2.1.292)
+      <sup><a href="#r13">[13]</a></sup>; <code>onFailure: "block"</code> (v2.1.295) <sup><a href="#r16">[16]</a></sup>;
+      and <code>autoCompactWindow</code> plus <code>CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL</code> (v2.1.296).
+      <sup><a href="#r17">[17]</a></sup></li>
+    <li><strong>Updated:</strong> the default model on Pro/Team Standard is now Opus (v2.1.280)
+      <sup><a href="#r1">[1]</a></sup>. Auto mode is the starting permission mode everywhere (v2.1.283–285)
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r5">[5]</a></sup><sup><a href="#r6">[6]</a></sup>.
+      <code>CLAUDE_CODE_AUTO_MODE_SERVER</code> now applies on the direct API, superseding v1.8's "not read on direct
+      API" (v2.1.281) <sup><a href="#r2">[2]</a></sup>. Ultracode is a separate toggle (v2.1.284)
+      <sup><a href="#r5">[5]</a></sup>. 1M context is the default on gateways and cloud providers (v2.1.285, v2.1.287)
+      <sup><a href="#r6">[6]</a></sup><sup><a href="#r8">[8]</a></sup>. The WebSearch budget now refills (v2.1.290)
+      <sup><a href="#r11">[11]</a></sup>. MCP description caps went up to 4,096/16,384 characters (v2.1.295–296)
+      <sup><a href="#r16">[16]</a></sup><sup><a href="#r17">[17]</a></sup>. Send-now backgrounds tools instead of
+      cancelling the turn (v2.1.281). <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Removed / reverted:</strong> v2.1.280 reverted the v2.1.260 <code>ctrl+l</code>/<code>cmd+k</code>
+      transcript clear, and dialogs no longer accept a stray <code>y</code>/<code>n</code>
+      <sup><a href="#r1">[1]</a></sup>. <code>claude project purge</code> was renamed <code>claude purge</code>
+      (v2.1.288) <sup><a href="#r9">[9]</a></sup>. <code>pyright</code> is no longer treated as read-only
+      (v2.1.290). <sup><a href="#r11">[11]</a></sup></li>
+    <li><strong>Bugfix/regression-only:</strong> <code>v2.1.289</code> was fixes plus one mods-API addition
+      <sup><a href="#r10">[10]</a></sup>. <code>v2.1.291</code> fixed v2.1.288/290 regressions
+      <sup><a href="#r12">[12]</a></sup>. <code>v2.1.294</code> fixed <code>prompt</code>/<code>agent</code> hooks
+      written as instructions allowing what they should block. <sup><a href="#r15">[15]</a></sup></li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="r1">Claude Code Release v2.1.280 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.280">github.com/anthropics/claude-code/releases/tag/v2.1.280</a> (accessed 2026-10-12).</li>
+    <li id="r2">Claude Code Release v2.1.281 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.281">github.com/anthropics/claude-code/releases/tag/v2.1.281</a> (accessed 2026-10-12).</li>
+    <li id="r3">Claude Code Release v2.1.282 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.282">github.com/anthropics/claude-code/releases/tag/v2.1.282</a> (accessed 2026-10-12).</li>
+    <li id="r4">Claude Code Release v2.1.283 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.283">github.com/anthropics/claude-code/releases/tag/v2.1.283</a> (accessed 2026-10-12).</li>
+    <li id="r5">Claude Code Release v2.1.284 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.284">github.com/anthropics/claude-code/releases/tag/v2.1.284</a> (accessed 2026-10-12).</li>
+    <li id="r6">Claude Code Release v2.1.285 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.285">github.com/anthropics/claude-code/releases/tag/v2.1.285</a> (accessed 2026-10-12).</li>
+    <li id="r7">Claude Code Release v2.1.286 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.286">github.com/anthropics/claude-code/releases/tag/v2.1.286</a> (accessed 2026-10-12).</li>
+    <li id="r8">Claude Code Release v2.1.287 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.287">github.com/anthropics/claude-code/releases/tag/v2.1.287</a> (accessed 2026-10-12).</li>
+    <li id="r9">Claude Code Release v2.1.288 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.288">github.com/anthropics/claude-code/releases/tag/v2.1.288</a> (accessed 2026-10-12).</li>
+    <li id="r10">Claude Code Release v2.1.289 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.289">github.com/anthropics/claude-code/releases/tag/v2.1.289</a> (accessed 2026-10-12).</li>
+    <li id="r11">Claude Code Release v2.1.290 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.290">github.com/anthropics/claude-code/releases/tag/v2.1.290</a> (accessed 2026-10-12).</li>
+    <li id="r12">Claude Code Release v2.1.291 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.291">github.com/anthropics/claude-code/releases/tag/v2.1.291</a> (accessed 2026-10-12).</li>
+    <li id="r13">Claude Code Release v2.1.292 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.292">github.com/anthropics/claude-code/releases/tag/v2.1.292</a> (accessed 2026-10-12).</li>
+    <li id="r14">Claude Code Release v2.1.293 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.293">github.com/anthropics/claude-code/releases/tag/v2.1.293</a> (accessed 2026-10-12).</li>
+    <li id="r15">Claude Code Release v2.1.294 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.294">github.com/anthropics/claude-code/releases/tag/v2.1.294</a> (accessed 2026-10-12).</li>
+    <li id="r16">Claude Code Release v2.1.295 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.295">github.com/anthropics/claude-code/releases/tag/v2.1.295</a> (accessed 2026-10-12).</li>
+    <li id="r17">Claude Code Release v2.1.296 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.296">github.com/anthropics/claude-code/releases/tag/v2.1.296</a> (accessed 2026-10-12).</li>
+    <li id="r18">Models overview — Claude Platform documentation, Anthropic —
+      <a href="https://platform.claude.com/docs/en/about-claude/models/overview">platform.claude.com/docs/en/about-claude/models/overview</a> (accessed 2026-10-12).</li>
+    <li id="r19">Model configuration — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/model-config">code.claude.com/docs/en/model-config</a> (accessed 2026-10-12).</li>
+    <li id="r20">Choose a permission mode — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/permission-modes">code.claude.com/docs/en/permission-modes</a> (accessed 2026-10-12).</li>
+    <li id="r21">Mods overview — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/plugins/mods/overview">code.claude.com/docs/en/plugins/mods/overview</a> (accessed 2026-10-12).</li>
+    <li id="r22">Claude Code Releases (index) — GitHub, Anthropic —
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a> (accessed 2026-10-12).</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5.5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>
