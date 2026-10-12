@@ -105,8 +105,11 @@ artifact's review annotation block.
    `{ "timestamp": "...", "status": "generated", "version": "1.x", "artifact": "docs/artifacts/CCPlus_<ts>.html", "new_items": <n>, "review_verdict": "...", "summary": "..." }`
 3. Regenerate `docs/index.html` from all files in `docs/artifacts/` (newest first; show version,
    date, model, and a one-line summary / top tips preview per entry).
-4. Commit and push. Then create a GitHub Release tagged `v1.x` (or `CCPlus_<ts>`) with the
-   artifact attached and the summary as notes.
+4. Publish — `main` is a protected branch (requires the `verify` check), so never push to `main`
+   directly: commit the changes to a short-lived `ccplus/run-*` branch, open a PR, and let it
+   auto-merge once `verify` passes. After the merge lands, create a GitHub Release tagged `v1.x`
+   (or `CCPlus_<ts>`) with the artifact attached and the summary as notes. (In the GitHub Actions
+   run the workflow performs this publishing for you — just stage all changes.)
 
 ## Guardrails
 

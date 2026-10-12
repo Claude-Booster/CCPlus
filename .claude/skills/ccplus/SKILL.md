@@ -17,8 +17,10 @@ Routine runs; use it for an ad-hoc refresh or a forced build.
      cross-model review and version bump).
    - default (no arg) → respect the significance rubric (may end as notify-only).
 3. Run the cross-model review via `prompts/review-ccplus.md` on the opposite model.
-4. Update `state/state.json`, `state/runlog.json`, regenerate `docs/index.html`, commit, push,
-   and create the GitHub Release (skip release if not authenticated).
+4. Update `state/state.json`, `state/runlog.json`, regenerate `docs/index.html`, then publish:
+   `main` is protected, so commit to a short-lived `ccplus/run-*` branch, open a PR, and
+   auto-merge it once `verify` passes (never push to `main` directly). Create the GitHub Release
+   after the merge (skip release if not authenticated).
 5. Report back: the version produced (or `no-update`), the artifact path, the review verdict,
    and the published URL.
 

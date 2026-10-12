@@ -100,8 +100,9 @@ Add **one** credential as a repo secret at
 | **B. OAuth token** | `CLAUDE_CODE_OAUTH_TOKEN` | Generated via `claude setup-token`; uses a Claude subscription instead of PAYG. Availability depends on your Enterprise plan — confirm with your admin. |
 | **C. Bedrock/Vertex** | (cloud creds) | If your organization already has Claude via AWS Bedrock / Google Vertex, authenticate the action with cloud credentials instead of an Anthropic key. Requires editing the workflow per the action's provider docs. |
 
-Then: **Actions tab → CCPlus weekly → Run workflow** to test. New artifacts publish to GitHub
-Pages automatically (push to `main` rebuilds Pages) and a GitHub Release is created.
+Then: **Actions tab → CCPlus weekly → Run workflow** to test. The run opens an auto-merging PR
+(see §A3); once it merges to `main`, GitHub Pages rebuilds automatically and a GitHub Release is
+created.
 
 > Verify the `anthropics/claude-code-action` version and input names against its current docs
 > before enabling — the action evolves frequently.
@@ -116,10 +117,25 @@ So the workflow (a) publishes through an **auto-merged PR** instead of pushing t
 
 ### A3.1 — Create the PAT (once)
 
-1. Go to <https://github.com/settings/tokens/new> (signed in as the account with admin on
-   `Claude-Booster/CCPlus`, i.e. **fredman08**).
-2. Scopes: **`repo`** + **`workflow`**. Set an expiry you'll remember to rotate.
-3. Generate and copy the token (shown once).
+Signed in as the account with admin on `Claude-Booster/CCPlus` (i.e. **fredman08**), create a PAT
+with the **minimum** permissions below. The same token is used both as the `CCPLUS_PAT` secret and
+in the cron-job.org Authorization header, so it must cover the git push, the PR + auto-merge, the
+release, and the `repository_dispatch` call.
+
+**Fine-grained token (recommended — least privilege)** at
+<https://github.com/settings/personal-access-tokens/new>:
+- **Repository access:** Only select repositories → `Claude-Booster/CCPlus`
+- **Permissions:**
+  - **Contents:** Read and write — push the `ccplus/run-*` branch, create the Release, fire `repository_dispatch`
+  - **Pull requests:** Read and write — open the PR and enable auto-merge
+  - **Metadata:** Read-only (auto-selected)
+- *Workflows permission is NOT needed* — the run never edits `.github/workflows/`.
+
+**Classic token** at <https://github.com/settings/tokens/new>: scope **`repo`** only.
+(`repo` is required even though the repo is public — the `repository_dispatch` endpoint mandates it;
+`public_repo` is not enough. `workflow` scope is NOT needed.)
+
+Set an expiry you'll remember to rotate, then generate and copy the token (shown once).
 
 ### A3.2 — Store it as a repo secret
 

@@ -94,7 +94,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${GH_TOKEN:-}" ]; then
-            echo "::error title=CCPLUS_PAT missing::Add a repo secret CCPLUS_PAT (classic PAT, scopes repo+workflow) so the publish PR can run verify and auto-merge. See SETUP.md §A3."
+            echo "::error title=CCPLUS_PAT missing::Add a repo secret CCPLUS_PAT (fine-grained: Contents + Pull requests RW; or classic scope 'repo') so the publish PR can run verify and auto-merge. See SETUP.md §A3."
             exit 1
           fi
           git config user.name  "ccplus-bot"
