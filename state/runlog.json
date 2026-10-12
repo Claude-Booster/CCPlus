@@ -120,6 +120,16 @@
       "new_items": 0,
       "checked_sources": 3,
       "note": "No significant Claude Code updates. GitHub Releases API: newest is still v2.1.162 (2026-06-03), already recorded; v2.1.159-162 are bugfixes and minor UX (e.g. `claude agents --json waitingFor`, `/effort` persistence confirmation, click-to-fill slash commands, Windsurf->Devin Desktop rename, WebFetch/Windows permission-rule fixes). No new release, default model, flag, or config change beyond what is in state.json. Anthropic news (Jun 2-3) was corporate (Claude Partner Network Services Track, AI-cyber-threats report, Project Glasswing, draft S-1); Opus 4.8 already recorded. Hacker News (last 7 days) held only low-engagement (1-10 pts) Show HN/Ask HN product posts and one YC company launch, with no >=2-source corroborated reproducible technique. Reddit and WebSearch were unavailable in CI. Significance rubric not met."
+    },
+    {
+      "timestamp": "2026-10-12_1553",
+      "status": "generated",
+      "version": "1.9",
+      "artifact": "docs/artifacts/CCPlus_2026-10-12_1553.html",
+      "new_items": 53,
+      "review_verdict": "pass_with_edits",
+      "forced": true,
+      "summary": "Significant (FORCE also set): Opus 5.5 / Sonnet 5.5 / Haiku 5.5 new defaults, Pro/Team Standard default to Opus, auto mode as starting permission mode, Claude Mods, attribution:false, maxProseWidth, onFailure:block hooks, Agent-tool effort, deniedModels/availableModelsMatch/allowedProviders. Releases v2.1.280-v2.1.296; CLI now v2.1.296. Community sources (HN/Reddit/WebSearch) unreachable in CI; no hacks."
     }
   ]
 }
