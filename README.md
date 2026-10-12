@@ -47,7 +47,7 @@ Prior versions are **never overwritten** — each run produces a new timestamped
 
 | Mode | How |
 |------|-----|
-| **Weekly (scheduled)** | GitHub Actions cron — Mon 05:00 UTC = 13:00 Asia/Manila |
+| **Weekly (scheduled)** | External scheduler → `repository_dispatch` — Mon 13:00 PHT (Asia/Manila) |
 | **On demand (Actions)** | Actions tab → **CCPlus weekly** → **Run workflow** (check **force** to build even with no significant updates) |
 | **On demand (local)** | `/ccplus` skill in any Claude Code session on this repo (`.claude/skills/ccplus/SKILL.md`) |
 

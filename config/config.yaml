@@ -14,7 +14,9 @@ models:
   # If the routine is forced to run on Sonnet, swap these (reviewer must be opus).
 
 schedule:
-  cron: "0 13 * * 1"        # Mondays 13:00 local; set timezone when creating the routine
+  # Target cadence. Active engine is fired by an external scheduler (cron-job.org →
+  # repository_dispatch) at this time — see SETUP.md §A3. Also used by the Routine if re-enabled.
+  cron: "0 13 * * 1"        # Mondays 13:00 Asia/Manila
   timezone: Asia/Manila
 
 # What counts as "significant" enough to generate a new artifact.

@@ -28,7 +28,7 @@ or on demand, and skipped (notification only) when nothing significant has chang
 | 5 | v1.0 covers all recommended default-config improvements to date | ✅ |
 | 6 | Never overwrite — a new artifact per version | ✅ (timestamped files + Releases) |
 | 7 | Accessible / shareable to others | ✅ (public GitHub Pages + Releases) |
-| 8 | Weekly schedule **or** by request/trigger | ✅ GitHub Actions cron + `/ccplus` skill |
+| 8 | Weekly schedule **or** by request/trigger | ✅ external scheduler → `repository_dispatch` + `/ccplus` skill |
 | 9 | No artifact if nothing significant — notify instead | ✅ issue comment + GitHub Watch email |
 | 10 | Cross-model review (Opus ⇄ Sonnet) for accuracy | ✅ |
 
@@ -37,8 +37,12 @@ or on demand, and skipped (notification only) when nothing significant has chang
 - **Engine:** **GitHub Actions** (`.github/workflows/ccplus.yml`), credential `CLAUDE_CODE_OAUTH_TOKEN`
   set — uses Enterprise subscription, no PAYG billing. Claude Code on the web / Routines are
   disabled for this account; if enabled later, see `SETUP.md §A` to switch.
-- **Schedule:** Mondays 05:00 UTC (= 13:00 Asia/Manila); on-demand via the `/ccplus` skill or
-  Actions **Run workflow** button.
+- **Schedule:** an external scheduler (cron-job.org) fires a `repository_dispatch` (type
+  `ccplus-weekly`) at **Mon 13:00 Asia/Manila** — GitHub's own `schedule` ran hours late, so it
+  was dropped. On-demand via the `/ccplus` skill or the Actions **Run workflow** button.
+- **Publishing:** `main` is a protected branch (requires the `verify` check), so the workflow
+  commits to a `ccplus/run-*` branch and auto-merges a PR once `verify` passes (needs the
+  `CCPLUS_PAT` secret + "Allow auto-merge"); the Release is created after the merge lands.
 - **Format:** self-contained Anthropic-styled HTML.
 - **Hosting / sharing:** public GitHub Pages from `docs/`, plus a GitHub Release per version.
 - **Notifications:** a rolling **"📋 CCPlus run log"** GitHub issue receives one comment per run
@@ -50,9 +54,9 @@ or on demand, and skipped (notification only) when nothing significant has chang
 ## 4. Architecture
 
 ```
-GitHub Actions cron (Mon 05:00 UTC)  ─┐
-/ccplus (on demand)                   ├─►  generate-ccplus.md (Opus)
-Actions "Run workflow"               ─┘         │
+External scheduler → repository_dispatch (Mon 13:00 PHT) ─┐
+/ccplus (on demand)                                       ├─►  generate-ccplus.md (Opus)
+Actions "Run workflow"                                   ─┘         │
                                                 ▼
         1. Gather   — WebFetch over config/sources.yaml → structured JSON
         2. Dedupe   — drop items already in state/state.json
@@ -61,8 +65,8 @@ Actions "Run workflow"               ─┘         │
               ▼ significant
         4. Generate — fill templates/template.html → docs/artifacts/CCPlus_<ts>.html
         5. Review   — Sonnet subagent (review-ccplus.md): pass / pass_with_edits / fail
-        6. Publish  — update state + runlog, regenerate docs/index.html, commit & push,
-                      create GitHub Release
+        6. Publish  — update state + runlog, regenerate docs/index.html, commit to a
+                      ccplus/run-* branch → auto-merge PR (verify gate) → GitHub Release
                                                 ▼
         Workflow posts issue comment on "📋 CCPlus run log" → GitHub Watch emails watchers
 ```

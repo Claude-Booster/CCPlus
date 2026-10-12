@@ -65,17 +65,25 @@ search_seeds:
   - "Claude Code subagents workflow {month} {year}"
 ```
 
-## Step 4 — Push it (required — the engine runs in the cloud)
+## Step 4 — Open a PR (required — the engine runs in the cloud)
 
-The weekly run executes on GitHub's runner, so local edits only take effect after you push:
+The weekly run executes on GitHub's runner, so local edits only take effect after they land on
+`main`. `main` is a **protected branch** (requires the `verify` check), so push a branch and open a
+PR rather than pushing to `main` directly:
 
 ```powershell
 # Run from the repo root, or point -C at your clone via $env:USERPROFILE.
-git -C "$env:USERPROFILE\CCPlus" add config/sources.yaml
-git -C "$env:USERPROFILE\CCPlus" commit -m "Add sources: Simon Willison, Anthropic YouTube"
-git -C "$env:USERPROFILE\CCPlus" pull --rebase
-git -C "$env:USERPROFILE\CCPlus" push
+$repo = "$env:USERPROFILE\CCPlus"
+git -C $repo checkout -b add-sources
+git -C $repo add config/sources.yaml
+git -C $repo commit -m "Add sources: Simon Willison, Anthropic YouTube"
+git -C $repo push -u origin add-sources
+gh pr create --repo Claude-Booster/CCPlus --base main --head add-sources `
+  --title "Add sources" --body "New research sources."
+gh pr merge add-sources --repo Claude-Booster/CCPlus --squash --auto --delete-branch
 ```
+
+The PR auto-merges once `verify` passes.
 
 ## Step 5 — (Optional) test immediately
 
