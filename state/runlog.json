@@ -140,6 +140,13 @@
       "checked_sources": 7,
       "review_verdict": "pass",
       "summary": "Significant: idle compaction (new default), MCP allow rules match only the named server, hook updatedInput validation, UserPromptSubmit before skill expansion, fork subagents default-on in -p/SDK/desktop/VS Code, -p on third-party providers starts in default mode, CLAUDE_CODE_AUTO_MODE_MODEL, gzip request bodies, OTel cache/classifier attributes. Releases v2.1.299-v2.1.303; CLI now v2.1.303. Docs release-notes URL now 404s; changelog lives at code.claude.com/docs/en/changelog. HN sweep found no corroborated technique; Reddit/WebSearch unavailable; no hacks."
+    },
+    {
+      "timestamp": "2026-10-19_1318",
+      "status": "no-update",
+      "new_items": 0,
+      "checked_sources": 4,
+      "note": "No significant Claude Code updates this week. Re-run ~16 min after v1.10 (2026-10-19_1302): GitHub Releases API latest is still v2.1.303 (2026-10-18, bugfix-only, already in ledger); docs changelog top entry also 2.1.303; Anthropic news has no Claude Code/model/Enterprise-default posts since (Oct 18 'Investing in the public benefit' is unrelated). code.claude.com/docs/en/release-notes returned 404 (changelog lives at /docs/en/changelog); HN/Reddit not checked in CI."
     }
   ]
 }
