@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.10 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.10</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated October 19, 2026 at 13:02 MPST · by Claude Opus 5.5 · prior version: 1.9</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5.5 — pass</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>There was no new model this week, but several defaults changed. Releases <code>v2.1.299</code>–<code>v2.1.303</code>
+  landed (there are no <code>v2.1.297</code> or <code>v2.1.298</code> tags), so the CLI moved from <code>v2.1.296</code> to
+  <code>v2.1.303</code>. <sup><a href="#r8">[8]</a></sup><sup><a href="#r9">[9]</a></sup>
+  The biggest change is <strong>idle compaction</strong>. The terminal now compacts a conversation of 200K+ tokens
+  that has sat idle for about 54 minutes, just before its one-hour prompt cache expires, so your next message
+  doesn't pay to reprocess the whole thing (v2.1.299). It can be tuned or turned off. <sup><a href="#r1">[1]</a></sup><sup><a href="#r4">[4]</a></sup><sup><a href="#r6">[6]</a></sup>
+  Permissions got stricter in two places. <strong>MCP allow rules now match only the server they name</strong>, and
+  the <code>updatedInput</code> that hooks return is now validated like Claude's own tool input (v2.1.299–300).
+  <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup><sup><a href="#r7">[7]</a></sup>
+  Fork subagents are now on by default in <code>claude -p</code>, the Agent SDK, the desktop app and VS Code, and
+  <code>claude -p</code> on third-party providers goes back to starting in <code>default</code> mode rather than auto
+  (v2.1.302). <sup><a href="#r4">[4]</a></sup>
+  Smaller additions include <code>CLAUDE_CODE_AUTO_MODE_MODEL</code>, <code>CLAUDE_CODE_DISABLE_FILE_MENTIONS</code>,
+  gzip for large API requests, new OpenTelemetry attributes, and a <code>%</code> motion in vim mode.
+  <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup><sup><a href="#r3">[3]</a></sup><sup><a href="#r4">[4]</a></sup></p>
+
+  <h2 id="whats-new">What's New</h2>
+
+  <h3>Context, compaction &amp; cost</h3>
+  <ul>
+    <li><strong>Idle compaction (v2.1.299).</strong> In the terminal, a conversation of at least 200K tokens that sits
+      idle for about 54 minutes is compacted before its one-hour prompt cache expires. That way, coming back to it
+      doesn't reprocess the full context. <code>CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS</code> changes the 200K
+      threshold, and <code>"idleCompaction": false</code> in <code>settings.json</code> turns it off. v2.1.302 added
+      an <em>Idle compaction</em> row to <code>/config</code>, and the notice shown after an idle compaction now
+      explains how to turn it off.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r4">[4]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Path-only <code>@</code> mentions (v2.1.299).</strong> <code>CLAUDE_CODE_DISABLE_FILE_MENTIONS</code>
+      stops Claude Code from inlining the files you <code>@</code>-mention. Claude gets their paths instead and reads
+      them with its file tools. Separately, @-mentioned PDFs no longer keep their bytes in the session transcript.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Smarter model switching (v2.1.301).</strong> When you switch to a model with a smaller context window,
+      a conversation that is too long for the new model is now summarized by the <em>previous</em> model first. A fix
+      in the same release stops that summary from spending usage credits without asking.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Gzip request bodies (v2.1.300).</strong> Large requests to <code>api.anthropic.com</code> are now
+      gzip-compressed even with telemetry off. Set <code>CLAUDE_CODE_GZIP_REQUEST_BODIES=0</code> to turn this off.
+      <sup><a href="#r2">[2]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong><code>/usage</code> warnings (v2.1.299).</strong> <code>/usage</code> now flags max effort, workflows,
+      always-on context and large tool results. <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Permissions, hooks &amp; auto mode</h3>
+  <ul>
+    <li><strong>MCP allow rules match only the server they name (v2.1.299).</strong> <code>mcp__a</code> no longer
+      allows a server named <code>a__b</code> or <code>a_</code>. Agent <code>tools:</code> lists changed the same way.
+      For a server whose normalized name contains <code>__</code>, write <code>mcp__&lt;whole name&gt;__*</code>.
+      Deny and ask rules for such servers now apply correctly too. The permissions docs describe the same rule.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Hook <code>updatedInput</code> is validated (v2.1.300).</strong> When a PreToolUse or PermissionRequest
+      hook rewrites a tool's input, Claude Code now drops unknown keys, and a rewritten input that the tool rejects
+      denies the call. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Hook ordering and failure behavior (v2.1.299).</strong> <code>UserPromptSubmit</code> hooks now run
+      <em>before</em> a skill or custom slash command expands, so a hook that blocks the prompt also stops that
+      command's embedded shell lines. An action a plugin hook could block is now refused, not let through, when the
+      hook can't receive it or can't return an answer. Plan mode no longer runs a write that a PreToolUse hook or a
+      mod's <code>tool.check</code> allowed. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Concurrency cap on prompt/agent hooks (v2.1.302).</strong> At most 12 prompt or agent hooks for the
+      same event run at once, and the rest wait their turn. Agent hooks now honor their <code>model</code> field, and
+      aliases such as <code>haiku</code> resolve (v2.1.300).
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Auto mode classifier model (v2.1.302).</strong> <code>CLAUDE_CODE_AUTO_MODE_MODEL</code> chooses the
+      model that the <em>client-side</em> auto mode classifier uses. It has no effect on the server-side classifier.
+      With the server-side classifier, a conversation too long for the safety check is now compacted, instead of
+      every checked tool call being denied. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong><code>claude -p</code> starts in default mode on third-party providers (v2.1.302).</strong>
+      <code>claude -p</code> and Agent SDK sessions with no permission mode set now start in <code>default</code> mode
+      on third-party providers, with telemetry off, or on a fresh install. This partly reverses the v2.1.285 change
+      reported in v1.9. <code>--permission-mode auto</code> still selects auto mode.
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>rm prompts are less noisy (v2.1.299).</strong> Shell <code>-c</code> scripts that don't run
+      <code>rm</code> no longer prompt. An <code>rm</code> built at run time inside a script Claude Code can't read
+      prompts only if <code>CLAUDE_CODE_STRICT_INLINE_SHELL_RM_PROMPT=1</code> is set. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Sandbox hardening (v2.1.299).</strong> Sandboxed commands can no longer write into a
+      <code>--plugin-dir</code> folder. On macOS, a denied path reached through a symlink is now blocked. Several
+      <code>allowRead</code>/<code>denyRead</code> glob edge cases were also fixed. <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Agents &amp; sessions</h3>
+  <ul>
+    <li><strong>Fork subagents are on by default in more places (v2.1.302).</strong> Fork subagents
+      (<code>subagent_type: "fork"</code>) are now on by default in <code>claude -p</code>, the Agent SDK, the desktop
+      app and VS Code, as they already were in the terminal. <code>CLAUDE_CODE_FORK_SUBAGENT=0</code> turns them off.
+      The desktop app and VS Code now always run the main conversation's subagents in the background. As of this
+      writing, the env-vars doc still describes the older interactive-only default.
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Agent view controls (v2.1.299).</strong> <code>/effort</code> and <code>/fast</code> in agent view set
+      what new sessions start with. A bare <code>/model</code>, <code>/effort</code> or <code>/fast</code> there opens
+      a picker. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Unattended retry cap (v2.1.301).</strong> <code>CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS</code>
+      lets unattended retry mode (<code>CLAUDE_CODE_RETRY_WATCHDOG</code>) give up when a usage limit resets too far
+      in the future, instead of waiting for it. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Advisor on Claude Platform on AWS (v2.1.300).</strong> <code>/advisor</code> is now available there.
+      No advisor runs until you pick one with <code>/advisor</code>, <code>advisorModel</code> or
+      <code>--advisor</code>. <code>CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1</code> turns it off.
+      <sup><a href="#r2">[2]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong><code>fable</code>/<code>best</code> alias fallback (v2.1.301).</strong> If your organization can't use
+      the newest Fable model, these aliases now retry once on the previous Fable model on the Anthropic API instead
+      of erroring. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Transcripts record full requests (v2.1.300).</strong> Local session transcripts now also store each API
+      request's system prompt, tools and parameters, so a transcript you share can reproduce a request exactly. Keep
+      this in mind before sharing transcripts. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Misc.</strong> The <code>%</code> bracket-match motion in vim mode (v2.1.301)
+      <sup><a href="#r3">[3]</a></sup>; you can watch up to 25 artifacts, up from 10 (v2.1.299)
+      <sup><a href="#r1">[1]</a></sup>; removal of the no-op <code>--sandbox</code>/<code>--no-sandbox</code>
+      flags on <code>claude remote-control</code> (v2.1.300) <sup><a href="#r2">[2]</a></sup>; the resume command
+      printed at exit now names the session by its ID (v2.1.299). <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Observability, mods &amp; enterprise</h3>
+  <ul>
+    <li><strong>OpenTelemetry additions.</strong> The <code>api_request</code> event now splits cache writes into
+      <code>cache_creation_5m_tokens</code> and <code>cache_creation_1h_tokens</code>, and trace spans carry GenAI
+      semantic-convention attributes such as <code>gen_ai.provider.name</code> (v2.1.300)
+      <sup><a href="#r2">[2]</a></sup>. <code>tool_decision</code> events gain <code>classifier_verdict</code> and
+      <code>permission_mode</code>, plus <code>classifier_category</code> when <code>OTEL_LOG_TOOL_DETAILS=1</code>
+      (v2.1.301, fixed in v2.1.302). <sup><a href="#r3">[3]</a></sup><sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Mods API growth (v2.1.299–301).</strong> New in the mods API: <code>$.prompt.media</code> and
+      <code>$.session.identity()</code> for mods installed through managed settings, a <code>virtualText</code> prompt
+      decoration, the <code>prompt.change</code> hook, <code>$.ui.view({ agentId })</code>, multi-line
+      <code>Input</code> rows, and rewriting a workflow agent's <code>prompt</code>/<code>model</code> in
+      <code>agent.spawn</code>. <code>turn.start</code> now also fires for subagent and teammate turns. Managed
+      permission rules, managed hooks and organization MCP tool names are now enforced more strictly against
+      user-installed mods.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup><sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Attribution header on gateways (v2.1.299).</strong> <code>CLAUDE_CODE_ATTRIBUTION_HEADER=0</code>
+      removes the attribution block, including in Claude Desktop's Code tab when set in a Claude apps gateway's
+      <code>code</code> policy. <sup><a href="#r1">[1]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>No redirects on Anthropic connector traffic (v2.1.299).</strong> Requests to claude.ai's connector proxy
+      and to Anthropic-hosted MCP servers no longer follow HTTP redirects. Redirects from a connector's own server
+      are unaffected. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Claude Design notice (v2.1.302).</strong> <code>/design-sync</code> and <code>/design-login</code> now
+      show that standalone Claude Design (claude.ai/design) closes by December 14, 2026.
+      <sup><a href="#r4">[4]</a></sup></li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Let idle compaction save you a cache rebuild, or turn it off on purpose.</strong> If you often leave a
+      long session idle and come back, keep it on. If you would rather keep the full uncompacted context and pay the
+      cache rebuild, set <code>"idleCompaction": false</code> or raise
+      <code>CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS</code>. <sup><a href="#r1">[1]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Use path-only mentions for big files.</strong> With <code>CLAUDE_CODE_DISABLE_FILE_MENTIONS=1</code>,
+      <code>@</code> mentions pass paths only, so Claude reads just the parts it needs instead of loading whole files
+      into context. <sup><a href="#r1">[1]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Watch cache spend with the new OTel split.</strong> Comparing <code>cache_creation_1h_tokens</code> with
+      <code>cache_creation_5m_tokens</code> shows how much you spend on the pricier one-hour cache writes.
+      <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Audit auto-mode decisions.</strong> Use the <code>classifier_verdict</code> and
+      <code>permission_mode</code> attributes on <code>tool_decision</code> events to tell classifier blocks apart from
+      permission-rule blocks. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Re-test hooks that rewrite input.</strong> Hooks that return <code>updatedInput</code> with extra or
+      malformed fields may now deny calls they used to allow. <sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No new community "hacks" this period. The Hacker News sweep for the last seven days found no Claude Code
+  technique posts with real engagement and two or more independent sources. Reddit and general WebSearch weren't
+  available in this CI run. Everything above comes from the authoritative GitHub release notes and the Claude Code
+  documentation. <sup><a href="#r9">[9]</a></sup></p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Audit MCP allow rules.</strong> Replace bare server rules for servers whose names contain
+      <code>__</code> (or end in <code>_</code>) with <code>mcp__&lt;whole name&gt;__*</code>. Check agent
+      <code>tools:</code> lists the same way. Rules that relied on the old prefix match no longer auto-approve those
+      tools. <sup><a href="#r1">[1]</a></sup><sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Set <code>--permission-mode</code> explicitly in CI.</strong> Headless runs on third-party providers or
+      with telemetry off now start in <code>default</code> mode. If a pipeline depended on auto mode, pass
+      <code>--permission-mode auto</code> or set <code>permissions.defaultMode</code>. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Decide on fork subagents for headless/SDK.</strong> If your <code>-p</code> or SDK automations shouldn't
+      spawn forked subagents, set <code>CLAUDE_CODE_FORK_SUBAGENT=0</code>. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Choose an idle compaction policy.</strong> Set <code>idleCompaction</code> in user or project settings,
+      or use the new <code>/config</code> row, so everyone on the team gets the same behavior.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Treat transcripts as sensitive.</strong> Transcripts now include full system prompts, tools and request
+      parameters, so review them before sharing outside your team. <sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p><strong>What changed since v1.9:</strong></p>
+  <ul>
+    <li><strong>Added:</strong> idle compaction, <code>idleCompaction</code>, <code>CLAUDE_CODE_IDLE_COMPACT_MIN_TOKENS</code>,
+      <code>CLAUDE_CODE_DISABLE_FILE_MENTIONS</code>, <code>CLAUDE_CODE_STRICT_INLINE_SHELL_RM_PROMPT</code>,
+      <code>/usage</code> warnings (v2.1.299) <sup><a href="#r1">[1]</a></sup>; <code>CLAUDE_CODE_GZIP_REQUEST_BODIES</code>,
+      <code>/advisor</code> on Claude Platform on AWS, OTel cache-write split and GenAI span attributes (v2.1.300)
+      <sup><a href="#r2">[2]</a></sup>; <code>CLAUDE_CODE_RETRY_WATCHDOG_MAX_USAGE_LIMIT_WAIT_MS</code>, the vim
+      <code>%</code> motion, and OTel classifier attributes (v2.1.301) <sup><a href="#r3">[3]</a></sup>;
+      <code>CLAUDE_CODE_AUTO_MODE_MODEL</code> and the Idle compaction <code>/config</code> row (v2.1.302).
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Updated:</strong> MCP allow rules and agent <code>tools:</code> lists match only the named server
+      (v2.1.299) <sup><a href="#r1">[1]</a></sup>. <code>UserPromptSubmit</code> hooks run before skill or command
+      expansion (v2.1.299) <sup><a href="#r1">[1]</a></sup>. Hook <code>updatedInput</code> is validated (v2.1.300)
+      <sup><a href="#r2">[2]</a></sup>. Fork subagents are on by default outside the terminal, and headless runs on
+      third-party providers start in <code>default</code> mode, refining v1.9's v2.1.285 note (v2.1.302)
+      <sup><a href="#r4">[4]</a></sup>. Up to 12 concurrent prompt/agent hooks per event (v2.1.302)
+      <sup><a href="#r4">[4]</a></sup>. You can watch 25 artifacts, up from 10 (v2.1.299).
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Removed:</strong> the no-op <code>--sandbox</code>/<code>--no-sandbox</code> flags on
+      <code>claude remote-control</code> (v2.1.300) <sup><a href="#r2">[2]</a></sup>. Text <code>bold</code> in mods is
+      deprecated in favor of <code>weight</code> (v2.1.299). <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Bugfix-only:</strong> <code>v2.1.303</code> contains only "bug fixes and reliability improvements"
+      <sup><a href="#r5">[5]</a></sup>. There are no <code>v2.1.297</code>/<code>v2.1.298</code> tags.
+      <sup><a href="#r8">[8]</a></sup><sup><a href="#r9">[9]</a></sup></li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="r1">Claude Code Release v2.1.299 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.299">github.com/anthropics/claude-code/releases/tag/v2.1.299</a> (accessed 2026-10-19).</li>
+    <li id="r2">Claude Code Release v2.1.300 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.300">github.com/anthropics/claude-code/releases/tag/v2.1.300</a> (accessed 2026-10-19).</li>
+    <li id="r3">Claude Code Release v2.1.301 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.301">github.com/anthropics/claude-code/releases/tag/v2.1.301</a> (accessed 2026-10-19).</li>
+    <li id="r4">Claude Code Release v2.1.302 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.302">github.com/anthropics/claude-code/releases/tag/v2.1.302</a> (accessed 2026-10-19).</li>
+    <li id="r5">Claude Code Release v2.1.303 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.303">github.com/anthropics/claude-code/releases/tag/v2.1.303</a> (accessed 2026-10-19).</li>
+    <li id="r6">Environment variables — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/env-vars">code.claude.com/docs/en/env-vars</a> (accessed 2026-10-19).</li>
+    <li id="r7">Configure permissions — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/permissions">code.claude.com/docs/en/permissions</a> (accessed 2026-10-19).</li>
+    <li id="r8">Claude Code changelog — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/changelog">code.claude.com/docs/en/changelog</a> (accessed 2026-10-19).</li>
+    <li id="r9">Claude Code Releases (index) — GitHub, Anthropic —
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a> (accessed 2026-10-19).</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5.5 — pass.
+  </footer>
+
+</div>
+</body>
+</html>

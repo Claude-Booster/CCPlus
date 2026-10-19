@@ -130,6 +130,16 @@
       "review_verdict": "pass_with_edits",
       "forced": true,
       "summary": "Significant (FORCE also set): Opus 5.5 / Sonnet 5.5 / Haiku 5.5 new defaults, Pro/Team Standard default to Opus, auto mode as starting permission mode, Claude Mods, attribution:false, maxProseWidth, onFailure:block hooks, Agent-tool effort, deniedModels/availableModelsMatch/allowedProviders. Releases v2.1.280-v2.1.296; CLI now v2.1.296. Community sources (HN/Reddit/WebSearch) unreachable in CI; no hacks."
+    },
+    {
+      "timestamp": "2026-10-19_1302",
+      "status": "generated",
+      "version": "1.10",
+      "artifact": "docs/artifacts/CCPlus_2026-10-19_1302.html",
+      "new_items": 42,
+      "checked_sources": 7,
+      "review_verdict": "pass",
+      "summary": "Significant: idle compaction (new default), MCP allow rules match only the named server, hook updatedInput validation, UserPromptSubmit before skill expansion, fork subagents default-on in -p/SDK/desktop/VS Code, -p on third-party providers starts in default mode, CLAUDE_CODE_AUTO_MODE_MODEL, gzip request bodies, OTel cache/classifier attributes. Releases v2.1.299-v2.1.303; CLI now v2.1.303. Docs release-notes URL now 404s; changelog lives at code.claude.com/docs/en/changelog. HN sweep found no corroborated technique; Reddit/WebSearch unavailable; no hacks."
     }
   ]
 }
