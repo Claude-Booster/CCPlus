@@ -171,6 +171,13 @@
       "checked_sources": 8,
       "review_verdict": "pass",
       "summary": "Significant: /auto-mode-setup on third-party providers/gateways/telemetry-off, tool search default-on behind custom ANTHROPIC_BASE_URL, Monitor on Bedrock/Vertex/Foundry, sandbox.allowNestedUserNamespaces, claude_code.safety_event OTel event, sed -i via Bash prompt (not /rewind-restorable), claude ultrareview requires workspace trust, allowedMcpServers scope change, large sandbox/permission/hook security batch. Releases v2.1.304-v2.1.310 (v2.1.306/308 bugfix-only); CLI now v2.1.310. Anthropic news: no Claude Code/model posts since Oct 19. HN sweep found no story above 6 points; Reddit/WebSearch unavailable; no hacks."
+    },
+    {
+      "timestamp": "2026-10-26_1316",
+      "status": "no-update",
+      "new_items": 0,
+      "checked_sources": 4,
+      "note": "No significant Claude Code updates this week. Re-run ~14 min after v1.11 (2026-10-26_1302): GitHub Releases API latest is still v2.1.310 (2026-10-23, already in ledger); docs changelog (/docs/en/changelog) top entry also 2.1.310 (/docs/en/release-notes now 404s). Anthropic news newest posts Oct 22: 'Donating Agent Skills to the Agentic AI Foundation' is governance only (no Claude Code format/default/config change), the other is unrelated. HN Algolia (points>20, since Oct 19): single-source Show HN projects and an unverified tweet only, so no community item meets the 2-source rule. Reddit not checked in CI. No artifact, so no cross-model review; state.json/index.html unchanged."
     }
   ]
 }
