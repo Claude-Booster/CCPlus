@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.11 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.11</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated October 26, 2026 at 13:02 MPST · by Claude Opus 5.5 · prior version: 1.10</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5.5 — pass</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>No new model this week. Releases <code>v2.1.304</code>–<code>v2.1.310</code> landed, moving the CLI from
+  <code>v2.1.303</code> to <code>v2.1.310</code>; <code>v2.1.306</code> and <code>v2.1.308</code> are fixes only.
+  <sup><a href="#r11">[11]</a></sup><sup><a href="#r12">[12]</a></sup>
+  Third-party providers and gateways caught up on several features: <code>/auto-mode-setup</code> now works on
+  Bedrock, Vertex, Foundry, the Claude apps gateway and telemetry-off sessions (v2.1.304), tool search is on by
+  default behind a custom <code>ANTHROPIC_BASE_URL</code> (v2.1.304), and the Monitor tool arrives on those
+  providers (v2.1.310). <sup><a href="#r1">[1]</a></sup><sup><a href="#r7">[7]</a></sup><sup><a href="#r8">[8]</a></sup>
+  New settings and signals include <code>sandbox.allowNestedUserNamespaces</code> for Chromium and rootless podman
+  on Linux (v2.1.305) and a <code>claude_code.safety_event</code> OpenTelemetry event for every blocked or prompted
+  tool call (v2.1.307). <sup><a href="#r2">[2]</a></sup><sup><a href="#r4">[4]</a></sup><sup><a href="#r9">[9]</a></sup><sup><a href="#r10">[10]</a></sup>
+  v2.1.309 is a large security release: sandbox, Bash permission-check and hook fail-open fixes. It also changes
+  <code>sed -i</code> to a normal Bash prompt (no longer undone by <code>/rewind</code>) and makes
+  <code>claude ultrareview</code> require workspace trust. <sup><a href="#r6">[6]</a></sup></p>
+
+  <h2 id="whats-new">What's New</h2>
+
+  <h3>Auto mode, permissions &amp; sandbox</h3>
+  <ul>
+    <li><strong><code>/auto-mode-setup</code> on third-party providers (v2.1.304).</strong> The guided setup, which
+      reads your project and recent sessions to draft <code>autoMode.environment</code> entries and writes them to
+      <code>~/.claude/settings.json</code> if you accept, now also runs on Bedrock, Vertex, Foundry, the Claude apps
+      gateway and telemetry-disabled sessions. The command itself already existed on first-party plans; the
+      auto-mode docs list v2.1.304 as the minimum for these session types.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r8">[8]</a></sup></li>
+    <li><strong><code>sed -i</code> gets a normal Bash prompt (v2.1.309).</strong> It now runs as written after the
+      standard Bash permission prompt rather than showing a simulated file-edit preview. Like other Bash edits, it is
+      no longer restored by <code>/rewind</code>. <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong><code>claude ultrareview</code> requires workspace trust (v2.1.309).</strong> It asks on a terminal
+      and refuses otherwise. Scripts can pass <code>--trust-workspace</code> (it takes no value, so put a PR number or
+      base branch before it) or set <code>CLAUDE_CODE_DISABLE_ULTRAREVIEW_TRUST_CHECK=1</code>.
+      <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Nested user namespaces in the Linux sandbox (v2.1.305).</strong> The new
+      <code>sandbox.allowNestedUserNamespaces</code> setting lets sandboxed commands create user namespaces, which
+      Chromium, Electron and rootless podman need. The release notes and sandboxing docs both warn that this lets
+      sandboxed code get around the sandbox's file protections. The docs say to set it in
+      <code>~/.claude/settings.json</code> rather than project settings.
+      <sup><a href="#r2">[2]</a></sup><sup><a href="#r9">[9]</a></sup></li>
+    <li><strong>Sandbox fallback is stricter (v2.1.309).</strong> When the sandbox is enabled but can't run, commands
+      that settings exclude from the sandbox now ask before writing to its write-list paths, and the unsandboxed
+      fallback is refused. On Linux, <code>/sandbox</code> and the startup warning now name Ubuntu's AppArmor
+      user-namespace restriction and how to lift it when it stops bubblewrap (v2.1.310).
+      <sup><a href="#r6">[6]</a></sup><sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Security fixes (v2.1.309–310).</strong> Sandboxed Bash on macOS and Linux no longer runs the shell's
+      startup files outside the sandbox before each command. Sandboxed commands and auto-accepted edits can no longer
+      modify the file passed with <code>--mcp-config</code>. macOS <code>denyWrite</code> globs now apply through
+      symlinked folders, and an <code>Edit(path)</code> deny rule now blocks more Bash redirects. PowerShell hooks
+      that exit with code 2 now block. On Windows, <code>PreToolUse</code>/<code>PermissionRequest</code> hooks no
+      longer fail open when Git Bash or Git for Windows is missing.
+      <sup><a href="#r6">[6]</a></sup><sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Dangerous <code>rm</code> in bypass mode on Desktop and VS Code (v2.1.309).</strong> The prompt now
+      denies the command at once with a hint to rewrite it, so unattended sessions keep going.
+      <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Settings-scope changes.</strong> <code>axScreenReader</code> and <code>CLAUDE_AX_SCREEN_READER</code>
+      in a settings <code>env</code> block now apply only from user, managed or <code>--settings</code> settings
+      (v2.1.307) <sup><a href="#r4">[4]</a></sup>. <code>allowedMcpServers</code> no longer filters
+      <code>managed-mcp.json</code> stdio servers that use <code>${VAR}</code> only in <code>env</code>, so one your
+      allowlist left out now loads; use <code>deniedMcpServers</code> to keep it off (v2.1.305). Under
+      <code>allowManagedPermissionRulesOnly</code>, plugins that Claude Desktop mounts by path lose their
+      <code>allowed-tools</code> (v2.1.305). <sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h3>Providers &amp; gateways</h3>
+  <ul>
+    <li><strong>Tool search on by default behind a custom <code>ANTHROPIC_BASE_URL</code> (v2.1.304).</strong> If the
+      gateway answers 400 or 422, Claude Code retries without it. v2.1.305 fixed a v2.1.304 regression where every
+      request failed on Vertex, Bedrock and other providers whose endpoint or gateway rejected tool search.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Monitor on Bedrock, Vertex and Foundry (v2.1.310).</strong> The Monitor tool and plugin monitors are
+      now available there and when telemetry or nonessential traffic is off. Long foreground sleeps are now blocked
+      in those sessions too. <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Gateway compatibility retries.</strong> Claude Code now retries without the
+      <code>effort-2025-11-24</code> beta or mid-conversation system messages when a gateway rejects them (v2.1.310),
+      and without <code>context_management</code> on "Extra inputs are not permitted" errors (v2.1.304).
+      <sup><a href="#r7">[7]</a></sup><sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Context, skills &amp; sessions</h3>
+  <ul>
+    <li><strong>Skills after compaction (v2.1.304).</strong> Compaction now sends Claude the skill list again
+      afterwards, and <code>/reload-skills</code> sends only new or changed skills. The skills of a single source
+      (a repo, your own folder or a plugin) can register at most 1,024 hooks and 16,384 matcher characters per
+      session. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong><code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code> accepts <code>k</code>/<code>M</code> (v2.1.304).</strong>
+      Before this fix, <code>200k</code> silently set a 100K window. The variable now takes the same suffixes as
+      <code>--autocompact</code> and warns when a value is out of range or ignored.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Resume-cost warning on Pro and Max (v2.1.304).</strong> Resuming an inactive conversation that would
+      use a noticeable share of your 5-hour limit now warns you. You can resume anyway or start fresh and let Claude
+      look up the old conversation if you refer to it. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Large nested <code>CLAUDE.md</code> files (v2.1.309).</strong> A nested <code>CLAUDE.md</code> over
+      the size limit now loads only its start, which fixes sessions that kept compacting after reading files under
+      it. <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Agent reliability (v2.1.307).</strong> Unparseable tool calls are retried up to twice before the turn
+      ends with an error. Forks launched together are each told which launch is theirs, so they are much less likely
+      to pick up each other's work. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Unattended retry recheck (v2.1.305).</strong> <code>CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS</code>
+      lets unattended retry mode notice when a usage limit is lifted before its reset time.
+      <sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h3>Observability, tooling &amp; enterprise</h3>
+  <ul>
+    <li><strong><code>claude_code.safety_event</code> (v2.1.307).</strong> A new OpenTelemetry event fires for each
+      tool call that a permission rule, auto mode, a safety check, a hook or the sandbox stopped, prompted or sent
+      back. The monitoring docs say it needs no separate setting and carries no command text or paths; join it to
+      <code>tool_decision</code> (with <code>OTEL_LOG_TOOL_DETAILS=1</code>) to see the command.
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r10">[10]</a></sup></li>
+    <li><strong><code>/usage</code> fixes (v2.1.305).</strong> Each <code>/usage</code> warning is now a one-line fix
+      naming its source, and pressing <code>f</code> applies the fixes. The same fixes show in VS Code and
+      <code>/doctor</code>. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong><code>/claude-api</code> additions.</strong> <code>/claude-api managed-agents-secure</code> compares a
+      Managed Agents agent's settings with Anthropic's security guide without changing anything (v2.1.304)
+      <sup><a href="#r1">[1]</a></sup>. <code>/claude-api api-version</code> moves Claude API code to API version
+      <code>2026-10-21</code> (v2.1.307) <sup><a href="#r4">[4]</a></sup>. Managed Agents subagent teams are now built
+      on <code>multiagent_20261001</code> with dynamic workflows on by default (v2.1.309).
+      <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Mods API (v2.1.304).</strong> A mod's <code>tool.check</code> can answer
+      <code>decider: "person"</code> so only a human can approve, and its event now has <code>e.isReadOnly</code>.
+      <code>settings.read</code> hooks receive each settings layer, so a managed mod can make an organization setting
+      a ceiling. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Code Review (GitHub app).</strong> Owners can choose Quick, Standard (default) or Deep review levels
+      per organization or repository, and can review every repository in a GitHub org (v2.1.304)
+      <sup><a href="#r1">[1]</a></sup>. <code>@claude review stop</code> (also <code>off</code>/<code>pause</code>)
+      ends an <code>@claude review always</code> subscription (v2.1.307). <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Self-hosted runner checkout hooks (v2.1.307).</strong> They are now stopped after 30 minutes by
+      default, failing setup; raise <code>--checkout-hook-timeout-min</code> or set it to <code>0</code>.
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Enterprise custom roles (v2.1.310).</strong> Cloud sessions and Remote Control permissions can now be
+      granted per custom role, and turning either on in admin settings asks for confirmation.
+      <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Misc.</strong> <code>/fast</code> on Opus 5.5 no longer carries a "(research preview)" label (v2.1.304)
+      <sup><a href="#r1">[1]</a></sup>; the <code>/artifacts</code> delete confirmation now uses 1/Enter to keep and 2
+      to delete (v2.1.304–305) <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup>; worktree creation no
+      longer fetches git objects on demand (v2.1.309). <sup><a href="#r6">[6]</a></sup></li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Check your autocompact window value.</strong> If you set <code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code>
+      with a <code>k</code> suffix before v2.1.304, you were getting 100K. Upgrade and confirm the warning is gone.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Run <code>/auto-mode-setup</code> on Bedrock, Vertex or Foundry.</strong> It drafts the
+      <code>autoMode.environment</code> entries that stop routine internal pushes and bucket writes from being
+      blocked. Run <code>claude auto-mode config</code> afterwards to check the result.
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r8">[8]</a></sup></li>
+    <li><strong>Commit before letting Claude run <code>sed -i</code>.</strong> These edits are no longer undone by
+      <code>/rewind</code>, so git is your safety net. <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Build a block dashboard from <code>safety_event</code>.</strong> Counting events by
+      <code>category</code> and <code>rule_source</code> shows which rules or classifier categories cause the most
+      friction. <sup><a href="#r10">[10]</a></sup></li>
+    <li><strong>Try <code>f</code> in <code>/usage</code>.</strong> Each warning is now a one-line fix that names its
+      source, and <code>f</code> applies them. <sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No new community "hacks" this period. The Hacker News sweep for the past week found no Claude Code technique
+  story above 6 points, and nothing with two or more independent sources. Reddit and general WebSearch weren't
+  available in this CI run. Everything above comes from the GitHub release notes and the Claude Code documentation.
+  <sup><a href="#r12">[12]</a></sup></p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Re-check MCP allowlists.</strong> If you relied on <code>allowedMcpServers</code> to keep a
+      <code>managed-mcp.json</code> stdio server off, and it uses <code>${VAR}</code> only in <code>env</code>, add
+      it to <code>deniedMcpServers</code>. It will otherwise load after upgrading. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Update scripts that call <code>claude ultrareview</code>.</strong> Add <code>--trust-workspace</code>
+      after the PR number or base branch, or set <code>CLAUDE_CODE_DISABLE_ULTRAREVIEW_TRUST_CHECK=1</code> in
+      trusted CI only. <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Keep <code>sandbox.allowNestedUserNamespaces</code> off unless you need it.</strong> Turn it on only
+      for Chromium, Electron or rootless podman workflows, in user settings, and with your security team's sign-off.
+      <sup><a href="#r2">[2]</a></sup><sup><a href="#r9">[9]</a></sup></li>
+    <li><strong>Move screen-reader settings.</strong> If <code>axScreenReader</code> or
+      <code>CLAUDE_AX_SCREEN_READER</code> lives in project settings, move it to <code>~/.claude/settings.json</code>.
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Self-hosted runners:</strong> set <code>--checkout-hook-timeout-min</code> if a checkout hook needs
+      more than 30 minutes. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Gateways:</strong> tool search is now on behind custom base URLs. If your gateway blocks it, upgrade to
+      at least v2.1.305 to get the automatic retry fix. <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p><strong>What changed since v1.10:</strong></p>
+  <ul>
+    <li><strong>Added:</strong> <code>/auto-mode-setup</code> on third-party providers, gateways and telemetry-off
+      sessions; <code>/claude-api managed-agents-secure</code>; mods <code>decider: "person"</code> and
+      <code>e.isReadOnly</code>; resume-cost warning on Pro/Max; Code Review levels (v2.1.304)
+      <sup><a href="#r1">[1]</a></sup>. <code>sandbox.allowNestedUserNamespaces</code>,
+      <code>CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS</code>, <code>/usage</code> one-key fixes (v2.1.305)
+      <sup><a href="#r2">[2]</a></sup>. <code>claude_code.safety_event</code>, <code>/claude-api api-version</code>,
+      <code>@claude review stop</code> (v2.1.307) <sup><a href="#r4">[4]</a></sup>. Monitor on Bedrock/Vertex/Foundry
+      and telemetry-off; Enterprise custom-role permissions for cloud sessions and Remote Control (v2.1.310).
+      <sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Updated:</strong> tool search on by default behind a custom <code>ANTHROPIC_BASE_URL</code>; skill
+      list re-sent after compaction; skill-hook caps; <code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code> suffixes (v2.1.304)
+      <sup><a href="#r1">[1]</a></sup>. <code>allowedMcpServers</code> scope for <code>${VAR}</code>-in-env servers
+      (v2.1.305) <sup><a href="#r2">[2]</a></sup>. <code>axScreenReader</code> scope; self-hosted-runner checkout hook
+      30-minute default (v2.1.307) <sup><a href="#r4">[4]</a></sup>. <code>sed -i</code> uses the Bash prompt;
+      <code>claude ultrareview</code> requires workspace trust; stricter sandbox fallback; dangerous <code>rm</code> in
+      bypass mode denied with a hint on Desktop/VS Code; large security-fix batch (v2.1.309).
+      <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Removed:</strong> the "(research preview)" label on <code>/fast</code> for Opus 5.5 and the
+      mod-hook placement notes in <code>claude plugin validate</code> (v2.1.304); <code>y</code>/<code>n</code> no
+      longer answer the <code>/artifacts</code> delete confirmation (v2.1.305).
+      <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Bugfix-only:</strong> <code>v2.1.306</code> (cloud-session login and MCP-heavy "prompt is too long"
+      fixes) <sup><a href="#r3">[3]</a></sup> and <code>v2.1.308</code> ("bug fixes and reliability improvements")
+      <sup><a href="#r5">[5]</a></sup>.</li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="r1">Claude Code Release v2.1.304 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.304">github.com/anthropics/claude-code/releases/tag/v2.1.304</a> (accessed 2026-10-26).</li>
+    <li id="r2">Claude Code Release v2.1.305 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.305">github.com/anthropics/claude-code/releases/tag/v2.1.305</a> (accessed 2026-10-26).</li>
+    <li id="r3">Claude Code Release v2.1.306 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.306">github.com/anthropics/claude-code/releases/tag/v2.1.306</a> (accessed 2026-10-26).</li>
+    <li id="r4">Claude Code Release v2.1.307 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.307">github.com/anthropics/claude-code/releases/tag/v2.1.307</a> (accessed 2026-10-26).</li>
+    <li id="r5">Claude Code Release v2.1.308 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.308">github.com/anthropics/claude-code/releases/tag/v2.1.308</a> (accessed 2026-10-26).</li>
+    <li id="r6">Claude Code Release v2.1.309 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.309">github.com/anthropics/claude-code/releases/tag/v2.1.309</a> (accessed 2026-10-26).</li>
+    <li id="r7">Claude Code Release v2.1.310 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.310">github.com/anthropics/claude-code/releases/tag/v2.1.310</a> (accessed 2026-10-26).</li>
+    <li id="r8">Configure auto mode — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/auto-mode-config">code.claude.com/docs/en/auto-mode-config</a> (accessed 2026-10-26).</li>
+    <li id="r9">Sandboxing — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/sandboxing">code.claude.com/docs/en/sandboxing</a> (accessed 2026-10-26).</li>
+    <li id="r10">Monitoring usage (OpenTelemetry) — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/monitoring-usage">code.claude.com/docs/en/monitoring-usage</a> (accessed 2026-10-26).</li>
+    <li id="r11">Claude Code changelog — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/changelog">code.claude.com/docs/en/changelog</a> (accessed 2026-10-26).</li>
+    <li id="r12">Claude Code Releases (index) — GitHub, Anthropic —
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a> (accessed 2026-10-26).</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5.5 — pass.
+  </footer>
+
+</div>
+</body>
+</html>
