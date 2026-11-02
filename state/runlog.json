@@ -192,6 +192,16 @@
       "new_items": 0,
       "checked_sources": 3,
       "note": "No significant Claude Code updates this week. Re-run after v1.11 (2026-10-26_1302) and no-update runs at 1316/1331: GitHub Releases API latest is still v2.1.310 (2026-10-23, already in ledger); docs changelog (/docs/en/changelog) top entry also 2.1.310 (/docs/en/release-notes returned 404). Anthropic news newest posts still Oct 22 (Agent Skills donation to the Agentic AI Foundation; life-sciences guest investigators), nothing Claude Code-specific. HN/Reddit not checked in CI. No artifact, so no cross-model review; state.json/index.html unchanged."
+    },
+    {
+      "timestamp": "2026-11-02_1301",
+      "status": "generated",
+      "version": "1.12",
+      "artifact": "docs/artifacts/CCPlus_2026-11-02_1301.html",
+      "new_items": 65,
+      "checked_sources": 5,
+      "review_verdict": "pass_with_edits",
+      "summary": "Significant: Opus 4.8 fast mode deprecated (removal Nov 30 2026), ultrathink = xhigh effort, permissions.blockWritesOutsideWorkingDirectories, CLAUDE_CODE_SUBAGENT_EFFORT, CLAUDE_CODE_DISABLE_ULTRATHINK, idle compaction on VS Code/Desktop/third-party, signed model catalog + shorter prompt for model names Claude Code doesn't recognize on Bedrock/Vertex/Foundry, safety_event OTel removed, claude -p exits 1 on startup failure, server-managed settings apply without prompt. Releases v2.1.311/312/314/316 (no 313/315 tags); CLI now v2.1.316. Anthropic news: no Claude Code/model posts since Oct 22. HN/Reddit not queried in CI; no hacks."
     }
   ]
 }
