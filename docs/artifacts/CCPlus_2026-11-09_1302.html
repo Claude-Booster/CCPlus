@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.13 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.13</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated November 09, 2026 at 13:02 MPST · by Claude Opus 5.5 · prior version: 1.12</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5.5 — pass_with_edits</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>No new model this week. Anthropic News has no new Claude Code or model posts this week; the newest model
+  post is still Haiku 5.5 on October 7. <sup><a href="#r4">[4]</a></sup> Three releases landed:
+  <code>v2.1.317</code>, <code>v2.1.318</code> and <code>v2.1.319</code>. They move the CLI from
+  <code>v2.1.316</code> to <code>v2.1.319</code>. <sup><a href="#r5">[5]</a></sup>
+  The biggest change for most people is auto mode. With telemetry or feature flags off, including behind LLM gateways,
+  calls the server can't check are now asked about or denied. Auto mode no longer falls back to the built-in classifier
+  unless you set <code>CLAUDE_CODE_AUTO_MODE_SERVER=0</code> (v2.1.319). <sup><a href="#r3">[3]</a></sup>
+  v2.1.319 also adds <code>permissions.denyInsteadOfPrompting</code> for unattended runs, background MCP tasks in the
+  terminal, and <code>CLAUDE_CODE_DISABLE_FEATURE_FLAGS</code>. Self-paced <code>/loop</code> now ends when a turn
+  doesn't reschedule. <sup><a href="#r3">[3]</a></sup>
+  Earlier in the week, subagents on a different model began using that model's own effort level, and the Read tool's
+  "file unchanged" stub was removed (v2.1.317). <code>claude auth status</code> now shows when a claude.ai sign-in
+  ends (v2.1.318). <sup><a href="#r1">[1]</a></sup><sup><a href="#r2">[2]</a></sup></p>
+
+  <h2 id="whats-new">What's New</h2>
+
+  <h3>Auto mode &amp; permissions</h3>
+  <ul>
+    <li><strong>No silent classifier fallback (v2.1.319).</strong> With telemetry or feature flags off, including
+      behind LLM gateways, auto mode now asks about or denies calls the server-side check can't review. It no longer
+      falls back to the built-in classifier. Set <code>CLAUDE_CODE_AUTO_MODE_SERVER=0</code> to keep the classifier.
+      Bedrock, Vertex and Foundry are unchanged. <sup><a href="#r3">[3]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Gateway server check (v2.1.319).</strong> Behind an LLM gateway,
+      <code>CLAUDE_CODE_AUTO_MODE_SERVER=1</code> turns on the server-side check even when
+      <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> is set. If managed settings set the latter, they must also set
+      the <code>1</code>. A project's settings files or a plugin can no longer turn the server check back on after you
+      have turned it off outside the project. <code>/status</code> no longer says "Auto mode server: Enabled" when the
+      review isn't reaching the session. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong><code>permissions.denyInsteadOfPrompting</code> (v2.1.319).</strong> A tool call that would wait on a
+      permission prompt is denied, and the turn continues. It applies in terminal sessions, subagents and teammates.
+      The settings reference doesn't list it yet. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Exit codes in auto mode (v2.1.319).</strong> <code>claude -p</code> now exits 1, in text and JSON
+      output, when auto mode refused actions because no safety check was available. Before, it exited 0.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Rule changes (v2.1.319).</strong> A session's exact Bash or PowerShell ask rule is now refused, not
+      asked about, when a broader deny rule covers the command. Bash asks before running <code>which</code> with flags
+      outside a lookup/display set. Monitor's WebSocket watch now follows Bash rules. Bash deny and ask rules now catch
+      commands written with quoted words. A plain <code>timeout DURATION</code> wrapper around a read-only command,
+      such as <code>timeout 30 rg foo</code>, no longer prompts. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Security fixes (v2.1.319).</strong> A Bash permission bypass using a crafted environment prefix; a
+      <code>sed</code> command skipping the permission check in accept-edits and auto mode; a sandbox escape when
+      creating a worktree; and <code>/rewind</code> restoring or deleting a file through a directory symlink. On
+      self-hosted runners, <code>--trust-workspace false</code> now also stops repository hooks and skills from
+      running. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Trust and nested skills (v2.1.319).</strong> <code>--add-dir</code> directories register plugin
+      marketplaces only after that directory's trust dialog is accepted. With the Bash sandbox on, skills in
+      <code>.claude/skills</code> folders below the starting folder load only if you start or <code>/cd</code> there.
+      <code>CLAUDE_CODE_PROXY_RESOLVES_HOSTS</code> can no longer be set from settings files where the host manages the
+      network. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong><code>deniedMcpServers</code> URL entries (v2.1.318).</strong> They now also block Anthropic-provided
+      servers whose upstream URL matches. They also block connectors in cloud sessions and on self-hosted runners;
+      elsewhere, deny a connector by name. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Email-address check (v2.1.317).</strong> Claude Code now asks before a web or shell tool call sends your
+      account email address to the network. <code>/schedule</code> warns when a new cloud scheduled task gets
+      connectors you didn't ask for. <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Agents, effort &amp; loops</h3>
+  <ul>
+    <li><strong>Per-model effort for subagents (v2.1.317).</strong> Subagents and teammates on a different model from
+      the main conversation now use that model's saved effort level or its default, not the session's.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Self-paced <code>/loop</code> ends on its own (v2.1.319).</strong> When a turn finishes without
+      rescheduling, the loop ends instead of scheduling a fallback wakeup. Set <code>CLAUDE_CODE_LOOP_KEEPALIVE=1</code>
+      for the old behavior. In cloud sessions, <code>/loop</code> confirmations now note that a timer stops with its
+      container. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Finished subagents in <code>/tasks</code> (v2.1.319).</strong> An "Earlier in this session" row lists
+      finished subagents, so you can reopen and message one after it leaves the list or after a restart.
+      <code>/clear</code> no longer kills running commands of background agents, teammates and workflows.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>SendMessage and background shells.</strong> A message to a running background agent now arrives sooner:
+      its running command moves to the background without being stopped (v2.1.317)
+      <sup><a href="#r1">[1]</a></sup>. Background subagents move a shell command to the background after 3 minutes on
+      all providers, so the prompt cache doesn't expire while it runs (v2.1.318). <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Mods.</strong> A mod's <code>$.model.fork</code> takes an <code>effort</code> option, for example to
+      run a quick side job at <code>low</code> (v2.1.318). What a mod attaches at <code>prompt.submit</code> now stays
+      in the user's turn, not a system message. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Agent SDK.</strong> Hook callbacks accept <code>onFailure: "block"</code>, so a failing callback blocks
+      the action instead of letting it run (v2.1.317). <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>MCP &amp; tools</h3>
+  <ul>
+    <li><strong>MCP tasks in the terminal (v2.1.319).</strong> When an MCP server runs a tool call as a task, Claude
+      Code moves it to the background right away and tells Claude the result when it finishes.
+      <code>CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND</code> makes it wait inside the tool call instead, and
+      <code>CLAUDE_CODE_DISABLE_MCP_TASKS=1</code> turns MCP tasks off. MCP tasks also work without feature-flag
+      fetching (Bedrock, Vertex, Foundry, gateways, <code>DISABLE_TELEMETRY</code>).
+      <sup><a href="#r3">[3]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>MCP fixes.</strong> Servers on the older handshake no longer fail to connect or return empty results because
+      Claude Code declared an extension it only uses with newer servers (v2.1.319) <sup><a href="#r3">[3]</a></sup>. An MCP tool called before it loads now returns its input
+      schema in the error (v2.1.318). <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Read returns content again (v2.1.317).</strong> The "file unchanged since your last Read" stub is gone;
+      reading an unchanged file again returns its content. Claude also no longer treats Grep and Glob results that hit
+      the time limit as complete. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong><code>/context</code> is cheaper (v2.1.319).</strong> It no longer sends its full visual grid to Claude
+      on every later turn. Claude reads a short table instead, with the 10 largest rows per list.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>PostToolUse after interrupts (v2.1.319).</strong> These hooks now run, with up to 10 seconds, on tool
+      calls that finish after a new message interrupts the turn. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong><code>/claude-api latency-optimize</code> (v2.1.319).</strong> It looks for where your Claude API code
+      makes people wait and tries faster settings against your eval. <sup><a href="#r3">[3]</a></sup></li>
+  </ul>
+
+  <h3>Auth, config files &amp; headless runs</h3>
+  <ul>
+    <li><strong>Sign-in expiry is visible (v2.1.318).</strong> <code>claude auth status</code> shows
+      <code>loginExpiresAt</code>, and <code>claude -p</code> JSON results include <code>credential_expires_at</code>.
+      Text output from <code>claude -p</code> warns on stderr starting 10 days before a stored claude.ai sign-in ends.
+      <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Console billing warnings (v2.1.319).</strong> Claude Code now warns when your claude.ai login ends and
+      it continues on the sign-in from <code>ant auth login</code>, which bills your Claude Console organization. At
+      startup it names that organization. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong><code>CLAUDE_CODE_DISABLE_FEATURE_FLAGS</code> (v2.1.319).</strong> It stops feature-flag fetching
+      without turning off telemetry, and every flag uses its built-in default. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong><code>~/.claude.json</code> handling (v2.1.318).</strong> Non-interactive launches no longer replace an
+      invalid <code>~/.claude.json</code> with defaults. They fail, explain how to restore it, and leave the file as is.
+      Saves on shared network home directories are sturdier. Unattended runs stop rewriting the file when nothing
+      changed. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>More honest exit codes.</strong> <code>claude -p</code> exits 1 when a full disk or quota loses its
+      transcript or <code>~/.claude.json</code> writes (v2.1.317) <sup><a href="#r1">[1]</a></sup>. On self-hosted
+      runners, setting <code>CLAUDE_CODE_DISABLE_NESTED_SESSION_ID=1</code> makes <code>claude -p</code> run inside a
+      session use that session's ID and transcript, as in earlier versions (v2.1.317).
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>IDE extension install (v2.1.318).</strong> Claude Code no longer installs or updates the IDE extension
+      when started in an IDE terminal. Use <code>/ide</code> from an outside terminal or your editor's extensions view.
+      <sup><a href="#r2">[2]</a></sup></li>
+  </ul>
+
+  <h3>Observability, gateways &amp; other</h3>
+  <ul>
+    <li><strong>OTel attributes (v2.1.317).</strong> <code>anthropic.plan</code>, <code>anthropic.seat_type</code>,
+      <code>anthropic.provider</code> and <code>anthropic.custom_base_url</code> are now on metrics, events and spans.
+      Exports through a proxy that never answers now time out after 10 seconds, or after
+      <code>OTEL_EXPORTER_OTLP_TIMEOUT</code> up to 30 seconds. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Claude apps gateway.</strong> Cost report API <code>GET /v1/organizations/analytics/cost</code>, with
+      IdP-group history kept for <code>admin.identity_retention_days</code> (v2.1.317) <sup><a href="#r1">[1]</a></sup>.
+      <code>assume_role</code> on <code>mantle</code> upstreams (v2.1.318) <sup><a href="#r2">[2]</a></sup>.
+      <code>admin.pooled_conflict_rule</code>/<code>pooled_priority_order</code>, <code>login_notice</code>,
+      <code>CLAUDE_GATEWAY_LOG_FORMAT=json</code>, and today/week/month spend in <code>/usage</code> for developers
+      with no spend limit (v2.1.319). <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>UI.</strong> <code>/model</code> groups older models under "More models"; faint gray text has more
+      contrast; a mistyped model name such as <code>opus-5-5</code> now suggests the model you meant (v2.1.319).
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Claude in Chrome (v2.1.319).</strong> <code>shortcuts_list</code> and <code>shortcuts_execute</code>
+      were removed from the built-in tools. <code>javascript_tool</code> results up to 60,000 characters stay in the
+      conversation. <sup><a href="#r3">[3]</a></sup></li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Use <code>denyInsteadOfPrompting</code> for unattended work.</strong> In a background or CI-style
+      session, a call that would need approval is denied and the turn keeps going, so the run doesn't sit waiting on a
+      prompt nobody will answer. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Check <code>/status</code> if you use auto mode behind a gateway or with telemetry off.</strong> After
+      v2.1.319 it reports the server review accurately. Expect more prompts or denials where the server can't review.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Watch sign-in expiry in automation.</strong> Read <code>credential_expires_at</code> from
+      <code>claude -p --output-format json</code>, or <code>loginExpiresAt</code> from <code>claude auth status</code>,
+      to renew before scheduled jobs start failing. <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Set effort per model, not just per session.</strong> Since v2.1.317, subagents on another model use that
+      model's saved effort, so a cheaper search model can keep a lower effort than your main model.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Keep <code>.claude/settings.local.json</code> out of commits.</strong> "Yes, and don't ask again"
+      approvals land there as allow rules. Claude Code adds the file to your global git excludes only when it writes the
+      file itself; if you created it by hand, add it to <code>.gitignore</code>. <sup><a href="#r7">[7]</a></sup></li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No new community "hacks" this period. Hacker News (Algolia) had no Claude Code technique story from the past week
+  with a second independent source. One widely discussed security write-up about "Don't Ask Again" approvals leaking
+  into public repositories couldn't be fetched (HTTP 403), so it isn't summarized here; the docs-backed tip above covers
+  the mitigation. Reddit wasn't queried in this CI run. <sup><a href="#r8">[8]</a></sup></p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Gateway or telemetry-off auto-mode users:</strong> decide on purpose. Either accept the stricter
+      behavior, set <code>CLAUDE_CODE_AUTO_MODE_SERVER=1</code> where your gateway passes the server check, or set
+      <code>CLAUDE_CODE_AUTO_MODE_SERVER=0</code> to keep the local classifier.
+      <sup><a href="#r3">[3]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Headless or background profiles:</strong> consider
+      <code>"permissions": {"denyInsteadOfPrompting": true}</code> together with
+      <code>blockWritesOutsideWorkingDirectories</code> from v1.12. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>If scripts depend on <code>/loop</code> keeping itself alive,</strong> set
+      <code>CLAUDE_CODE_LOOP_KEEPALIVE=1</code> in your settings <code>env</code> block. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Privacy-restricted setups that only need feature flags off:</strong> use
+      <code>CLAUDE_CODE_DISABLE_FEATURE_FLAGS</code> instead of turning off telemetry entirely.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Self-hosted runner orchestrators:</strong> update log parsers that match <code>retryable=true:</code> or
+      <code>retryable=false:</code>, since v2.1.318 adds <code>reason=…</code> after them.
+      <sup><a href="#r2">[2]</a></sup></li>
+    <li><strong>Still on fast mode for Opus 4.8?</strong> Move to Opus 5.5 before the November 30, 2026 removal, as
+      covered in v1.12. <sup><a href="#r9">[9]</a></sup></li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p><strong>What changed since v1.12:</strong></p>
+  <ul>
+    <li><strong>Added:</strong> Agent SDK hook <code>onFailure: "block"</code>; OTel <code>anthropic.*</code>
+      attributes; email-address send check; gateway cost report; <code>CLAUDE_CODE_DISABLE_NESTED_SESSION_ID</code>
+      (v2.1.317) <sup><a href="#r1">[1]</a></sup>. <code>loginExpiresAt</code>/<code>credential_expires_at</code>;
+      mod fork <code>effort</code>; gateway <code>assume_role</code> (v2.1.318) <sup><a href="#r2">[2]</a></sup>.
+      <code>permissions.denyInsteadOfPrompting</code>; MCP tasks in the terminal,
+      <code>CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND</code>, <code>CLAUDE_CODE_DISABLE_MCP_TASKS</code>;
+      <code>CLAUDE_CODE_DISABLE_FEATURE_FLAGS</code>; <code>CLAUDE_CODE_LOOP_KEEPALIVE</code>;
+      <code>/claude-api latency-optimize</code>; <code>/tasks</code> "Earlier in this session"; gateway pooled-budget
+      ordering, <code>login_notice</code> and JSON logs (v2.1.319). <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Updated:</strong> subagent effort follows its own model; SendMessage backgrounds a running command
+      (v2.1.317) <sup><a href="#r1">[1]</a></sup>. <code>deniedMcpServers</code> URL matching; background shell after 3
+      minutes on all providers; safer <code>~/.claude.json</code> handling (v2.1.318) <sup><a href="#r2">[2]</a></sup>.
+      Auto mode server check without classifier fallback; self-paced <code>/loop</code> ends; stricter Bash/Monitor
+      rules; nested-skill and <code>--add-dir</code> trust gating; leaner <code>/context</code> (v2.1.319).
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Removed:</strong> Read's "file unchanged" stub (v2.1.317) <sup><a href="#r1">[1]</a></sup>; automatic
+      IDE extension install from IDE terminals (v2.1.318) <sup><a href="#r2">[2]</a></sup>; Claude in Chrome
+      <code>shortcuts_list</code>/<code>shortcuts_execute</code> and the self-hosted runner's end-of-session debug-log
+      upload (v2.1.319). <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Carried over:</strong> the Opus 4.8 fast-mode removal date (November 30, 2026) from v1.12.
+      <sup><a href="#r9">[9]</a></sup></li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="r1">Claude Code Release v2.1.317 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.317">github.com/anthropics/claude-code/releases/tag/v2.1.317</a> (accessed 2026-11-09).</li>
+    <li id="r2">Claude Code Release v2.1.318 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.318">github.com/anthropics/claude-code/releases/tag/v2.1.318</a> (accessed 2026-11-09).</li>
+    <li id="r3">Claude Code Release v2.1.319 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.319">github.com/anthropics/claude-code/releases/tag/v2.1.319</a> (accessed 2026-11-09).</li>
+    <li id="r4">Anthropic News — Anthropic —
+      <a href="https://www.anthropic.com/news">www.anthropic.com/news</a> (accessed 2026-11-09).</li>
+    <li id="r5">Claude Code Releases (index) — GitHub, Anthropic —
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a> (accessed 2026-11-09).</li>
+    <li id="r6">Environment variables — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/env-vars">code.claude.com/docs/en/env-vars</a> (accessed 2026-11-09).</li>
+    <li id="r7">Settings files and precedence — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/settings">code.claude.com/docs/en/settings</a> (accessed 2026-11-09).</li>
+    <li id="r8">Hacker News search: "claude code" stories — Algolia HN API —
+      <a href="https://hn.algolia.com/api/v1/search_by_date?query=claude%20code&amp;tags=story">hn.algolia.com/api/v1/search_by_date?query=claude%20code&amp;tags=story</a> (accessed 2026-11-09).</li>
+    <li id="r9">Claude Code Release v2.1.316 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.316">github.com/anthropics/claude-code/releases/tag/v2.1.316</a> (accessed 2026-11-09).</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5.5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>
