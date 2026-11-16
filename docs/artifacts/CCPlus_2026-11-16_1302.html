@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPlus v1.14 — What's New in Claude Code</title>
+<style>
+  :root{
+    --bg:#F5F4EE; --panel:#FBFAF6; --ink:#1A1A19; --muted:#6B6963;
+    --accent:#D97757; --accent-ink:#B85C3E; --line:#E4E1D6; --code:#EEEBDF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:56px 24px 96px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",ui-serif,serif; font-weight:600; line-height:1.2; letter-spacing:-0.01em}
+  h1{font-size:2.5rem; margin:0 0 8px}
+  h2{font-size:1.5rem; margin:48px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  h3{font-size:1.15rem; margin:28px 0 6px}
+  a{color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px}
+  a:hover{color:var(--accent)}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px; padding-left:1.3em}
+  li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:5px; font-family:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace; font-size:0.88em}
+  pre{background:var(--code); border:1px solid var(--line); border-radius:10px; padding:14px 16px; overflow:auto}
+  pre code{background:none; padding:0}
+  sup a{text-decoration:none; font-weight:600; color:var(--accent-ink)}
+  .badge{display:inline-block; background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; vertical-align:middle}
+  .meta{color:var(--muted); font-size:.92rem; margin:0 0 4px}
+  .review{background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:14px 18px; margin:24px 0; font-size:.95rem}
+  .callout{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:16px 0}
+  .tag{font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent-ink)}
+  header.doc{border-bottom:2px solid var(--line); padding-bottom:24px; margin-bottom:8px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem}
+  .refs{font-size:.9rem}
+  .refs li{margin:8px 0}
+  .toc{font-size:.92rem; color:var(--muted)}
+  .toc a{color:var(--muted)}
+  hr{border:none; border-top:1px solid var(--line); margin:32px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <p class="meta"><span class="badge">CCPlus</span> &nbsp; v1.14</p>
+    <h1>What's New in Claude Code</h1>
+    <p class="meta">Generated November 16, 2026 at 13:02 MPST · by Claude Opus 5.5 · prior version: 1.13</p>
+  </header>
+
+  <div class="review">✓ Reviewed by Claude Sonnet 5.5 — pass_with_edits</div>
+
+  <nav class="toc">
+    <strong>Contents:</strong>
+    <a href="#summary">Summary</a> ·
+    <a href="#whats-new">What's New</a> ·
+    <a href="#tips">Tips &amp; Techniques</a> ·
+    <a href="#hacks">Hacks</a> ·
+    <a href="#config">Recommended Default-Config Changes</a> ·
+    <a href="#history">History Log</a> ·
+    <a href="#references">References</a>
+  </nav>
+
+  <h2 id="summary">Summary</h2>
+  <p>A new model arrived this week. Anthropic announced Claude Fable 5.2 on November 9, alongside Mythos 5.2, which is
+  available through verification programs and, for Enterprise customers, Claude Security. <sup><a href="#r5">[5]</a></sup> Claude Code v2.1.321 added Fable 5.2
+  (<code>claude-fable-5-2</code>) as the default Fable model, with a 1M context window. Saved Fable 5.1 picks move to
+  it. <sup><a href="#r1">[1]</a></sup>
+  Four releases landed, <code>v2.1.321</code>, <code>v2.1.322</code>, <code>v2.1.323</code> and <code>v2.1.325</code>.
+  They move the CLI from <code>v2.1.319</code> to <code>v2.1.325</code>; there are no v2.1.320 or v2.1.324 tags.
+  <sup><a href="#r8">[8]</a></sup>
+  v2.1.323 adds <strong>Code Mode</strong>, an experimental opt-in in which Claude writes JavaScript that makes its tool
+  calls. <sup><a href="#r3">[3]</a></sup><sup><a href="#r6">[6]</a></sup>
+  The default change most likely to affect your setup is in v2.1.325. Sandboxed Bash commands now go through the normal
+  permission flow, unless you set <code>sandbox.autoAllowBashIfSandboxed: true</code>.
+  <sup><a href="#r4">[4]</a></sup> v2.1.321, v2.1.323 and v2.1.325 also include permission and sandbox security fixes.</p>
+
+  <h2 id="whats-new">What's New</h2>
+
+  <h3>Models</h3>
+  <ul>
+    <li><strong>Claude Fable 5.2 (v2.1.321).</strong> <code>claude-fable-5-2</code> is now the default Fable model,
+      with 1M context, priced at $8/$40 per million input/output tokens and $0.20 per million for cache reads.
+      <sup><a href="#r1">[1]</a></sup> Anthropic's announcement reports 69.9% on FrontierSWE v2, against 62.3% for
+      Opus 5.5 and 56.3% for Fable 5.1. It also says Fable 5.2 generates output up to 30% faster than Fable 5.1.
+      <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong>Saved Fable 5.1 picks move to <code>fable</code> (v2.1.321).</strong> This happens right away on Pro
+      and Max plans, and on Team and Enterprise once your organization allows it. Run
+      <code>/model claude-fable-5-1</code> to switch back. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Cyber safeguards.</strong> Anthropic says Fable 5.2's classifiers block high-risk cyber activities, such as
+      penetration testing, exploit generation and binary-based vulnerability work, and notes they will block most
+      cybersecurity-related tasks. In early testing it saw about 60% fewer cyber blocks than with Fable 5.1. Blocked
+      cyber queries get a response from Opus 4.8 instead. Mythos 5.2 is available
+      only through the Cyber Verification and Life Sciences Verification programs, and in Claude Security for
+      Enterprise customers. <sup><a href="#r5">[5]</a></sup></li>
+    <li><strong>Fast mode.</strong> Fable 5.2 fast mode costs $16/$80 per million tokens, and Claude Code is one of the
+      surfaces where it's offered. <sup><a href="#r5">[5]</a></sup> Fast mode on Vertex now works in the global, us and
+      eu regions, and falls back to standard speed if Vertex refuses it (v2.1.322). <sup><a href="#r2">[2]</a></sup>
+      Fast-mode labels in <code>/fast</code>, <code>/config</code> and <code>/model</code> now name your current model
+      when it supports fast mode. When fast serving is rate-limited, Claude Code tries standard speed on the same model
+      first (v2.1.321). <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>No Enterprise default-model change.</strong> The release notes call Fable 5.2 the default
+      <em>Fable</em> model. They don't announce a new overall default. <sup><a href="#r1">[1]</a></sup></li>
+  </ul>
+
+  <h3>Code Mode (experimental, v2.1.323)</h3>
+  <ul>
+    <li><strong>What it is.</strong> Instead of asking for each Bash, Read or Edit call separately, Claude writes a
+      short JavaScript program that makes the calls. One program can run calls in parallel, pass one result into the
+      next call, and return only the part of the output Claude needs. You see the tool calls in the conversation. Press
+      <code>Ctrl+O</code> to read the code. <sup><a href="#r3">[3]</a></sup><sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Turning it on.</strong> Set <code>CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1</code> in your shell or in the
+      <code>env</code> block of <code>~/.claude/settings.json</code>. Project settings files can't turn it on.
+      Claude Code asks you to confirm the first time. <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Requirements.</strong> An interactive terminal session on the native build. You need a Claude
+      subscription or Console account on the Anthropic API, not a gateway, Bedrock, Vertex or Foundry. Supported models
+      are Opus 5.5, Sonnet 5.5, Haiku 5.5 and Fable 5.2. It doesn't work with <code>-p</code>, the SDK, VS Code, the
+      Desktop app, OpenTelemetry export, <code>DISABLE_TELEMETRY</code>, an API key helper or agent teams.
+      <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Permission behavior.</strong> Your deny and ask rules and <code>PreToolUse</code> hooks still apply to
+      each call the code makes. In auto mode, the classifier reviews the whole program before it runs, not each call,
+      and it can't see values computed at run time. A <code>PreToolUse</code> hook on the <code>REPL</code> tool can
+      read the code from <code>tool_input.code</code>. A Code Mode session can be resumed only with Code Mode on.
+      <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Organization off switch.</strong> Set <code>CLAUDE_CODE_EXPERIMENTAL_CODE_MODE</code> to
+      <code>"0"</code> in the managed settings <code>env</code> block. Managed settings can't turn it on for users.
+      <sup><a href="#r6">[6]</a></sup></li>
+  </ul>
+
+  <h3>Permissions &amp; sandbox</h3>
+  <ul>
+    <li><strong>Sandboxed Bash prompts again by default (v2.1.325).</strong> Sandboxed commands now follow the normal
+      permission flow. Set <code>sandbox.autoAllowBashIfSandboxed: true</code> to keep running them without prompts.
+      If managed settings turn the sandbox on, set this key in your highest-ranking managed source.
+      <sup><a href="#r4">[4]</a></sup><sup><a href="#r7">[7]</a></sup></li>
+    <li><strong>Skills in unattended runs (v2.1.325).</strong> Scheduled tasks and <code>/loop</code> now ask before
+      running a skill that declares <code>allowed-tools</code> or hooks. To keep such a skill unattended, add
+      <code>Skill(name)</code> to <code>permissions.allow</code>. Read-only git commands in a repository that isn't the
+      project's or one you trusted now ask first. Use <code>--add-dir</code>, not <code>additionalDirectories</code>,
+      to let them run without prompts. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Safer startup (v2.1.323).</strong> If you start with <code>--permission-mode auto</code> or
+      <code>defaultMode: auto</code> and auto mode isn't available, Claude Code now starts in Manual mode. Before, it
+      could start in a mode that allowed more. A <code>--settings</code> file that isn't valid JSON and has a
+      <code>sandbox</code> key now stops startup. When sandbox settings fail validation, <code>claude -p</code> and the
+      SDK stop instead of running Bash unsandboxed. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>"Don't ask again" is more careful (v2.1.323).</strong> An allow rule that looks like it contains a
+      secret, or that would be saved to a git-tracked <code>settings.local.json</code>, now lasts only for the session.
+      Bash allow rules with a <code>*</code> in a variable's value, such as <code>Bash(PORT=* npm run dev)</code>, get a
+      startup warning. <code>/security-review</code> now asks before it runs. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Sandbox and worktrees (v2.1.323, v2.1.325).</strong> Inside the sandbox, <code>git worktree
+      add</code>/<code>move</code>/<code>remove</code> now fail as read-only. So do commits in a worktree the session
+      wasn't started in or given. Write access granted through a symlink is ignored; grant the real path instead.
+      <sup><a href="#r3">[3]</a></sup> The sandbox also refuses writes to <code>.claude</code> settings, skills,
+      agents, commands and hooks in added directories (v2.1.325). <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Security fixes.</strong> v2.1.321 stops MCP OAuth from sending refresh tokens to another host on a
+      redirect. It also applies deny rules to files that <code>cp</code>/<code>mv</code> write into a directory.
+      <sup><a href="#r1">[1]</a></sup> v2.1.323 fixes many Bash, sandbox and allow-rule bypasses, including
+      wildcard rules like <code>Bash(ls*)</code> and <code>sudo</code>/<code>env</code> wrappers.
+      <sup><a href="#r3">[3]</a></sup> v2.1.325 fixes zstd response decoding and more compound-command gaps. Relative
+      rules such as <code>Read(./.env)</code> now keep covering the project after a <code>cd</code>.
+      <sup><a href="#r4">[4]</a></sup></li>
+  </ul>
+
+  <h3>Context, models &amp; agents</h3>
+  <ul>
+    <li><strong>Unrecognized model IDs assume 1M context (v2.1.323).</strong> This was 200K before. Sessions on other
+      vendors' models with smaller windows can fail every turn once full. Set
+      <code>CLAUDE_CODE_DISABLE_1M_CONTEXT=1</code> before they fill. <sup><a href="#r3">[3]</a></sup>
+      <code>CLAUDE_CODE_MAX_CONTEXT_TOKENS</code> now also sets the window for unrecognized <code>claude-</code> IDs,
+      such as a gateway alias (v2.1.325). Sessions on many gateways and Foundry now compact instead of failing with a
+      context-length error. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Subagents (v2.1.325).</strong> A subagent cut off at the output token limit is now asked to give its
+      full answer again, more briefly. Subagents with their own model are no longer moved to the plan-mode model under
+      <code>opusplan</code> or <code>haiku</code>. <sup><a href="#r4">[4]</a></sup>
+      <code>CLAUDE_CODE_DISABLE_AGENT_PROGRESS_SUMMARIES=1</code> turns off subagent progress summaries and the requests
+      that write them (documented in v2.1.323; available since v2.1.318). <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Leaner background output (v2.1.321).</strong> Background command notifications and TaskStop results
+      over 1,000 characters show Claude only the start and end. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Removed <code>subagentStatusLine</code> (v2.1.323).</strong> Subagent rows always use the default
+      look. Settings files that still contain the key load as before. <sup><a href="#r3">[3]</a></sup></li>
+  </ul>
+
+  <h3>Plugins, MCP &amp; mods</h3>
+  <ul>
+    <li><strong>Version ranges for plugins (v2.1.323).</strong> <code>engines["claude-code"]</code> in
+      <code>plugin.json</code> keeps a plugin from installing, updating or loading outside its stated version range.
+      <code>claude plugin validate</code> type-checks TypeScript hooks modules; <code>--strict</code> fails on
+      findings. A plugin's <code>agent</code> setting is deprecated. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>MCP client (v2.1.323).</strong> The v1 MCP client is removed. <code>MCP_SDK_GENERATION=v1</code> now
+      runs the v2 client in a compatibility mode. The tool that finishes an MCP sign-in now asks you to confirm, even
+      in bypass and auto modes. <code>.mcp.json</code> approvals must match the server's exact name.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Managed plugin changes (v2.1.325).</strong> <code>pluginDigests</code> is deprecated and ignored.
+      Plugins from a managed remote marketplace that are listed in <code>prependPlugins</code>/<code>appendPlugins</code>
+      count as the organization's. <code>.claude/skills</code> in <code>--plugin-dir</code> plugins no longer load
+      from a session started above them. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Remote Control (v2.1.321, v2.1.325).</strong> <code>claude remote-control --settings &lt;file&gt;</code>
+      applies a settings file to every session it starts <sup><a href="#r1">[1]</a></sup>. It now exits with status 4
+      when it stops by itself and 69 when it can't register, so a service manager can restart it.
+      <sup><a href="#r4">[4]</a></sup></li>
+  </ul>
+
+  <h3>Networking, IDE &amp; other</h3>
+  <ul>
+    <li><strong>Proxies (v2.1.323).</strong> Organization settings and policy requests no longer use a proxy set only by
+      <code>ALL_PROXY</code>; set <code>HTTPS_PROXY</code> instead. The maximum for
+      <code>CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS</code> rose from 64000 to 300000. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Credentials kept out of subprocesses (v2.1.323, v2.1.325).</strong> Claude Code's own ripgrep, most
+      internal git commands and the sandbox's helper programs now run without most of its sign-in tokens and API keys.
+      <sup><a href="#r3">[3]</a></sup><sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>VS Code.</strong> A trust prompt before the first session in an untrusted folder, and live Bash
+      output under the command's card (v2.1.323) <sup><a href="#r3">[3]</a></sup>. Prompt suggestions, which Tab
+      accepts; turn them off with <code>promptSuggestionEnabled: false</code> (v2.1.325).
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Usage credits (v2.1.323).</strong> When a model needs usage credits that are off or used up, an options
+      menu offers to stop, switch to usage credits or upgrade. <sup><a href="#r3">[3]</a></sup></li>
+  </ul>
+
+  <h2 id="tips">Tips &amp; Techniques</h2>
+  <ul>
+    <li><strong>Try Code Mode on wide, repetitive work.</strong> The docs suggest it for the same change across many
+      files, searches whose results need filtering, and independent commands that can run in parallel. Keep deny rules
+      or hooks for calls you must control, because the auto-mode classifier sees the program, not run-time values.
+      <sup><a href="#r6">[6]</a></sup></li>
+    <li><strong>Watch for new sandbox prompts after updating.</strong> If prompts appear for commands that ran
+      silently last week, that's the v2.1.325 sandbox default. Decide whether you want the prompts. If you don't,
+      set <code>autoAllowBashIfSandboxed</code> explicitly. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Pin Fable 5.1 only if you have a reason.</strong> After v2.1.321, saved Fable picks follow
+      <code>fable</code> to 5.2. Use <code>/model claude-fable-5-1</code> if a workflow depends on the old model.
+      <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>On gateways with non-Claude or aliased models,</strong> set the context window explicitly with
+      <code>CLAUDE_CODE_MAX_CONTEXT_TOKENS</code> or <code>CLAUDE_CODE_DISABLE_1M_CONTEXT=1</code>. That way the new 1M
+      assumption doesn't skip compaction. <sup><a href="#r3">[3]</a></sup><sup><a href="#r4">[4]</a></sup></li>
+  </ul>
+
+  <h2 id="hacks">Hacks</h2>
+  <p>No new community "hacks" this period. The Hacker News (Algolia) stories from the past week with 20 or more points
+  were about a November 13 service incident, an unrelated game, and an article about the cloud Projects redesign from
+  September. None described a Claude Code technique with a second independent source. Reddit wasn't queried in this CI
+  run. <sup><a href="#r9">[9]</a></sup></p>
+
+  <h2 id="config">Recommended Default-Config Changes</h2>
+  <ul>
+    <li><strong>Sandbox users who relied on auto-allow:</strong> add
+      <code>"sandbox": {"autoAllowBashIfSandboxed": true}</code>. Organizations that turn the sandbox on through managed
+      settings should set it in their highest-ranking managed source. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Scheduled tasks and <code>/loop</code> that call skills:</strong> add
+      <code>"Skill(&lt;name&gt;)"</code> to <code>permissions.allow</code> for each skill that declares
+      <code>allowed-tools</code> or hooks. <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Organizations:</strong> choose a Code Mode policy. Leave it opt-in, or block it with
+      <code>"env": {"CLAUDE_CODE_EXPERIMENTAL_CODE_MODE": "0"}</code> in managed settings.
+      <sup><a href="#r6">[6]</a></sup> Team and Enterprise admins should also decide whether to allow Fable 5.2, since
+      saved Fable 5.1 picks move only once the organization allows it. <sup><a href="#r1">[1]</a></sup></li>
+    <li><strong>Networks with only <code>ALL_PROXY</code> set:</strong> also set <code>HTTPS_PROXY</code>.
+      <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Plugin authors:</strong> declare <code>engines["claude-code"]</code> and run
+      <code>claude plugin validate --strict</code> in CI. <sup><a href="#r3">[3]</a></sup></li>
+    <li><strong>Clean-up:</strong> you can remove <code>subagentStatusLine</code> from settings
+      <sup><a href="#r3">[3]</a></sup>. Managed configs can drop <code>pluginDigests</code>.
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Still on fast mode for Opus 4.8?</strong> Move to Opus 5.5 before the November 30, 2026 removal, as
+      covered in v1.12. <sup><a href="#r10">[10]</a></sup></li>
+  </ul>
+
+  <h2 id="history">History Log</h2>
+  <p><strong>What changed since v1.13:</strong></p>
+  <ul>
+    <li><strong>Added:</strong> Claude Fable 5.2 as the default Fable model; <code>claude remote-control
+      --settings</code> (v2.1.321) <sup><a href="#r1">[1]</a></sup>. Vertex fast mode (v2.1.322)
+      <sup><a href="#r2">[2]</a></sup>. Code Mode; plugin <code>engines["claude-code"]</code>; plugin validate type
+      checks; <code>CLAUDE_CODE_DISABLE_AGENT_PROGRESS_SUMMARIES</code> (available since v2.1.318); <code>CLAUDE_CODE_RESUME_HINT_COMMAND</code>;
+      usage-credits options menu; VS Code trust prompt and live Bash output (v2.1.323)
+      <sup><a href="#r3">[3]</a></sup>. VS Code prompt suggestions; Remote Control exit codes 4/69 (v2.1.325).
+      <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Updated:</strong> saved Fable 5.1 picks move to <code>fable</code>; leaner background-command output
+      (v2.1.321) <sup><a href="#r1">[1]</a></sup>. 1M context assumed for unrecognized model IDs; Manual-mode fallback
+      when auto mode isn't available; session-only allow rules that look like secrets; <code>/security-review</code>
+      asks first; read-only worktree git commands in the sandbox; <code>ALL_PROXY</code> and the
+      <code>MCP_SDK_GENERATION=v1</code> compatibility mode (v2.1.323) <sup><a href="#r3">[3]</a></sup>. Sandboxed Bash
+      follows the normal permission flow; skills in scheduled tasks and <code>/loop</code> ask first;
+      <code>CLAUDE_CODE_MAX_CONTEXT_TOKENS</code> covers unrecognized <code>claude-</code> IDs; subagent re-ask at the
+      output limit (v2.1.325). <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Removed or deprecated:</strong> <code>subagentStatusLine</code> setting, the v1 MCP client, and the
+      plugin <code>agent</code> setting (deprecated) (v2.1.323) <sup><a href="#r3">[3]</a></sup>.
+      <code>pluginDigests</code> (deprecated, ignored) (v2.1.325). <sup><a href="#r4">[4]</a></sup></li>
+    <li><strong>Carried over:</strong> the Opus 4.8 fast-mode removal date (November 30, 2026) from v1.12.
+      <sup><a href="#r10">[10]</a></sup></li>
+  </ul>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li id="r1">Claude Code Release v2.1.321 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.321">github.com/anthropics/claude-code/releases/tag/v2.1.321</a> (accessed 2026-11-16).</li>
+    <li id="r2">Claude Code Release v2.1.322 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.322">github.com/anthropics/claude-code/releases/tag/v2.1.322</a> (accessed 2026-11-16).</li>
+    <li id="r3">Claude Code Release v2.1.323 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.323">github.com/anthropics/claude-code/releases/tag/v2.1.323</a> (accessed 2026-11-16).</li>
+    <li id="r4">Claude Code Release v2.1.325 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.325">github.com/anthropics/claude-code/releases/tag/v2.1.325</a> (accessed 2026-11-16).</li>
+    <li id="r5">Introducing Claude Fable 5.2 and Claude Mythos 5.2 — Anthropic —
+      <a href="https://www.anthropic.com/news/claude-fable-and-mythos-5-2">www.anthropic.com/news/claude-fable-and-mythos-5-2</a> (accessed 2026-11-16).</li>
+    <li id="r6">Run tool calls from code with Code Mode — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/code-mode">code.claude.com/docs/en/code-mode</a> (accessed 2026-11-16).</li>
+    <li id="r7">Sandboxing — Claude Code documentation, Anthropic —
+      <a href="https://code.claude.com/docs/en/sandboxing">code.claude.com/docs/en/sandboxing</a> (accessed 2026-11-16).</li>
+    <li id="r8">Claude Code Releases (index) — GitHub, Anthropic —
+      <a href="https://github.com/anthropics/claude-code/releases">github.com/anthropics/claude-code/releases</a> (accessed 2026-11-16).</li>
+    <li id="r9">Hacker News search: "claude code" stories — Algolia HN API —
+      <a href="https://hn.algolia.com/api/v1/search_by_date?query=claude%20code&amp;tags=story">hn.algolia.com/api/v1/search_by_date?query=claude%20code&amp;tags=story</a> (accessed 2026-11-16).</li>
+    <li id="r10">Claude Code Release v2.1.316 — GitHub Releases —
+      <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.316">github.com/anthropics/claude-code/releases/tag/v2.1.316</a> (accessed 2026-11-16).</li>
+  </ol>
+
+  <footer>
+    CCPlus is generated with Claude Code. Content is paraphrased from the cited public sources
+    above; access dates are listed per reference. Reviewed by Claude Sonnet 5.5 — pass_with_edits.
+  </footer>
+
+</div>
+</body>
+</html>
