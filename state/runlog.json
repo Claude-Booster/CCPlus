@@ -299,6 +299,13 @@
       "new_items": 0,
       "checked_sources": 4,
       "note": "No significant Claude Code updates this week. Latest GitHub release still v2.1.330 (2026-11-20) and CHANGELOG.md last updated 2026-11-20; code.claude.com release notes also top out at 2.1.330. All already reported in v1.15 (CCPlus_2026-11-23_1302) earlier today. Anthropic news since then has only IPO posts (2026-11-18 pricing, 2026-11-20 closing) and no Claude Code or model announcements."
+    },
+    {
+      "timestamp": "2026-11-23_1331",
+      "status": "no-update",
+      "new_items": 0,
+      "checked_sources": 3,
+      "note": "No significant Claude Code updates this week. Re-run after v1.15 (2026-11-23_1302): latest CLI still v2.1.330 (2026-11-20) per GitHub Releases and release notes; no new Anthropic model or Claude Code announcements."
     }
   ]
 }
