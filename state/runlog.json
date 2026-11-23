@@ -306,6 +306,13 @@
       "new_items": 0,
       "checked_sources": 3,
       "note": "No significant Claude Code updates this week. Re-run after v1.15 (2026-11-23_1302): latest CLI still v2.1.330 (2026-11-20) per GitHub Releases and release notes; no new Anthropic model or Claude Code announcements."
+    },
+    {
+      "timestamp": "2026-11-23_1346",
+      "status": "no-update",
+      "new_items": 0,
+      "checked_sources": 3,
+      "note": "No significant Claude Code updates this week. Re-run after v1.15 (2026-11-23_1302): latest CLI still v2.1.330 (2026-11-20) per GitHub Releases and release notes; Anthropic News has only IPO items since Nov 9 (no new model or Claude Code announcements)."
     }
   ]
 }
